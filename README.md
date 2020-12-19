@@ -14,4 +14,6 @@ npm run dev
 yarn dev
 ```
 
+Rename `.env.sample` to `.env.local` and fill in the respective information as well.
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
