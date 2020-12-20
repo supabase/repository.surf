@@ -130,7 +130,8 @@ export default function Home() {
           'inserted_at': group[0].inserted_at
         })
       })
-      setIssueCounts(overviewIssueCounts)
+      const sortedIssueCounts = overviewIssueCounts.sort((a, b) => a.inserted_at - b.inserted_at)
+      setIssueCounts(sortedIssueCounts)
     }
     setSelectedView('Overview')
   }
