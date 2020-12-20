@@ -32,6 +32,9 @@ function MyApp({ Component, pageProps, router }) {
 
   useEffect(() => {
     (async function retrieveGithub() {
+      if (router.route === '/') {
+        router.push(`/${organization}`)
+      }
       const repos = await fetchAndWait(`https://api.github.com/orgs/${organization}/repos?access_token=${githubAccessToken}`)
       const repoNames = repos.map(repo => repo.name)
       setRepoNames(repoNames.sort())
@@ -66,12 +69,13 @@ function MyApp({ Component, pageProps, router }) {
     </Layout>
   )
 }
-MyApp.getInitialProps = ({ ctx }) => {
-  if (ctx.pathname === '/' && ctx.res) {
-    ctx.res.writeHead(302, { Location: `/${organization}` });
-    ctx.res.end();
-  }
-  return { };
-}
+
+// MyApp.getInitialProps = ({ ctx }) => {
+//   if (ctx.pathname === '/' && ctx.res) {
+//     ctx.res.writeHead(302, { Location: `/${organization}` });
+//     ctx.res.end();
+//   }
+//   return { };
+// }
 
 export default MyApp
