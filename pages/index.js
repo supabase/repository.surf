@@ -3,11 +3,34 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
-import { groupBy, formatIssueCounts } from 'lib/helpers'
+import { groupBy } from 'lib/helpers'
 
 import Sidebar from 'components/Sidebar'
 import Overview from 'components/Overview'
 import IssueTracker from 'components/IssueTracker'
+
+const Loader = () => (
+  <svg
+    className="animate-spin"
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="12" y1="2" x2="12" y2="6" />
+    <line x1="12" y1="18" x2="12" y2="22" />
+    <line x1="4.93" y1="4.93" x2="7.76" y2="7.76" />
+    <line x1="16.24" y1="16.24" x2="19.07" y2="19.07" />
+    <line x1="2" y1="12" x2="6" y2="12" />
+    <line x1="18" y1="12" x2="22" y2="12" />
+    <line x1="4.93" y1="19.07" x2="7.76" y2="16.24" />
+    <line x1="16.24" y1="7.76" x2="19.07" y2="4.93" />
+  </svg>
+)
 
 export default function Home() {
 
@@ -21,10 +44,11 @@ export default function Home() {
   const supabase = createClient(supabaseURL, supabasePublicKey)
   const organizationName = organization.charAt(0).toUpperCase() + organization.slice(1);
 
+  const [loaded, setLoaded] = useState(false)
+  const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [repoNames, setRepoNames] = useState([])
   const [issueCounts, setIssueCounts] = useState([])
   const [selectedView, setSelectedView] = useState('Overview')
-  const [uPlotLoaded, setUPlotLoaded] = useState(false)
 
   useEffect(() => {
     (async function retrieveGithub() {
@@ -32,6 +56,7 @@ export default function Home() {
       const repoNames = repos.map(repo => repo.name)
       setRepoNames(repoNames.sort())
       await onSelectOverview()
+      setLoaded(true)
     })()
 
     if (uPlot) setUPlotLoaded(true)
@@ -153,7 +178,13 @@ export default function Home() {
 
       {uPlotLoaded && (
         <main className="h-screen flex-1 overflow-y-auto focus:outline-none flex flex-col bg-gray-700 px-10 py-24">
-          {selectedView === 'Overview' && (
+          {!loaded && (
+            <div className="text-white flex-1 flex flex-col justify-center items-center">
+              <Loader />
+              <p className="text-xs mt-3 leading-5 text-center">Retrieving organization data</p>
+            </div>
+          )}
+          {selectedView === 'Overview' && issueCounts.length > 0 && (
             <Overview
               uPlot={uPlot}
               organizationName={organizationName}
@@ -161,7 +192,7 @@ export default function Home() {
               issueCounts={issueCounts}
             />
           )}
-          {selectedView !== 'Overview' && (
+          {selectedView !== 'Overview' && issueCounts.length > 0 && (
             <IssueTracker
               uPlot={uPlot}
               selectedView={selectedView}

@@ -32,6 +32,10 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
             fill:   (u, seriesIdx)       => "#fff",
           }
         },
+        scales: {
+          x: {},
+          y: {},
+        },
         series: [
           {},
           {
@@ -41,7 +45,6 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
             // in-legend display
             label: "Open issues",
             value: (self, rawValue) => rawValue,
-            // series style
             stroke: "#00BA55",
             width: 1,
             fill: "rgba(0, 186, 85, 0.3)",
