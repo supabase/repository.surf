@@ -1,12 +1,14 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
+import { ToastContainer } from 'react-toastify';
 
 import { fetchAndWait } from 'lib/fetchWrapper'
 import { groupBy } from 'lib/helpers'
 
 import Sidebar from 'components/Sidebar'
 import Overview from 'components/Overview'
+import Settings from 'components/Settings'
 import IssueTracker from 'components/IssueTracker'
 
 const Loader = () => (
@@ -47,8 +49,10 @@ export default function Home() {
   const [loaded, setLoaded] = useState(false)
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [repoNames, setRepoNames] = useState([])
+  const [viewableRepos, setViewableRepos] = useState([])
   const [issueCounts, setIssueCounts] = useState([])
-  const [selectedView, setSelectedView] = useState('Overview')
+  const [selectedView, setSelectedView] = useState(null)
+  const [whitelist, setWhitelist] = useState([])
 
   useEffect(() => {
     (async function retrieveGithub() {
@@ -60,6 +64,12 @@ export default function Home() {
     })()
 
     if (uPlot) setUPlotLoaded(true)
+
+    const whitelistRepos = localStorage.getItem(`issueTracker_${organization}`)
+    if (whitelistRepos) {
+      const formattedWhitelist = whitelistRepos.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
+      setWhitelist(formattedWhitelist)      
+    }
 
     const subscription = supabase
       .from(issuesTable)
@@ -74,6 +84,14 @@ export default function Home() {
       supabase.removeSubscription(subscription)
     }
   }, [])
+
+  useEffect(() => {
+    let repositories = repoNames.slice()
+    whitelist.forEach(whitelistRepo => {
+      repositories = repositories.filter(repo => repo !== whitelistRepo)
+    })
+    setViewableRepos(repositories)
+  }, [repoNames, whitelist])
 
   const retrieveRepoIssueCounts = async(repo) => {
     if (selectedView !== repo) {
@@ -161,8 +179,20 @@ export default function Home() {
     setSelectedView('Overview')
   }
 
+  const onSelectSettings = () => {
+    setSelectedView('Settings')
+  }
+
   return (
     <div className="flex">
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        closeOnClick
+        pauseOnHover
+        hideProgressBar
+      />
+
       <Head>
         <title>{organizationName} | Issue Tracker</title>
         <link rel="icon" href="/favicon.ico" />
@@ -170,10 +200,11 @@ export default function Home() {
 
       <Sidebar
         logoUrl={organizationLogo}
-        repositories={repoNames}
+        repositories={viewableRepos}
         selectedView={selectedView}
         onSelectOverview={() => onSelectOverview()}
         onSelectRepo={(repo) => retrieveRepoIssueCounts(repo)}
+        onSelectSettings={() => onSelectSettings()}
       />
 
       {uPlotLoaded && (
@@ -184,24 +215,36 @@ export default function Home() {
               <p className="text-xs mt-3 leading-5 text-center">Retrieving organization data</p>
             </div>
           )}
-          {selectedView === 'Overview' && issueCounts.length > 0 && (
-            <Overview
-              uPlot={uPlot}
-              organizationName={organizationName}
-              repoNames={repoNames}
-              issueCounts={issueCounts}
-            />
-          )}
-          {selectedView !== 'Overview' && issueCounts.length > 0 && (
-            <IssueTracker
-              uPlot={uPlot}
-              selectedView={selectedView}
-              issueCounts={issueCounts}
-              latestOpenIssueCount={retrieveLatestOpenIssueCount()}
-              latestClosedIssueCount={retrieveLatestCloseIssueCount()}
-              openIssueCountComparison={deriveOpenIssueCountComparison()}
-            />
-          )}
+          {selectedView === 'Overview' && issueCounts.length > 0
+            ? (
+              <Overview
+                uPlot={uPlot}
+                organizationName={organizationName}
+                repoNames={repoNames}
+                issueCounts={issueCounts}
+              />
+            )
+            : selectedView === 'Settings'
+            ? (
+              <Settings
+                repoNames={repoNames}
+                organization={organization}
+                onUpdateWhitelist={(whitelistRepos) => setWhitelist(whitelistRepos)}
+              />
+            )
+            : selectedView !== null
+            ? (
+              <IssueTracker
+                uPlot={uPlot}
+                selectedView={selectedView}
+                issueCounts={issueCounts}
+                latestOpenIssueCount={retrieveLatestOpenIssueCount()}
+                latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+                openIssueCountComparison={deriveOpenIssueCountComparison()}
+              />
+            )
+            : <div></div>
+          }
         </main>
       )}
     </div>

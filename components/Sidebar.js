@@ -6,6 +6,7 @@ const SideBar = ({
   selectedView,
   onSelectOverview,
   onSelectRepo,
+  onSelectSettings,
 }) => {
 
   const [expandRepositories, setExpandRepositories] = useState(false)
@@ -55,19 +56,30 @@ const SideBar = ({
               <ChevronDown />
             </div>
           </div>
-          <div className={`overflow-y-hidden space-y-1 ${expandRepositories ? 'max-h-auto' : 'max-h-0'}`}>
-            {repositories.map((repo, idx) => (
-              <div
-                key={`repo_${idx}`}
-                onClick={() => onSelectRepo(repo)}
-                className={`
-                  pl-5 pr-2 py-2 rounded-md cursor-pointer text-sm
-                  ${selectedView === repo ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
-                `}
-              >
-                {repo}
-              </div>
-            ))}
+          {expandRepositories && (
+            <div className="overflow-y-hidden space-y-1">
+              {repositories.map((repo, idx) => (
+                <div
+                  key={`repo_${idx}`}
+                  onClick={() => onSelectRepo(repo)}
+                  className={`
+                    pl-5 pr-2 py-2 rounded-md cursor-pointer text-sm
+                    ${selectedView === repo ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
+                  `}
+                >
+                  {repo}
+                </div>
+              ))}
+            </div>
+          )}
+          <div
+            onClick={() => onSelectSettings()}
+            className={`
+              px-2 py-2 rounded-md cursor-pointer
+              ${selectedView === 'Settings' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
+            `}
+          >
+            <span>Settings</span>
           </div>
         </nav>
       </div>
