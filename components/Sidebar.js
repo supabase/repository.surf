@@ -1,14 +1,15 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
+import Link from 'next/link'
 
 const SideBar = ({
   logoUrl,
   repositories,
   selectedView,
-  onSelectOverview,
   onSelectRepo,
-  onSelectSettings,
 }) => {
 
+  const router = useRouter()
   const [expandRepositories, setExpandRepositories] = useState(false)
 
   const ChevronDown = () => (
@@ -35,15 +36,16 @@ const SideBar = ({
       </div>
       <div className="flex-1 flex flex-col overflow-y-auto bg-gray-800 py-3">
         <nav className="flex-1 px-2 py-4 space-y-2">
-          <div
-            onClick={() => onSelectOverview()}
-            className={`
+          <Link href={`/${router.query.org}`}>
+            <div
+              className={`
               px-2 py-2 rounded-md cursor-pointer
               ${selectedView === 'Overview' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
-            `}
-          >
-            <span>Overview</span>
-          </div>
+              `}
+            >
+              <span>Overview</span>
+            </div>
+          </Link>
           <div
             onClick={() => setExpandRepositories(!expandRepositories)}
             className={`
@@ -59,28 +61,29 @@ const SideBar = ({
           {expandRepositories && (
             <div className="overflow-y-hidden space-y-1">
               {repositories.map((repo, idx) => (
-                <div
-                  key={`repo_${idx}`}
-                  onClick={() => onSelectRepo(repo)}
-                  className={`
-                    pl-5 pr-2 py-2 rounded-md cursor-pointer text-sm
-                    ${selectedView === repo ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
-                  `}
-                >
-                  {repo}
-                </div>
+                <Link key={`repo_${idx}`} href={`/${router.query.org}/${repo}`}>
+                  <div
+                    className={`
+                      pl-5 pr-2 py-2 rounded-md cursor-pointer text-sm
+                      ${selectedView === repo ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
+                    `}
+                  >
+                    {repo}
+                  </div>
+                </Link>
               ))}
             </div>
           )}
-          <div
-            onClick={() => onSelectSettings()}
-            className={`
+          <Link href={`/${router.query.org}/settings`}>
+            <div
+              className={`
               px-2 py-2 rounded-md cursor-pointer
               ${selectedView === 'Settings' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
-            `}
-          >
-            <span>Settings</span>
-          </div>
+              `}
+            >
+              <span>Settings</span>
+            </div>
+          </Link>
         </nav>
       </div>
     </div>

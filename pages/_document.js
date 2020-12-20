@@ -13,7 +13,7 @@ class MyDocument extends Document {
           <link rel="stylesheet" href="/uPlot/uPlot.min.css" />
           <script type="text/javascript" src="/uPlot/uPlot.iife.min.js" />
         </Head>
-        <body>
+        <body className="bg-gray-700">
           <Main />
           <NextScript />
         </body>

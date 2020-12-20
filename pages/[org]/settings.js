@@ -20,14 +20,14 @@ const SaveIcon = () => (
 const Settings = ({
   repoNames,
   organization,
-  onUpdateWhitelist,
+  onUpdateFilterList,
 }) => {
 
-  const [whitelist, setWhitelist] = useState('')
+  const [filterList, setFilterList] = useState('')
 
   useEffect(() => {
-    const whitelistRepos = localStorage.getItem(`issueTracker_${organization}`)
-    if (whitelistRepos) setWhitelist(whitelistRepos)
+    const filterListRepos = localStorage.getItem(`issueTracker_${organization}`)
+    if (filterListRepos) setFilterList(filterListRepos)
   }, [])
 
   const onSaveSettings = (event) => {
@@ -41,10 +41,10 @@ const Settings = ({
 
     // This part below is very messy, please do refactor
 
-    if (whitelist.length > 0) {
-      const whiteListRepos = whitelist.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
+    if (filterList.length > 0) {
+      const filterListRepos = filterList.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
 
-      for (const repo of whiteListRepos) {
+      for (const repo of filterListRepos) {
         if (repoNames.indexOf(repo) === -1) {
           toast.error(`Unable to find ${repo} repository within the organization`)
           if (!error) error = true
@@ -52,14 +52,14 @@ const Settings = ({
       }
 
       if (!error) {
-        localStorage.setItem(`issueTracker_${organization}`, whitelist)
-        onUpdateWhitelist(whiteListRepos)
+        localStorage.setItem(`issueTracker_${organization}`, filterList)
+        onUpdateFilterList(filterListRepos)
         toast.success('Successfully updated settings!')
       }
 
-    } else if (whitelist.length === 0) {
+    } else if (filterList.length === 0) {
       localStorage.removeItem(`issueTracker_${organization}`)
-      onUpdateWhitelist([])
+      onUpdateFilterList([])
       toast.success('Successfully updated settings!')
     }
   }
@@ -78,30 +78,19 @@ const Settings = ({
         </div>
       </div>
       <div className="flex-1 flex flex-col items-start px-10 text-white">
-
         <form className="w-full" onSubmit={(e) => onSaveSettings(e)}>
-          <label htmlFor="whitelist">
-            Whitelist Repositories
+          <label htmlFor="filterList">
+            Filter Repositories
             <span className="block text-gray-400 text-sm mt-1">Hide certain repositories in the side bar</span>
           </label>
           <input
             type="text"
-            value={whitelist}
-            onChange={(e) => setWhitelist(e.target.value)}
+            value={filterList}
+            onChange={(e) => setFilterList(e.target.value)}
             placeholder="Comma separated strings"
             className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
           />
         </form>
-
-        {/* <div className="flex flex-col justify-center overflow-y-auto">
-          <p>Whitelist Repositories</p>
-          <span className="text-gray-400 text-sm mt-1">Hide certain repositories in the side bar</span>
-        </div>
-        <input
-          type="text"
-          placeholder="Comma separated strings"
-          className="w-full bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
-        /> */}
       </div>
     </>
   )
