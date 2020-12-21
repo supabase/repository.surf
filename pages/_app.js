@@ -35,7 +35,7 @@ function MyApp({ Component, pageProps, router }) {
       if (router.route === '/') {
         router.push(`/${organization}`)
       }
-      const repos = await fetchAndWait(`https://api.github.com/orgs/${organization}/repos?access_token=${githubAccessToken}`)
+      const repos = await fetchAndWait(`https://api.github.com/orgs/${organization}/repos`, githubAccessToken)
       const repoNames = repos.map(repo => repo.name)
       setRepoNames(repoNames.sort())
       setLoaded(true)
