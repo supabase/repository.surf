@@ -8,7 +8,8 @@ export default function Home() {
   const [organization, setOrganization] = useState('')
 
   useEffect(() => {
-    setUrl(window.location.origin)
+    console.log(window.location)
+    setUrl(window.location.host)
   }, [])
 
   const goToURL = (event) => {
@@ -28,18 +29,18 @@ export default function Home() {
           <p className="text-white w-3/4 sm:w-auto text-lg xl:text-xl text-gray-400">Star history, issue tracking, and more to come</p>
         </div>
         <div className="mb-10">
-          {/* <code className="text-white bg-gray-500 px-2 py-1 rounded-md">{url}/{`{organization}`}</code> */}
           <form
             onSubmit={(e) => goToURL(e)}
-            className="flex items-center bg-gray-500 font-mono px-2 py-1 rounded-md text-white sm:w-1/2 focus:border"
+            className="flex items-center bg-gray-500 font-mono px-2 py-1 rounded-md text-white focus:border sm:w-2/3 xl:w-1/2"
           >
-            <p className="hidden sm:block">{url}/</p>
+            <p className="hidden sm:block">issue-tracker.supabase.io/</p>
+            {/* {url}/ */}
             <input
               type="text"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
               placeholder="organization"
-              className="w-full bg-gray-500 text-white focus:outline-none"
+              className="flex-1 bg-gray-500 text-white focus:outline-none"
             />
           </form>
         </div>
