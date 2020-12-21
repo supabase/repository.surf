@@ -48,7 +48,7 @@ const SideBar = ({
       <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
         <div className="flex w-full items-center justify-between h-8 w-auto text-white">
           <img className="h-6" src={logoUrl} />
-          <div onClick={() => closeSidebar()}>
+          <div className="sm:hidden" onClick={() => closeSidebar()}>
             <Close />
           </div>
         </div>
