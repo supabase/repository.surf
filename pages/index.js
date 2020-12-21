@@ -44,7 +44,7 @@ export default function Home() {
             />
           </form>
         </div>
-        <a className="text-white sm:w-1/4 text-gray-200 flex items-center opacity-75 hover:opacity-100 transition cursor-pointer">
+        <a href="https://supabase.io" target="_blank" className="text-white sm:w-1/4 text-gray-200 flex items-center opacity-75 hover:opacity-100 transition cursor-pointer">
           <span>Powered by</span>
           <img src='https://supabase.io/new/images/logo-dark.png' className="ml-2 h-5 relative" style={{ top: '2px'}}/>
         </a>
