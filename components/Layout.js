@@ -1,12 +1,9 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 
 import Sidebar from 'components/Sidebar'
-
-const organizationLogo = process.env.NEXT_PUBLIC_ORGANIZATION_LOGO
-const organization = process.env.NEXT_PUBLIC_GITHUB_ORGANIZATION
-const organizationName = organization.charAt(0).toUpperCase() + organization.slice(1);
 
 const Loader = () => (
   <svg
@@ -50,6 +47,7 @@ const Menu = () => (
 
 const Layout = ({ view, repos, loaded, children }) => {
 
+  const router = useRouter()
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
@@ -67,14 +65,13 @@ const Layout = ({ view, repos, loaded, children }) => {
         hideProgressBar
       />
       <Head>
-        <title>{organizationName} | Issue Tracker</title>
+        <title>{router.query.org ? `${router.query.org} | Issue Tracker` : 'Issue Tracker'}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       {/* Sidebar on mobile */}
       <div className={`absolute top-0 z-50 transform transition ${sidebarOpen ? 'translate-x-0' : '-translate-x-64'}`}>
         <Sidebar
-          logoUrl={organizationLogo}
           repositories={repos}
           selectedView={view}
           closeSidebar={() => setSidebarOpen(false)}
@@ -88,7 +85,6 @@ const Layout = ({ view, repos, loaded, children }) => {
 
       <Sidebar
         className="hidden sm:flex"
-        logoUrl={organizationLogo}
         repositories={repos}
         selectedView={view}
       />
@@ -102,7 +98,7 @@ const Layout = ({ view, repos, loaded, children }) => {
                 <p className="text-xs mt-3 leading-5 text-center">Retrieving organization data</p>
               </div>
             )
-            : <div>{children}</div>
+            : <>{children}</>
           }
         </main>
       )}

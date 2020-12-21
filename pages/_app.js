@@ -9,7 +9,6 @@ import Layout from 'components/Layout'
 import { fetchAndWait } from 'lib/fetchWrapper'
 
 const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
-const organization = process.env.NEXT_PUBLIC_GITHUB_ORGANIZATION
 const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabasePublicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_TABLE_NAME
@@ -31,22 +30,21 @@ function MyApp({ Component, pageProps, router }) {
   const [filteredRepoNames, setFilteredRepoNames] = useState([])
 
   useEffect(() => {
-    (async function retrieveGithub() {
-      if (router.route === '/') {
-        router.push(`/${organization}`)
+    if (router.pathname !== '/' && router.query.org) {
+      (async function retrieveGithub() {
+        const repos = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}/repos?per_page=100`, githubAccessToken)
+        const repoNames = repos.map(repo => repo.name)
+        setRepoNames(repoNames.sort())
+        setLoaded(true)
+      })()
+  
+      const filterListRepos = localStorage.getItem(`issueTracker_${router.query.org}`)
+      if (filterListRepos) {
+        const formattedFilterList = filterListRepos.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
+        setFilteredRepoNames(formattedFilterList)      
       }
-      const repos = await fetchAndWait(`https://api.github.com/orgs/${organization}/repos`, githubAccessToken)
-      const repoNames = repos.map(repo => repo.name)
-      setRepoNames(repoNames.sort())
-      setLoaded(true)
-    })()
-
-    const filterListRepos = localStorage.getItem(`issueTracker_${organization}`)
-    if (filterListRepos) {
-      const formattedFilterList = filterListRepos.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
-      setFilteredRepoNames(formattedFilterList)      
     }
-  }, [])
+  }, [router.query.org])
 
   useEffect(() => {
     let repositories = repoNames.slice()
@@ -57,25 +55,21 @@ function MyApp({ Component, pageProps, router }) {
   }, [repoNames, filteredRepoNames])
 
   return (
-    <Layout view={selectedView} repos={viewableRepos} loaded={loaded}>
-      <Component
-        {...pageProps}
-        supabase={supabase}
-        issuesTable={issuesTable}
-        organization={organization}
-        repoNames={repoNames}
-        onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}
-      />
-    </Layout>
+    router.route === '/'
+      ? <Component {...pageProps} />
+      : (
+        <Layout view={selectedView} repos={viewableRepos} loaded={loaded}>
+          <Component
+            {...pageProps}
+            supabase={supabase}
+            issuesTable={issuesTable}
+            organization={router.query.org}
+            repoNames={repoNames}
+            onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}
+          />
+        </Layout>
+      )
   )
 }
-
-// MyApp.getInitialProps = ({ ctx }) => {
-//   if (ctx.pathname === '/' && ctx.res) {
-//     ctx.res.writeHead(302, { Location: `/${organization}` });
-//     ctx.res.end();
-//   }
-//   return { };
-// }
 
 export default MyApp
