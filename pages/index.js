@@ -34,7 +34,6 @@ export default function Home() {
             className="flex items-center bg-gray-500 font-mono px-2 py-1 rounded-md text-white focus:border sm:w-2/3 xl:w-1/2"
           >
             <p className="hidden sm:block">issue-tracker.supabase.io/</p>
-            {/* {url}/ */}
             <input
               type="text"
               value={organization}

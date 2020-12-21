@@ -11,10 +11,10 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
         chartData[1].push(issue.open_issues)
       })
       issueCountsPlotRef.current?.setData(chartData)
-      issueCountsPlotRef.current?.setScale('y', {
-        min: 0,
-        max: Math.max(...issueCounts.map(issue => issue.open_issues))
-      })
+      // issueCountsPlotRef.current?.setScale('y', {
+      //   min: 0,
+      //   max: Math.max(...issueCounts.map(issue => issue.open_issues))
+      // })
     }
   }, [issueCounts])
 
