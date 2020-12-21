@@ -23,7 +23,7 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
         id: "chart1",
         class: "my-chart",
         width: chartDiv.offsetWidth,
-        height: 300,
+        height: chartDiv.offsetHeight - 30,
         cursor: {
           points: {
             size:   (u, seriesIdx)       => u.series[seriesIdx].points.size * 2.5,
@@ -86,7 +86,7 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
       const chartDiv = document.getElementById("chart")
       issueCountsPlotRef.current?.setSize({
         width: chartDiv.offsetWidth,
-        height: 300
+        height: chartDiv.offsetHeight - 30
       })
     }
 
@@ -96,7 +96,7 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
   
   return (
     <div className="text-white">
-      <div id="chart" className="w-full" style={{ height: 330 }} />
+      <div id="chart" className="w-full h-60 sm:h-80" />
     </div>
   )
 }

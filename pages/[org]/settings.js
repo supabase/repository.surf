@@ -66,7 +66,7 @@ const Settings = ({
 
   return (
     <>
-      <div className="px-10 pb-10 flex items-center justify-between">
+      <div className="pb-5 sm:px-10 sm:pb-10 flex items-center justify-between">
         <div>
           <h1 className="text-white text-2xl">Settings</h1>
           <p className="mt-2 text-base text-gray-400">Adjust your settings here</p>
@@ -77,7 +77,7 @@ const Settings = ({
           <SaveIcon />
         </div>
       </div>
-      <div className="flex-1 flex flex-col items-start px-10 text-white">
+      <div className="flex-1 flex flex-col items-start sm:px-10 text-white">
         <form className="w-full" onSubmit={(e) => onSaveSettings(e)}>
           <label htmlFor="filterList">
             Filter Repositories

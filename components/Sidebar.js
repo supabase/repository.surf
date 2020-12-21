@@ -3,10 +3,11 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 
 const SideBar = ({
+  className = '',
   logoUrl,
   repositories,
   selectedView,
-  onSelectRepo,
+  closeSidebar = () => {},
 }) => {
 
   const router = useRouter()
@@ -27,17 +28,36 @@ const SideBar = ({
     </svg>
   )
 
+  const Close = () => (
+    <svg
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      stroke="currentColor"
+      strokeWidth="2"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+  )
+
   return (
-    <div className="bg-gray-500 flex flex-col h-screen w-64">
+    <div className={`bg-gray-500 flex flex-col h-screen w-64 ${className}`}>
       <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
-        <div className="flex items-center h-8 w-auto text-white">
+        <div className="flex w-full items-center justify-between h-8 w-auto text-white">
           <img className="h-6" src={logoUrl} />
+          <div onClick={() => closeSidebar()}>
+            <Close />
+          </div>
         </div>
       </div>
       <div className="flex-1 flex flex-col overflow-y-auto bg-gray-800 py-3">
         <nav className="flex-1 px-2 py-4 space-y-2">
           <Link href={`/${router.query.org}`}>
             <div
+              onClick={() => closeSidebar()}
               className={`
               px-2 py-2 rounded-md cursor-pointer
               ${selectedView === 'Overview' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
@@ -63,6 +83,7 @@ const SideBar = ({
               {repositories.map((repo, idx) => (
                 <Link key={`repo_${idx}`} href={`/${router.query.org}/${repo}`}>
                   <div
+                    onClick={() => closeSidebar()}
                     className={`
                       pl-5 pr-2 py-2 rounded-md cursor-pointer text-sm
                       ${selectedView === repo ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
@@ -76,6 +97,7 @@ const SideBar = ({
           )}
           <Link href={`/${router.query.org}/settings`}>
             <div
+              onClick={() => closeSidebar()}
               className={`
               px-2 py-2 rounded-md cursor-pointer
               ${selectedView === 'Settings' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
