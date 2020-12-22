@@ -23,7 +23,7 @@ const Menu = () => (
   </svg>
 )
 
-const Layout = ({ view, repos, loaded, children }) => {
+const Layout = ({ view, repos, loaded, organization, children }) => {
 
   const router = useRouter()
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
@@ -52,6 +52,8 @@ const Layout = ({ view, repos, loaded, children }) => {
         <Sidebar
           repositories={repos}
           selectedView={view}
+          organizationAvatar={organization.avatar_url}
+          organizationName={organization.name}
           closeSidebar={() => setSidebarOpen(false)}
         />
       </div>
@@ -65,6 +67,8 @@ const Layout = ({ view, repos, loaded, children }) => {
         className="hidden sm:flex"
         repositories={repos}
         selectedView={view}
+        organizationAvatar={organization.avatar_url}
+        organizationName={organization.name}
       />
 
       {uPlotLoaded && (

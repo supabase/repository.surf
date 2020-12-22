@@ -24,6 +24,7 @@ function MyApp({ Component, pageProps, router }) {
     : ''
 
   const [loaded, setLoaded] = useState(false)
+  const [organization, setOrganization] = useState({})
   const [repoNames, setRepoNames] = useState([])
   const [viewableRepos, setViewableRepos] = useState([])
   const [filteredRepoNames, setFilteredRepoNames] = useState([])
@@ -49,6 +50,16 @@ function MyApp({ Component, pageProps, router }) {
   }, [router.query.org])
 
   useEffect(() => {
+    if (router.pathname !== '/' && router.query.org) {
+      (async function retrieveOrganizationProfile() {
+        const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
+        console.log('org', org)
+        setOrganization(org)
+      })()
+    }
+  }, [router.query.org])
+
+  useEffect(() => {
     let repositories = repoNames.slice()
     filteredRepoNames.forEach(filteredRepo => {
       repositories = repositories.filter(repo => repo !== filteredRepo)
@@ -60,7 +71,12 @@ function MyApp({ Component, pageProps, router }) {
     router.route === '/'
       ? <Component {...pageProps} />
       : (
-        <Layout view={selectedView} repos={viewableRepos} loaded={loaded}>
+        <Layout
+          view={selectedView}
+          repos={viewableRepos}
+          loaded={loaded}
+          organization={organization}
+        >
           <Component
             {...pageProps}
             githubAccessToken={githubAccessToken}
