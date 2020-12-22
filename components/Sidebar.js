@@ -63,11 +63,17 @@ const SideBar = ({
     <div className={`bg-gray-500 flex flex-col h-screen w-64 ${className}`}>
       <div className="flex items-center h-16 flex-shrink-0 px-4 bg-gray-900">
         <div className="flex w-full items-center justify-between h-8 w-auto text-white">
-          <Link href={'/'}>
-            <div className="cursor-pointer">
-              <Home />
+          <div className="flex items-center">
+            <Link href={'/'}>
+              <div className="cursor-pointer">
+                <Home />
+              </div>
+            </Link>
+            <div className="ml-4 flex flex-col ">
+              <p className="text-gray-400" style={{ fontSize: '0.6rem'}}>ORGANIZATION</p>
+              <p style={{ marginTop: '-3px'}}>{router.query.org}</p>
             </div>
-          </Link>
+          </div>
           <div className="sm:hidden" onClick={() => closeSidebar()}>
             <Close />
           </div>

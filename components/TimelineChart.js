@@ -1,26 +1,31 @@
 import { useEffect, useRef } from 'react'
 
-const TimelineChart = ({ uPlot, issueCounts }) => {
-  const issueCountsPlotRef = useRef(null)
+// Need two more properties: dateKey, valueKey
+
+const TimelineChart = ({ id, uPlot, data, dateKey, valueKey, xLabel = '' }) => {
+  const dataPlotRef = useRef(null)
 
   useEffect(() => {
-    if (issueCounts.length > 0) {
-      const chartData = [[], []]
-      issueCounts.forEach(issue => {
-        chartData[0].push(Math.floor(new Date(issue.inserted_at) / 1000))
-        chartData[1].push(issue.open_issues)
+    if (data.length > 0) {
+      const sortedData = data.sort((a, b) => {
+        return (a[dateKey] < b[dateKey]) ? -1 : ((a[dateKey] > b[dateKey]) ? 1 : 0);
       })
-      issueCountsPlotRef.current?.setData(chartData)
-      // issueCountsPlotRef.current?.setScale('y', {
+      const chartData = [[], []]
+      sortedData.forEach(issue => {
+        chartData[0].push(Math.floor(new Date(issue[dateKey]) / 1000))
+        chartData[1].push(issue[valueKey])
+      })
+      dataPlotRef.current?.setData(chartData)
+      // dataPlotRef.current?.setScale('y', {
       //   min: 0,
-      //   max: Math.max(...issueCounts.map(issue => issue.open_issues))
+      //   max: Math.max(...data.map(issue => issue[valueKey]))
       // })
     }
-  }, [issueCounts])
+  }, [data])
 
   useEffect(() => {
-    if (issueCountsPlotRef.current === null) {
-      const chartDiv = document.getElementById("chart")
+    if (dataPlotRef.current === null) {
+      const chartDiv = document.getElementById(id)
 
       let opts = {
         id: "chart1",
@@ -46,7 +51,7 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
             show: true,
             spanGaps: false,
             // in-legend display
-            label: "Open issues",
+            label: xLabel,
             value: (self, rawValue) => rawValue,
             stroke: "#00BA55",
             width: 1,
@@ -76,18 +81,18 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
 
       const chartData = [[], []]
 
-      issueCounts.forEach(issue => {
-        chartData[0].push(Math.floor(new Date(issue.inserted_at) / 1000))
-        chartData[1].push(issue.open_issues)
+      data.forEach(issue => {
+        chartData[0].push(Math.floor(new Date(issue[dateKey]) / 1000))
+        chartData[1].push(issue[valueKey])
       })
     
-      const plot = new uPlot(opts, chartData, document.getElementById("chart"))
-      issueCountsPlotRef.current = plot
+      const plot = new uPlot(opts, chartData, document.getElementById(id))
+      dataPlotRef.current = plot
     }
 
     const handleResize = () => {
-      const chartDiv = document.getElementById("chart")
-      issueCountsPlotRef.current?.setSize({
+      const chartDiv = document.getElementById(id)
+      dataPlotRef.current?.setSize({
         width: chartDiv.offsetWidth,
         height: chartDiv.offsetHeight - 30
       })
@@ -99,7 +104,7 @@ const TimelineChart = ({ uPlot, issueCounts }) => {
   
   return (
     <div className="text-white">
-      <div id="chart" className="w-full h-60 sm:h-80" />
+      <div id={id} className="w-full h-60 sm:h-80" />
     </div>
   )
 }

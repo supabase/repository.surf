@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { groupBy } from 'lib/helpers'
 import TimelineChart from 'components/TimelineChart'
 
-const OrganizationOverview = ({ supabase, issuesTable, organization, repoNames }) => {
+const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
+
+const OrganizationOverview = ({ supabase, organization, repoNames }) => {
 
   const [issueCounts, setIssueCounts] = useState([])
   const organizationName = organization.charAt(0).toUpperCase() + organization.slice(1)
@@ -42,7 +44,14 @@ const OrganizationOverview = ({ supabase, issuesTable, organization, repoNames }
       </div>
       <div className="flex-1 flex flex-col items-start">
         <div className="w-full sm:pr-5">
-          <TimelineChart uPlot={uPlot} issueCounts={issueCounts} />
+          <TimelineChart
+            id="overviewIssuesChart"
+            uPlot={uPlot}
+            data={issueCounts}
+            dateKey="inserted_at"
+            valueKey="open_issues"
+            xLabel="Open issues"
+          />
         </div>
       </div>
     </>

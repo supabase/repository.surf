@@ -11,7 +11,6 @@ import { fetchAndWait } from 'lib/fetchWrapper'
 const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
 const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabasePublicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
-const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_TABLE_NAME
 
 function MyApp({ Component, pageProps, router }) {
 
@@ -32,7 +31,10 @@ function MyApp({ Component, pageProps, router }) {
   useEffect(() => {
     if (router.pathname !== '/' && router.query.org) {
       (async function retrieveGithub() {
-        const repos = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}/repos?per_page=100`, githubAccessToken)
+        const repos = await fetchAndWait(
+          `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
+          {'Authorization': `token ${githubAccessToken}`}
+        )
         const repoNames = repos.map(repo => repo.name)
         setRepoNames(repoNames.sort())
         setLoaded(true)
@@ -61,8 +63,8 @@ function MyApp({ Component, pageProps, router }) {
         <Layout view={selectedView} repos={viewableRepos} loaded={loaded}>
           <Component
             {...pageProps}
+            githubAccessToken={githubAccessToken}
             supabase={supabase}
-            issuesTable={issuesTable}
             organization={router.query.org}
             repoNames={repoNames}
             onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}

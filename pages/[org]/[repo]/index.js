@@ -1,31 +1,25 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import TimelineChart from '~/components/TimelineChart'
-import StatsIndicator from '~/components/StatsIndicator'
+import { renewStarHistory } from 'lib/helpers'
+import IssueTracker from '~/components/IssueTracker'
+import StarHistory from '~/components/StarHistory'
 
-const InfoIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="24"
-    height="24"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="16" x2="12" y2="12" />
-      <line x1="12" y1="8" x2="12.01" y2="8" />
-    </svg>
-)
+const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
+const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
-const RepositoryStatistics = ({ supabase, organization, issuesTable }) => {
+const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => {
 
   const router = useRouter()
+
   const [issueCounts, setIssueCounts] = useState([])
+  const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
+
+  const [starHistory, setStarHistory] = useState([])
+  const [loadingStarHistory, setLoadingStarHistory] = useState(false)
 
   useEffect(() => {
-    (async function retrieveOrganizationStats() {
+    (async function retrieveRepositoryIssueCounts() {
+      setLoadingIssueCounts(true)
       const { data, error } = await supabase
         .from(issuesTable)
         .select('*')
@@ -36,6 +30,39 @@ const RepositoryStatistics = ({ supabase, organization, issuesTable }) => {
       } else if (data) {
         setIssueCounts(data)
       }
+      setLoadingIssueCounts(false)
+    })()
+  }, [router.query.repo])
+
+  useEffect(() => {
+    (async function retrieveRepositoryStarHistory() {
+      setLoadingStarHistory(true)
+
+      const { data, error } = await supabase
+        .from(starsTable)
+        .select('*')
+        .eq('organization', organization)
+        .eq('repository', router.query.repo)
+      if (error) {
+        console.log(error)
+      } else if (data) {
+        if (data.length == 0) {
+          const starHistory = await renewStarHistory(supabase, starsTable, organization, router.query.repo, githubAccessToken)
+          setStarHistory(starHistory)
+        } else {
+          // Check if its valid within 12 hours
+          const historyUpdateTime = new Date(data[0].updated_at).getTime()
+          const currentTime = new Date().getTime()
+          if (currentTime - historyUpdateTime <= (12*60*60*1000)) {
+            setStarHistory(data[0].star_history)
+          } else {
+            const starHistory = await renewStarHistory(supabase, starsTable, organization, router.query.repo, githubAccessToken)
+            setStarHistory(starHistory)
+          }
+
+        }
+      }
+      setLoadingStarHistory(false)
     })()
   }, [router.query.repo])
 
@@ -83,42 +110,23 @@ const RepositoryStatistics = ({ supabase, organization, issuesTable }) => {
     }
   }
 
-  return issueCounts.length > 0
-    ? (
-      <>
-        <div className="pb-5 sm:px-10 sm:pb-10">
-          <h1 className="text-white text-2xl">Statistics for {router.query.repo}</h1>
-          <p className="mt-2 text-base text-gray-400">This is a timeline of how many open issues {router.query.repo} has on Github over time.</p>
-        </div>
-        <div className="flex-1 flex flex-col items-start">
-          <div className="w-full pb-3 sm:pb-0 sm:pr-5">
-            <TimelineChart uPlot={uPlot} issueCounts={issueCounts} />
-          </div>
-          <div className="sm:px-10 w-full mt-10 flex flex-col">
-            <p className="text-white">Daily statistics</p>
-            <div className="mt-5 grid grid-cols-12 gap-x-5">
-              <div className="col-span-6 sm:col-span-5 xl:col-span-4">
-                <p className="text-gray-400">Open issues</p>
-                <div id="numbers" className="flex items-center mt-2">
-                  <p className="text-white text-3xl mr-2">{retrieveLatestOpenIssueCount()}</p>
-                  <StatsIndicator countDiff={deriveOpenIssueCountComparison()} />
-                </div>
-              </div>
-              <div className="col-span-6 sm:col-span-5 xl:col-span-4">
-                <p className="text-gray-400">Total closed issues</p>
-                <p className="mt-2 text-white text-3xl">{retrieveLatestCloseIssueCount()}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </>
-    )
-    : (
-      <div className="px-5 sm:px-10 text-gray-400 w-full flex-1 flex flex-col items-center justify-center text-center">
-        <InfoIcon />
-        <span className="mt-5">{router.query.repo} is not being tracked at the moment.</span>
-      </div>
-    )
+  return (
+    <>
+      <StarHistory
+        repoName={router.query.repo}
+        starHistory={starHistory}
+        loadingStarHistory={loadingStarHistory}
+      />
+      <IssueTracker
+        repoName={router.query.repo}
+        issueCounts={issueCounts}
+        loadingIssueCounts={loadingIssueCounts}
+        latestOpenIssueCount={retrieveLatestOpenIssueCount()}
+        openIssueCountComparison={deriveOpenIssueCountComparison()}
+        latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+      />
+    </>
+  )
 }
 
 export default RepositoryStatistics
