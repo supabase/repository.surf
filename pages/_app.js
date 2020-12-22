@@ -53,7 +53,6 @@ function MyApp({ Component, pageProps, router }) {
     if (router.pathname !== '/' && router.query.org) {
       (async function retrieveOrganizationProfile() {
         const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
-        console.log('org', org)
         setOrganization(org)
       })()
     }
