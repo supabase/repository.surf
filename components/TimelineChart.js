@@ -1,9 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import Toggle from './toggle'
+import Toggle from 'components/Toggle'
 
-// Need two more properties: dateKey, valueKey
-
-const TimelineChart = ({ id, uPlot, data, dateKey, valueKey, xLabel = '' }) => {
+const TimelineChart = ({
+  id,
+  uPlot,
+  data,
+  dateKey,
+  valueKey,
+  xLabel = '',
+  showBaselineToggle = false,
+}) => {
   const dataPlotRef = useRef(null)
   const [isBaselineZero, setIsBaselineZero] = useState(false)
 
@@ -116,9 +122,11 @@ const TimelineChart = ({ id, uPlot, data, dateKey, valueKey, xLabel = '' }) => {
   
   return (
     <>
-      <div className="float-right transform -translate-x-10 translate-y-4">
-        <Toggle isOn={isBaselineZero} onToggle={handleToggle}/>
-      </div>
+      {showBaselineToggle && (
+        <div className="sm:px-10">
+          <Toggle isOn={isBaselineZero} onToggle={handleToggle} label="Set baseline to 0" />
+        </div>
+      )}
       <div className="text-white clear-both">
         <div id={id} className="w-full h-60 sm:h-80" />
       </div>

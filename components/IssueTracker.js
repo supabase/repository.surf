@@ -42,6 +42,7 @@ const IssueTracker = ({
                   dateKey="inserted_at"
                   valueKey="open_issues"
                   xLabel="Open issues"
+                  showBaselineToggle={true}
                 />
               </div>
               <div className="sm:px-10 w-full mt-10 flex flex-col">

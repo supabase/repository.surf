@@ -51,6 +51,7 @@ const OrganizationOverview = ({ supabase, organization, repoNames }) => {
             dateKey="inserted_at"
             valueKey="open_issues"
             xLabel="Open issues"
+            showBaselineToggle={true}
           />
         </div>
       </div>
