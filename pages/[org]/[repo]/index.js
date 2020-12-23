@@ -15,6 +15,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   const [issueCounts, setIssueCounts] = useState([])
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
 
+  const [lastUpdated, setLastUpdated] = useState(null)
   const [starHistory, setStarHistory] = useState([])
   const [loadingStarHistory, setLoadingStarHistory] = useState(false)
 
@@ -56,10 +57,12 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
           const currentTime = new Date().getTime()
           if (currentTime - historyUpdateTime <= (12*60*60*1000)) {
             console.log(`Star history of ${repoName} still valid`)
+            setLastUpdated(historyUpdateTime)
             setStarHistory(data[0].star_history)
           } else {
             console.log(`Star history of ${repoName} invalid, refreshing`)
             const starHistory = await renewStarHistory(supabase, starsTable, organization, repoName, githubAccessToken, true)
+            setLastUpdated(currentTime)
             setStarHistory(starHistory)
           }
 
@@ -117,6 +120,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
     <>
       <StarHistory
         repoName={repoName}
+        lastUpdated={lastUpdated}
         starHistory={starHistory}
         loadingStarHistory={loadingStarHistory}
       />
