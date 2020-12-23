@@ -1,9 +1,21 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Toggle from 'components/Toggle'
 
-// Need two more properties: dateKey, valueKey
-
-const TimelineChart = ({ id, uPlot, data, dateKey, valueKey, xLabel = '' }) => {
+const TimelineChart = ({
+  id,
+  uPlot,
+  data,
+  dateKey,
+  valueKey,
+  xLabel = '',
+  showBaselineToggle = false,
+}) => {
   const dataPlotRef = useRef(null)
+  const [isBaselineZero, setIsBaselineZero] = useState(false)
+
+  const handleToggle = () => {
+    setIsBaselineZero(!isBaselineZero)
+  }
 
   useEffect(() => {
     if (data.length > 0) {
@@ -15,13 +27,19 @@ const TimelineChart = ({ id, uPlot, data, dateKey, valueKey, xLabel = '' }) => {
         chartData[0].push(Math.floor(new Date(issue[dateKey]) / 1000))
         chartData[1].push(issue[valueKey])
       })
-      dataPlotRef.current?.setData(chartData)
-      // dataPlotRef.current?.setScale('y', {
-      //   min: 0,
-      //   max: Math.max(...data.map(issue => issue[valueKey]))
-      // })
+      // We need to pass true as the second argument of setData
+      // in order to reset the scale.
+      dataPlotRef.current?.setData(chartData, true)
+
+      if (isBaselineZero) {
+        dataPlotRef.current?.setScale('y', {
+          min: 0,
+          max: Math.max(...data.map(issue => issue[valueKey]))
+        })
+      }
+      
     }
-  }, [data])
+  }, [data, isBaselineZero])
 
   useEffect(() => {
     if (dataPlotRef.current === null) {
@@ -103,9 +121,16 @@ const TimelineChart = ({ id, uPlot, data, dateKey, valueKey, xLabel = '' }) => {
   }, [])
   
   return (
-    <div className="text-white">
-      <div id={id} className="w-full h-60 sm:h-80" />
-    </div>
+    <>
+      {showBaselineToggle && (
+        <div className="sm:px-10">
+          <Toggle isOn={isBaselineZero} onToggle={handleToggle} label="Set baseline to 0" />
+        </div>
+      )}
+      <div className="text-white clear-both">
+        <div id={id} className="w-full h-60 sm:h-80" />
+      </div>
+    </>
   )
 }
 
