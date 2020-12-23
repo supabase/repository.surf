@@ -1,5 +1,11 @@
-# Github Organization Tracker
+# `repository.surf`
 
-A monitoring dashboard that tracks various stats across all repositories on an organization. At the moment it only tracks issue counts, but looking into extending to other data.
+A dashboard for various stats across all repositories in a GitHub organization. 
+
+
+- [x] Star History
+- [x] Issue count
+- [ ] More coming soon
+
 
 Built with Next.js, Supabase and AWS Lambda.
