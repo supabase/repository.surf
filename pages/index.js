@@ -60,7 +60,7 @@ export default function Home() {
                 ${loading ? 'opacity-75' : ''}
               `}
             >
-              <p className="hidden sm:block">insights.supabase.io/</p>
+              <p className="hidden sm:block">repository.surf/</p>
               <input
                 type="text"
                 value={organization}
