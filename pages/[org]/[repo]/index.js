@@ -10,6 +10,7 @@ const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => {
 
   const router = useRouter()
+  const repoName = router.query.repo
 
   const [issueCounts, setIssueCounts] = useState([])
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
@@ -24,7 +25,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         .from(issuesTable)
         .select('*')
         .eq('organization', organization)
-        .eq('repository', router.query.repo)
+        .eq('repository', repoName)
       if (error) {
         console.error(error)
       } else if (data) {
@@ -32,7 +33,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
       }
       setLoadingIssueCounts(false)
     })()
-  }, [router.query.repo])
+  }, [repoName])
 
   useEffect(() => {
     (async function retrieveRepositoryStarHistory() {
@@ -42,21 +43,23 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         .from(starsTable)
         .select('*')
         .eq('organization', organization)
-        .eq('repository', router.query.repo)
+        .eq('repository', repoName)
       if (error) {
         console.log(error)
       } else if (data) {
         if (data.length == 0) {
-          const starHistory = await renewStarHistory(supabase, starsTable, organization, router.query.repo, githubAccessToken)
+          const starHistory = await renewStarHistory(supabase, starsTable, organization, repoName, githubAccessToken)
           setStarHistory(starHistory)
         } else {
           // Check if its valid within 12 hours
           const historyUpdateTime = new Date(data[0].updated_at).getTime()
           const currentTime = new Date().getTime()
           if (currentTime - historyUpdateTime <= (12*60*60*1000)) {
+            console.log(`Star history of ${repoName} still valid`)
             setStarHistory(data[0].star_history)
           } else {
-            const starHistory = await renewStarHistory(supabase, starsTable, organization, router.query.repo, githubAccessToken)
+            console.log(`Star history of ${repoName} invalid, refreshing`)
+            const starHistory = await renewStarHistory(supabase, starsTable, organization, repoName, githubAccessToken, true)
             setStarHistory(starHistory)
           }
 
@@ -64,7 +67,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
       }
       setLoadingStarHistory(false)
     })()
-  }, [router.query.repo])
+  }, [repoName])
 
   const retrieveLatestOpenIssueCount = () => {
     if (issueCounts.length > 0) {
@@ -113,12 +116,12 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   return (
     <>
       <StarHistory
-        repoName={router.query.repo}
+        repoName={repoName}
         starHistory={starHistory}
         loadingStarHistory={loadingStarHistory}
       />
       <IssueTracker
-        repoName={router.query.repo}
+        repoName={repoName}
         issueCounts={issueCounts}
         loadingIssueCounts={loadingIssueCounts}
         latestOpenIssueCount={retrieveLatestOpenIssueCount()}
