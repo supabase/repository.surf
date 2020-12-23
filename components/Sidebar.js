@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import ExternalLink from 'icons/ExternalLink'
 
 const ChevronDown = () => (
   <svg
@@ -76,11 +77,15 @@ const SideBar = ({
             <div className="ml-4 flex flex-col ">
               <p className="text-gray-400" style={{ fontSize: '0.6rem'}}>ORGANIZATION</p>
               <a
-                className="text-gray-200 hover:text-white"
+                className="text-white group flex items-center"
                 href={`https://github.com/${router.query.org}`}
+                target="_blank"
                 style={{ marginTop: '-2px'}}
               >
-                {organizationName}
+                <span>{organizationName}</span>
+                <div className="ml-2 transition opacity-0 group-hover:opacity-100">
+                  <ExternalLink size={14} />
+                </div>
               </a>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 
 import Sidebar from 'components/Sidebar'
-import Loader from 'components/Loader'
+import Loader from 'icons/Loader'
 
 const Menu = () => (
   <svg

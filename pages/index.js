@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { fetchAndWait } from 'lib/fetchWrapper'
 import { toast, ToastContainer } from 'react-toastify'
-import Loader from 'components/Loader'
+import Loader from 'icons/Loader'
 
 export default function Home() {
 

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { renewStarHistory } from 'lib/helpers'
 import IssueTracker from '~/components/IssueTracker'
 import StarHistory from '~/components/StarHistory'
+import ExternalLink from '~/icons/ExternalLink'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
@@ -118,6 +119,19 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
 
   return (
     <>
+      <div className="sm:mx-10 mb-12 sm:mb-20">
+        <p className="text-gray-400 text-xs">REPOSITORY</p>
+        <a
+          href={`https://github.com/${organization}/${repoName}`}
+          target="_blank"
+          className="text-white text-3xl mt-1 group flex items-center"
+        >
+          <h1>{repoName}</h1>
+          <div className="transition ml-3 opacity-0 group-hover:opacity-100">
+            <ExternalLink />
+          </div>
+        </a>
+      </div>
       <StarHistory
         repoName={repoName}
         lastUpdated={lastUpdated}

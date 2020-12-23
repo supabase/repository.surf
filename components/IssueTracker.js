@@ -1,5 +1,6 @@
 import TimelineChart from '~/components/TimelineChart'
 import StatsIndicator from '~/components/StatsIndicator'
+import Url from '~/icons/Url'
 
 const InfoIcon = () => (
   <svg
@@ -26,8 +27,13 @@ const IssueTracker = ({
 }) => {
   return (
     <>
-      <div className="pb-5 sm:px-10 sm:pb-10">
-        <h1 className="text-white text-2xl">Issues tracking for {repoName}</h1>
+      <div id="issueTrack" className="pb-5 sm:px-10 sm:pb-10">
+        <a href="#issueTrack" className="text-white text-2xl flex items-center group">
+          <h1>Issues Tracking</h1>
+          <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
+            <Url />
+          </div>
+        </a>
         <p className="mt-2 text-base text-gray-400">This is a timeline of how many open issues {repoName} has over time.</p>
       </div>
       <div className="flex-1 flex flex-col items-start">

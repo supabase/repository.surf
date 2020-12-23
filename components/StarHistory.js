@@ -1,4 +1,5 @@
-import Loader from 'components/Loader'
+import Loader from 'icons/Loader'
+import Url from 'icons/Url'
 import TimelineChart from '~/components/TimelineChart'
 
 const Star = () => (
@@ -45,10 +46,15 @@ const StarHistory = ({
   }
 
   return (
-    <div className="mb-12 lg:mb-20">
+    <div id="starHistory" className="mb-12 lg:mb-20">
       <div className="pb-5 sm:px-10 sm:pb-10">
         <div className="flex items-center justify-between">
-          <h1 className="text-white text-2xl ">Star history for {repoName}</h1>
+          <a href="#starHistory" className="text-white text-2xl flex items-center group">
+            <h1>Star History</h1>
+            <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
+              <Url />
+            </div>
+          </a>
           {!loadingStarHistory && starHistory.length > 0 && (
             <div className="flex items-center">
               <Star />
