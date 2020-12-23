@@ -40,7 +40,7 @@ export default function Home() {
         hideProgressBar
       />
       <Head>
-        <title>Insights | Supabase</title>
+        <title>repository.surf</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex flex-col h-screen justify-center bg-gray-800 relative">

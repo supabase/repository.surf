@@ -43,7 +43,7 @@ const Layout = ({ view, repos, loaded, organization, children }) => {
         hideProgressBar
       />
       <Head>
-        <title>{router.query.org ? `${organization.name} | Issue Tracker` : 'Issue Tracker'}</title>
+        <title>{router.query.org ? `${organization.name} | repository.surf` : 'repository.surf'}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
