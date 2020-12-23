@@ -1,9 +1,9 @@
-const Loader = () => (
+const Loader = ({ size = 24 }) => (
   <svg
     className="animate-spin"
     viewBox="0 0 24 24"
-    width="24"
-    height="24"
+    width={size}
+    height={size}
     stroke="currentColor"
     strokeWidth="2"
     fill="none"

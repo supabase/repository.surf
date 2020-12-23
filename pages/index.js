@@ -3,11 +3,12 @@ import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { fetchAndWait } from 'lib/fetchWrapper'
 import { toast, ToastContainer } from 'react-toastify'
-
+import Loader from 'components/Loader'
 
 export default function Home() {
 
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
   const [url, setUrl] = useState('')
   const [organization, setOrganization] = useState('')
 
@@ -19,13 +20,14 @@ export default function Home() {
     event.preventDefault()
     event.stopPropagation()
 
+    setLoading(true)
     const org = await fetchAndWait(`https://api.github.com/orgs/${organization}`)
-    
     if (org.name) {
       router.push(organization)
     } else {
       toast.error(`The organization ${organization} cannot be found`)
     }
+    setLoading(false)
   }
 
   return (
@@ -53,7 +55,10 @@ export default function Home() {
           <div className="mb-10">
             <form
               onSubmit={(e) => goToOrganization(e)}
-              className="flex items-center bg-gray-500 font-mono px-2 py-1 rounded-md text-white focus:border sm:w-2/3 xl:w-1/2"
+              className={`
+                flex items-center bg-gray-500 font-mono px-2 py-1 rounded-md text-white focus:border sm:w-2/3 xl:w-1/2
+                ${loading ? 'opacity-75' : ''}
+              `}
             >
               <p className="hidden sm:block">insights.supabase.io/</p>
               <input
@@ -61,8 +66,10 @@ export default function Home() {
                 value={organization}
                 onChange={(e) => setOrganization(e.target.value)}
                 placeholder="organization"
+                disabled={loading}
                 className="flex-1 bg-gray-500 text-white focus:outline-none"
               />
+              {loading && <Loader size={18} />}
             </form>
           </div>
           <a href="https://supabase.io" target="_blank" className="text-white sm:w-1/4 text-gray-200 flex items-center opacity-75 hover:opacity-100 transition cursor-pointer">
