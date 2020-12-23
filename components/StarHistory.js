@@ -49,10 +49,12 @@ const StarHistory = ({
       <div className="pb-5 sm:px-10 sm:pb-10">
         <div className="flex items-center justify-between">
           <h1 className="text-white text-2xl ">Star history for {repoName}</h1>
-          <div className="flex items-center">
-            <Star />
-            <span className="ml-2 text-white">{starHistory[starHistory.length - 1].starNumber}</span>
-          </div>
+          {!loadingStarHistory && starHistory.length > 0 && (
+            <div className="flex items-center">
+              <Star />
+              <span className="ml-2 text-white">{starHistory[starHistory.length - 1].starNumber}</span>
+            </div>
+          )}
         </div>
         <p className="mt-2 text-base text-gray-400">This is a timeline of how the stars of {repoName} has grown till today.</p>
         {lastUpdated && <p className="mt-3 text-gray-400 text-xs">Last updated on: {new Date(lastUpdated).toDateString()}</p>}
