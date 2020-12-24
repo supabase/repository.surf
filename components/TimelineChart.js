@@ -67,7 +67,9 @@ const TimelineChart = ({
           {
             value: (self, rawValue) => {
               const date = new Date(rawValue * 1000)
-              return showOnlyDate ? date.toLocaleDateString() : date.toLocaleString()
+              return showOnlyDate
+                ? date.toLocaleDateString()
+                : `${date.toLocaleDateString()} ${date.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`
             }
           },
           {
