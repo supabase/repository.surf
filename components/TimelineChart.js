@@ -8,6 +8,7 @@ const TimelineChart = ({
   dateKey,
   valueKey,
   xLabel = '',
+  showOnlyDate = false,
   showBaselineToggle = false,
 }) => {
   const dataPlotRef = useRef(null)
@@ -63,7 +64,12 @@ const TimelineChart = ({
           y: {},
         },
         series: [
-          {},
+          {
+            value: (self, rawValue) => {
+              const date = new Date(rawValue * 1000)
+              return showOnlyDate ? date.toLocaleDateString() : date.toLocaleString()
+            }
+          },
           {
             // initial toggled state (optional)
             show: true,
