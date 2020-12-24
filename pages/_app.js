@@ -25,7 +25,8 @@ function MyApp({ Component, pageProps, router }) {
 
   const [loaded, setLoaded] = useState(false)
   const [organization, setOrganization] = useState({})
-  const [repoNames, setRepoNames] = useState([])
+
+  const [repos, setRepos] = useState([])
   const [viewableRepos, setViewableRepos] = useState([])
   const [filteredRepoNames, setFilteredRepoNames] = useState([])
 
@@ -34,10 +35,9 @@ function MyApp({ Component, pageProps, router }) {
       (async function retrieveGithub() {
         const repos = await fetchAndWait(
           `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
-          {'Authorization': `token ${githubAccessToken}`}
+          { 'Authorization': `token ${githubAccessToken}` }
         )
-        const repoNames = repos.map(repo => repo.name)
-        setRepoNames(repoNames.sort())
+        setRepos(repos.sort((a, b) => a.name < b.name ? -1 : 1))
         setLoaded(true)
       })()
   
@@ -59,12 +59,12 @@ function MyApp({ Component, pageProps, router }) {
   }, [router.query.org])
 
   useEffect(() => {
-    let repositories = repoNames.slice()
+    let repositories = repos.slice()
     filteredRepoNames.forEach(filteredRepo => {
-      repositories = repositories.filter(repo => repo !== filteredRepo)
+      repositories = repositories.filter(repo => repo.name !== filteredRepo)
     })
     setViewableRepos(repositories)
-  }, [repoNames, filteredRepoNames])
+  }, [repos, filteredRepoNames])
 
   return (
     router.route === '/'
@@ -81,7 +81,7 @@ function MyApp({ Component, pageProps, router }) {
             githubAccessToken={githubAccessToken}
             supabase={supabase}
             organization={router.query.org}
-            repoNames={repoNames}
+            repoNames={repos.map(repo => repo.name)}
             onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}
           />
         </Layout>

@@ -126,7 +126,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
           target="_blank"
           className="text-white text-3xl mt-1 group flex items-center"
         >
-          <h1>{repoName}</h1>
+          <h1>{repoName.toString()}</h1>
           <div className="transition ml-3 opacity-0 group-hover:opacity-100">
             <ExternalLink />
           </div>
