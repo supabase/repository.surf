@@ -128,16 +128,13 @@ const SideBar = ({
           </Link>
           <div
             onClick={() => setExpandRepositories(!expandRepositories)}
-            className={`
-              px-2 py-2 rounded-md cursor-pointer flex items-center justify-between
-              ${selectedView === 'Repositories' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
-            `}
+            className="px-2 py-2 rounded-md cursor-pointer flex items-center justify-between text-gray-200 hover:bg-gray-600 hover:text-white"
           >
             <span>Repositories</span>
             <div className="flex items-center">
               <div
                 onClick={(e) => toggleSortMenu(e)}
-                className={`transition relative ${expandRepositories ? 'opacity-100' : 'opacity-0'}`}
+                className={`relative ${expandRepositories ? 'block' : 'hidden'}`}
               >
                 <Slider size={16} />
                 <Dropdown showDropdown={showSortMenu} options={sortOptions} />
@@ -155,7 +152,7 @@ const SideBar = ({
                     onClick={() => closeSidebar()}
                     className={`
                       pl-5 pr-2 py-2 rounded-md cursor-pointer text-sm
-                      ${selectedView === repo ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
+                      ${selectedView === repo.name ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
                     `}
                   >
                     {repo.name}
