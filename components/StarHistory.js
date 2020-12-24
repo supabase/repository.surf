@@ -34,6 +34,7 @@ const StarHistory = ({
           dateKey="date"
           valueKey="starNumber"
           xLabel="Number of stars"
+          showOnlyDate={true}
         />
       )
     } else {
