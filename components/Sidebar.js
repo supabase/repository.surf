@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import Dropdown from 'components/Dropdown'
 import ExternalLink from 'icons/ExternalLink'
+import Slider from 'icons/Slider'
+import Close from 'icons/Close'
 
 const ChevronDown = () => (
   <svg
@@ -32,22 +35,6 @@ const ChevronLeft = () => (
     </svg>
 )
 
-const Close = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-      <line x1="18" y1="6" x2="6" y2="18" />
-      <line x1="6" y1="6" x2="18" y2="18" />
-    </svg>
-)
-
 const SideBar = ({
   className = '',
   organizationAvatar,
@@ -58,7 +45,35 @@ const SideBar = ({
 }) => {
 
   const router = useRouter()
+  const [repoList, setRepoList] = useState(repositories)
+  const [showSortMenu, setShowSortMenu] = useState(false)
   const [expandRepositories, setExpandRepositories] = useState(false) 
+
+  const toggleSortMenu = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setShowSortMenu(!showSortMenu)
+  }
+
+  const sortRepositories = (key, order) => {
+    const sortedRepoList = order === 'asc'
+      ? repositories.sort((a, b) => a[key] < b[key] ? -1 : 1)
+      : repositories.sort((a, b) => a[key] > b[key] ? -1 : 1)
+    setRepoList(sortedRepoList)
+  }
+
+  const sortOptions = [
+    {
+      key: 'name',
+      label: 'Sort by alphabetical',
+      action: () => sortRepositories('name', 'asc')
+    },
+    {
+      key: 'stars',
+      label: 'Sort by most stars ',
+      action: () => sortRepositories('stargazers_count', 'desc')
+    }
+  ]
 
   return (
     <div className={`bg-gray-500 flex flex-col h-screen w-64 ${className}`}>
@@ -115,14 +130,23 @@ const SideBar = ({
             `}
           >
             <span>Repositories</span>
-            <div className={`transform transition ${expandRepositories ? 'rotate-180' : 'rotate-0'}`}>
-              <ChevronDown />
+            <div className="flex items-center">
+              <div
+                onClick={(e) => toggleSortMenu(e)}
+                className={`transition relative ${expandRepositories ? 'opacity-100' : 'opacity-0'}`}
+              >
+                <Slider size={16} />
+                <Dropdown showDropdown={showSortMenu} options={sortOptions} />
+              </div>              
+              <div className={`ml-4 transform transition ${expandRepositories ? 'rotate-180' : 'rotate-0'}`}>
+                <ChevronDown />
+              </div>
             </div>
           </div>
           {expandRepositories && (
             <div className="overflow-y-hidden space-y-1">
-              {repositories.map((repo, idx) => (
-                <Link key={`repo_${idx}`} href={`/${router.query.org}/${repo}`}>
+              {repoList.map((repo, idx) => (
+                <Link key={`repo_${idx}`} href={`/${router.query.org}/${repo.name}`}>
                   <div
                     onClick={() => closeSidebar()}
                     className={`
@@ -130,7 +154,7 @@ const SideBar = ({
                       ${selectedView === repo ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
                     `}
                   >
-                    {repo}
+                    {repo.name}
                   </div>
                 </Link>
               ))}
