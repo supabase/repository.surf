@@ -23,7 +23,7 @@ export default function Home() {
     setLoading(true)
     const org = await fetchAndWait(`https://api.github.com/orgs/${organization}`)
     if (org.name) {
-      router.push(organization)
+      router.push(organization.toLowerCase())
     } else {
       toast.error(`The organization ${organization} cannot be found`)
     }
