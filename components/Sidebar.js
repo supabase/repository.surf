@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Dropdown from 'components/Dropdown'
@@ -48,6 +48,10 @@ const SideBar = ({
   const [repoList, setRepoList] = useState(repositories)
   const [showSortMenu, setShowSortMenu] = useState(false)
   const [expandRepositories, setExpandRepositories] = useState(false) 
+
+  useEffect(() => {
+    setRepoList(repositories)
+  }, [repositories])
 
   const toggleSortMenu = (event) => {
     event.preventDefault()
