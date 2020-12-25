@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { renewStarHistory } from 'lib/helpers'
+import { getRepositoryStarHistory } from 'lib/helpers'
 import IssueTracker from '~/components/IssueTracker'
 import StarHistory from '~/components/StarHistory'
 import ExternalLink from '~/icons/ExternalLink'
@@ -40,42 +40,11 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   useEffect(() => {
     (async function retrieveRepositoryStarHistory() {
       setLoadingStarHistory(true)
+      setLastUpdated(null)
 
-      const { data, error } = await supabase
-        .from(starsTable)
-        .select('*')
-        .eq('organization', organization)
-        .eq('repository', repoName)
-      
-      // data[0].star_history's format:
-      // [{date: "2019-10-25", starNumber: 33},
-      //  {date: "2019-10-26", starNumber: 41},
-      //  {date: "2019-10-27", starNumber: 46},
-      //  {date: "2019-10-28", starNumber: 51}]
-      
-      if (error) {
-        console.log(error)
-      } else if (data) {
-        if (data.length == 0) {
-          const starHistory = await renewStarHistory(supabase, starsTable, organization, repoName, githubAccessToken)
-          setStarHistory(starHistory)
-        } else {
-          // Check if its valid within 12 hours
-          const historyUpdateTime = new Date(data[0].updated_at).getTime()
-          const currentTime = new Date().getTime()
-          if (currentTime - historyUpdateTime <= (12*60*60*1000)) {
-            console.log(`Star history of ${repoName} still valid`)
-            setLastUpdated(historyUpdateTime)
-            setStarHistory(data[0].star_history)
-          } else {
-            console.log(`Star history of ${repoName} invalid, refreshing`)
-            const starHistory = await renewStarHistory(supabase, starsTable, organization, repoName, githubAccessToken, true)
-            setLastUpdated(currentTime)
-            setStarHistory(starHistory)
-          }
-
-        }
-      }
+      const {starHistory, historyUpdateTime} = await getRepositoryStarHistory(supabase, starsTable, organization, repoName, githubAccessToken)
+      setStarHistory(starHistory)
+      setLastUpdated(historyUpdateTime)
       setLoadingStarHistory(false)
     })()
   }, [repoName])
