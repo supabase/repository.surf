@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps, router }) {
           `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
           { 'Authorization': `token ${githubAccessToken}` }
         )
-        setRepos(repos.sort((a, b) => a.name < b.name ? -1 : 1))
+        setRepos(repos.sort((a, b) => a.stargazers_count > b.stargazers_count ? -1 : 1))
         setLoaded(true)
       })()
   

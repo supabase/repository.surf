@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { updateUserPreferences } from 'lib/helpers'
 
 const SaveIcon = () => (
   <svg
@@ -30,18 +31,8 @@ const Settings = ({
     if (userPreferences && userPreferences.repoFilter) setFilterList(userPreferences.repoFilter)
   }, [])
 
-  const updatePreference = (originalPreference, newPreference) => {
-    const preference = {
-      ...originalPreference,
-      ...newPreference
-    }
-    localStorage.setItem(`repoSurf_${organization}`, JSON.stringify(preference))
-  }
-
   const onSaveSettings = (event) => {
     let error = false
-    const localStorageKey = `repoSurf_${organization}`
-    const originalPreference = JSON.parse(localStorage.getItem(localStorageKey))
     
     if (event) {
       document.activeElement.blur();
@@ -60,12 +51,12 @@ const Settings = ({
       }
 
       if (!error) {
-        updatePreference(originalPreference, { repoFilter: filterList })
+        updateUserPreferences(organization, { repoFilter: filterList })
         onUpdateFilterList(filterListRepos)
         toast.success('Successfully updated settings!')
       }
     } else if (filterList.length === 0) {
-      updatePreference(originalPreference, { repoFilter: [] })
+      updateUserPreferences(organization, { repoFilter: [] })
       onUpdateFilterList([])
       toast.success('Successfully updated settings!')
     }

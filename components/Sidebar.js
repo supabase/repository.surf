@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
+import { updateUserPreferences } from 'lib/helpers'
 import Dropdown from 'components/Dropdown'
 import ExternalLink from 'icons/ExternalLink'
 import Slider from 'icons/Slider'
@@ -46,11 +47,22 @@ const SideBar = ({
 
   const router = useRouter()
   const [repoList, setRepoList] = useState(repositories)
+  const [selectedSort, setSelectedSort] = useState({})
   const [showSortMenu, setShowSortMenu] = useState(false)
-  const [expandRepositories, setExpandRepositories] = useState(false) 
+  const [expandRepositories, setExpandRepositories] = useState(false)
 
   useEffect(() => {
-    setRepoList(repositories)
+    const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${router.query.org}`))
+    if (userPreferences && userPreferences.sort) {
+      const [key, order] = userPreferences.sort.split(' ')
+      sortRepositories(key, order)
+    } else (
+      setSelectedSort({ key: 'stargazers_count', order: 'desc' })
+    )
+  }, [router.query.org])
+
+  useEffect(() => {
+    sortRepositories(selectedSort.key, selectedSort.order)
   }, [repositories])
 
   const toggleSortMenu = (event) => {
@@ -64,18 +76,25 @@ const SideBar = ({
       ? repositories.sort((a, b) => a[key] < b[key] ? -1 : 1)
       : repositories.sort((a, b) => a[key] > b[key] ? -1 : 1)
     setRepoList(sortedRepoList)
+    setSelectedSort({ key, order })
   }
 
   const sortOptions = [
     {
-      key: 'name',
-      label: 'Sort by alphabetical',
-      action: () => sortRepositories('name', 'asc')
+      key: 'stargazers_count',
+      label: 'Sort by most stars ',
+      action: () => {
+        sortRepositories('stargazers_count', 'desc')
+        updateUserPreferences(router.query.org, { sort: "stargazers_count desc" })
+      }
     },
     {
-      key: 'stars',
-      label: 'Sort by most stars ',
-      action: () => sortRepositories('stargazers_count', 'desc')
+      key: 'name',
+      label: 'Sort by alphabetical',
+      action: () => {
+        sortRepositories('name', 'asc')
+        updateUserPreferences(router.query.org, { sort: "name asc" })
+      }
     }
   ]
 
@@ -137,7 +156,7 @@ const SideBar = ({
                 className={`relative ${expandRepositories ? 'block' : 'hidden'}`}
               >
                 <Slider size={16} />
-                <Dropdown showDropdown={showSortMenu} options={sortOptions} />
+                <Dropdown showDropdown={showSortMenu} options={sortOptions} selectedOptionKey={selectedSort.key} />
               </div>              
               <div className={`ml-4 transform transition ${expandRepositories ? 'rotate-180' : 'rotate-0'}`}>
                 <ChevronDown />
