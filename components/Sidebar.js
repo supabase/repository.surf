@@ -47,7 +47,7 @@ const SideBar = ({
 
   const router = useRouter()
   const [repoList, setRepoList] = useState(repositories)
-  const [selectedSort, setSelectedSort] = useState({})
+  const [selectedSort, setSelectedSort] = useState({ key: 'stargazers_count', order: 'desc' })
   const [showSortMenu, setShowSortMenu] = useState(false)
   const [expandRepositories, setExpandRepositories] = useState(false)
 
@@ -56,9 +56,7 @@ const SideBar = ({
     if (userPreferences && userPreferences.sort) {
       const [key, order] = userPreferences.sort.split(' ')
       sortRepositories(key, order)
-    } else (
-      setSelectedSort({ key: 'stargazers_count', order: 'desc' })
-    )
+    }
   }, [router.query.org])
 
   useEffect(() => {
