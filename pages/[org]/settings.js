@@ -26,20 +26,28 @@ const Settings = ({
   const [filterList, setFilterList] = useState('')
 
   useEffect(() => {
-    const filterListRepos = localStorage.getItem(`issueTracker_${organization}`)
-    if (filterListRepos) setFilterList(filterListRepos)
+    const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${organization}`))
+    if (userPreferences && userPreferences.repoFilter) setFilterList(userPreferences.repoFilter)
   }, [])
+
+  const updatePreference = (originalPreference, newPreference) => {
+    const preference = {
+      ...originalPreference,
+      ...newPreference
+    }
+    localStorage.setItem(`repoSurf_${organization}`, JSON.stringify(preference))
+  }
 
   const onSaveSettings = (event) => {
     let error = false
+    const localStorageKey = `repoSurf_${organization}`
+    const originalPreference = JSON.parse(localStorage.getItem(localStorageKey))
     
     if (event) {
       document.activeElement.blur();
       event.preventDefault()
       event.stopPropagation()
     }
-
-    // This part below is very messy, please do refactor
 
     if (filterList.length > 0) {
       const filterListRepos = filterList.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
@@ -52,13 +60,12 @@ const Settings = ({
       }
 
       if (!error) {
-        localStorage.setItem(`issueTracker_${organization}`, filterList)
+        updatePreference(originalPreference, { repoFilter: filterList })
         onUpdateFilterList(filterListRepos)
         toast.success('Successfully updated settings!')
       }
-
     } else if (filterList.length === 0) {
-      localStorage.removeItem(`issueTracker_${organization}`)
+      updatePreference(originalPreference, { repoFilter: [] })
       onUpdateFilterList([])
       toast.success('Successfully updated settings!')
     }

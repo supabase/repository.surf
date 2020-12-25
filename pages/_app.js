@@ -41,9 +41,9 @@ function MyApp({ Component, pageProps, router }) {
         setLoaded(true)
       })()
   
-      const filterListRepos = localStorage.getItem(`issueTracker_${router.query.org}`)
-      if (filterListRepos) {
-        const formattedFilterList = filterListRepos.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
+      const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${router.query.org}`))
+      if (userPreferences && userPreferences.repoFilter) {
+        const formattedFilterList = userPreferences.repoFilter.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
         setFilteredRepoNames(formattedFilterList)      
       }
     }
