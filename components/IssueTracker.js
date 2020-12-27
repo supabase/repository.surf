@@ -1,22 +1,7 @@
 import TimelineChart from '~/components/TimelineChart'
 import StatsIndicator from '~/components/StatsIndicator'
 import Url from '~/icons/Url'
-
-const InfoIcon = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="24"
-    height="24"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="12" y1="16" x2="12" y2="12" />
-      <line x1="12" y1="8" x2="12.01" y2="8" />
-    </svg>
-)
+import Info from 'icons/Info'
 
 const IssueTracker = ({
   repoName,
@@ -71,7 +56,7 @@ const IssueTracker = ({
           )
           : (
             <div className="px-5 sm:px-10 text-gray-400 w-full flex-1 flex flex-col items-center justify-center text-center">
-              <InfoIcon />
+              <Info />
               <span className="mt-5">Issues under {repoName} are not being tracked at the moment.</span>
             </div>
           )
