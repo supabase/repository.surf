@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 import Layout from 'components/Layout'
+import Meta from 'components/Meta'
 import { fetchAndWait } from 'lib/fetchWrapper'
 
 const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
@@ -68,7 +69,12 @@ function MyApp({ Component, pageProps, router }) {
 
   return (
     router.route === '/'
-      ? <Component {...pageProps} />
+      ? (
+        <>
+          <Meta />
+          <Component {...pageProps} />
+        </>
+      )
       : (
         <Layout
           view={selectedView}
