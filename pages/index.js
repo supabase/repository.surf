@@ -117,8 +117,8 @@ export default function Home() {
               </div>
               <div 
                 className={`
-                  absolute bg-gray-600 h-16 w-24 rounded-md top-0 left-0 flex items-center justify-center
-                  transform transition-all duration-200 ${loadGraphic ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-95'}
+                  absolute bg-gray-600 h-16 w-24 rounded-md top-0 left-0 flex items-center justify-center transform transition-all
+                  duration-200 ${loadGraphic ? 'opacity-100 scale-x-100 translate-y-0' : 'opacity-0 scale-x-95 translate-y-2'}
                 `}
                 style={{ transitionDelay: '1500ms' }}
               >

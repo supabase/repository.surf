@@ -68,11 +68,15 @@ function MyApp({ Component, pageProps, router }) {
   }, [repos, filteredRepoNames])
 
   return (
-    router.route === '/'
+    router.route === '/' || router.query.embed
       ? (
         <>
           <Meta />
-          <Component {...pageProps} />
+          <Component
+            {...pageProps}
+            supabase={supabase} 
+            organization={router.query.org}
+          />
         </>
       )
       : (

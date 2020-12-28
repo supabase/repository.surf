@@ -12,3 +12,5 @@ const UpArrow = () => (
     />
   </svg>
 )
+
+export default UpArrow

@@ -6,6 +6,7 @@ import Url from '~/icons/Url'
 import Info from 'icons/Info'
 
 const IssueTracker = ({
+  embed = false,
   repoName,
   issueCounts,
   latestOpenIssueCount,
@@ -54,7 +55,7 @@ const IssueTracker = ({
         {issueCounts.length > 0
           ? (
             <>
-              <div className="w-full pb-3 sm:pb-0 sm:pr-5">
+              <div className="w-full pb-3 sm:pb-0 sm:pr-3">
                 <TimelineChart
                   id="issueCountsChart"
                   uPlot={uPlot}
@@ -65,22 +66,24 @@ const IssueTracker = ({
                   showBaselineToggle={true}
                 />
               </div>
-              <div className="sm:px-10 w-full mt-10 flex flex-col">
-                <p className="text-white">Daily statistics</p>
-                <div className="mt-5 grid grid-cols-12 gap-x-5">
-                  <div className="col-span-6 sm:col-span-5 xl:col-span-4">
-                    <p className="text-gray-400">Open issues</p>
-                    <div id="numbers" className="flex items-center mt-2">
-                      <p className="text-white text-3xl mr-2">{latestOpenIssueCount}</p>
-                      <StatsIndicator countDiff={openIssueCountComparison} />
+              {!embed && (
+                <div className="sm:px-10 w-full mt-10 flex flex-col">
+                  <p className="text-white">Daily statistics</p>
+                  <div className="mt-5 grid grid-cols-12 gap-x-5">
+                    <div className="col-span-6 sm:col-span-5 xl:col-span-4">
+                      <p className="text-gray-400">Open issues</p>
+                      <div id="numbers" className="flex items-center mt-2">
+                        <p className="text-white text-3xl mr-2">{latestOpenIssueCount}</p>
+                        <StatsIndicator countDiff={openIssueCountComparison} />
+                      </div>
+                    </div>
+                    <div className="col-span-6 sm:col-span-5 xl:col-span-4">
+                      <p className="text-gray-400">Total closed issues</p>
+                      <p className="mt-2 text-white text-3xl">{latestClosedIssueCount}</p>
                     </div>
                   </div>
-                  <div className="col-span-6 sm:col-span-5 xl:col-span-4">
-                    <p className="text-gray-400">Total closed issues</p>
-                    <p className="mt-2 text-white text-3xl">{latestClosedIssueCount}</p>
-                  </div>
                 </div>
-              </div>
+              )}
             </>
           )
           : (
