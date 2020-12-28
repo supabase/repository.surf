@@ -93,8 +93,7 @@ export default function Home() {
           <div 
             className={`
               col-span-12 lg:col-start-9 lg:col-span-5 flex items-center justify-center
-              transform lg:-translate-y-7 skew-y-12 
-              w-4/5 h-40 mx-auto lg:w-full lg:h-56 mb-24 lg:mb-0
+              transform skew-y-12 w-4/5 h-40 mx-auto lg:w-full lg:h-56 mb-24 lg:mb-0
             `}
           >
             <div className="relative h-full w-full border-b border-gray-400">
