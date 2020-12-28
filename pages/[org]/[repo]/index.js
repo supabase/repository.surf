@@ -152,7 +152,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
           </>
         )
         : (
-          <>
+          <div className="p-10">
             {!router.query.type && (
               <div className="h-screen w-screen flex flex-col items-center justify-center">
                 <p className="mb-2 text-white">Specify what type of charts you would like to embed as such:</p>
@@ -182,7 +182,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
                 latestClosedIssueCount={retrieveLatestCloseIssueCount()}
               />
             )}
-          </>
+          </div>
         )
       }
     </>
