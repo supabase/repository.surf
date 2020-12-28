@@ -119,33 +119,61 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
 
   return (
     <>
-      <div className="sm:mx-10 mb-12 sm:mb-20">
-        <p className="text-gray-400 text-xs">REPOSITORY</p>
-        <a
-          href={`https://github.com/${organization}/${repoName}`}
-          target="_blank"
-          className="text-white text-3xl mt-1 group flex items-center"
-        >
-          <h1>{repoName.toString()}</h1>
-          <div className="transition ml-3 opacity-0 group-hover:opacity-100">
-            <ExternalLink />
-          </div>
-        </a>
-      </div>
-      <StarHistory
-        repoName={repoName}
-        lastUpdated={lastUpdated}
-        starHistory={starHistory}
-        loadingStarHistory={loadingStarHistory}
-      />
-      <IssueTracker
-        repoName={repoName}
-        issueCounts={issueCounts}
-        loadingIssueCounts={loadingIssueCounts}
-        latestOpenIssueCount={retrieveLatestOpenIssueCount()}
-        openIssueCountComparison={deriveOpenIssueCountComparison()}
-        latestClosedIssueCount={retrieveLatestCloseIssueCount()}
-      />
+      {!router.query.embed
+        ? (
+          <>
+            <div className="sm:mx-10 mb-12 sm:mb-20">
+              <p className="text-gray-400 text-xs">REPOSITORY</p>
+              <a
+                href={`https://github.com/${organization}/${repoName}`}
+                target="_blank"
+                className="text-white text-3xl mt-1 group flex items-center"
+              >
+                <h1>{repoName.toString()}</h1>
+                <div className="transition ml-3 opacity-0 group-hover:opacity-100">
+                  <ExternalLink />
+                </div>
+              </a>
+            </div>
+            <StarHistory
+              repoName={repoName}
+              lastUpdated={lastUpdated}
+              starHistory={starHistory}
+              loadingStarHistory={loadingStarHistory}
+            />
+            <IssueTracker
+              repoName={repoName}
+              issueCounts={issueCounts}
+              loadingIssueCounts={loadingIssueCounts}
+              latestOpenIssueCount={retrieveLatestOpenIssueCount()}
+              openIssueCountComparison={deriveOpenIssueCountComparison()}
+              latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+            />
+          </>
+        )
+        : (
+          <>
+            {router.query.type === 'stars' && (
+              <StarHistory
+                repoName={repoName}
+                lastUpdated={lastUpdated}
+                starHistory={starHistory}
+                loadingStarHistory={loadingStarHistory}
+              />
+            )}
+            {router.query.type === 'issues' && (
+              <IssueTracker
+                repoName={repoName}
+                issueCounts={issueCounts}
+                loadingIssueCounts={loadingIssueCounts}
+                latestOpenIssueCount={retrieveLatestOpenIssueCount()}
+                openIssueCountComparison={deriveOpenIssueCountComparison()}
+                latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+              />
+            )}
+          </>
+        )
+      }
     </>
   )
 }
