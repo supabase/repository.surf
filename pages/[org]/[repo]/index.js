@@ -166,6 +166,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
             )}
             {router.query.type === 'stars' && (
               <StarHistory
+                embed={true}
                 repoName={repoName}
                 lastUpdated={lastUpdated}
                 starHistory={starHistory}

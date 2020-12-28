@@ -54,7 +54,7 @@ const IssueTracker = ({
         {issueCounts.length > 0
           ? (
             <>
-              <div className="w-full pb-3 sm:pb-0 sm:pr-5">
+              <div className="w-full pb-3 sm:pb-0 sm:pr-3">
                 <TimelineChart
                   id="issueCountsChart"
                   uPlot={uPlot}

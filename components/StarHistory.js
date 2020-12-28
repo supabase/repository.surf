@@ -4,6 +4,7 @@ import Star from 'icons/Star'
 import TimelineChart from '~/components/TimelineChart'
 
 const StarHistory = ({
+  embed = false,
   repoName,
   lastUpdated,
   starHistory,
@@ -33,7 +34,7 @@ const StarHistory = ({
   }
 
   return (
-    <div id="starHistory" className="mb-12 lg:mb-20">
+    <div id="starHistory" className={`${embed ? '' : 'mb-12 lg:mb-20'}`}>
       <div className="pb-5 sm:px-10 sm:pb-10">
         <div className="flex items-center justify-between">
           <a href="#starHistory" className="text-white text-2xl flex items-center group">
@@ -53,7 +54,7 @@ const StarHistory = ({
         {lastUpdated && <p className="mt-3 text-gray-400 text-xs">Last updated on: {new Date(lastUpdated).toDateString()}</p>}
       </div>
       <div className="flex-1 flex flex-col items-start">
-        <div className="w-full pb-3 sm:pb-0 sm:pr-5">
+        <div className={`w-full ${embed ? '' : 'pb-3 sm:pb-0 sm:pr-3'}`}>
           {loadingStarHistory
             ? (
               <div className="py-24 lg:py-32 text-white w-ful flex flex-col items-center justify-center">
