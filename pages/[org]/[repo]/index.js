@@ -153,6 +153,17 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         )
         : (
           <>
+            {!router.query.type && (
+              <div className="h-screen w-screen flex flex-col items-center justify-center">
+                <p className="mb-2 text-white">Specify what type of charts you would like to embed as such:</p>
+                <p className="text-white mb-5">{window.location.href}&type=[chartType]</p>
+                <p className="text-gray-400">
+                  Available chart types:
+                  <span className="font-mono ml-2 border-r mr-2 pr-2">stars</span>
+                  <span className="font-mono">issues</span>
+                </p>
+              </div>
+            )}
             {router.query.type === 'stars' && (
               <StarHistory
                 repoName={repoName}
