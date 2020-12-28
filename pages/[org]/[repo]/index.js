@@ -175,6 +175,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
             )}
             {router.query.type === 'issues' && (
               <IssueTracker
+                embed={true}
                 repoName={repoName}
                 issueCounts={issueCounts}
                 loadingIssueCounts={loadingIssueCounts}
