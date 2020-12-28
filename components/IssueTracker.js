@@ -12,11 +12,6 @@ const IssueTracker = ({
   openIssueCountComparison,
   latestClosedIssueCount
 }) => {
-  
-  const [issueType, setIssueType] = useState({
-    key: 'open_issues',
-    label: 'Open issues'
-  })
 
   const options = [
     {
@@ -28,6 +23,8 @@ const IssueTracker = ({
       label: 'Closed issues'
     }
   ] 
+  
+  const [issueType, setIssueType] = useState(options[0])
 
   return (
     <>
