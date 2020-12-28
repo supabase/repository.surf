@@ -40,7 +40,7 @@ const TimelineChart = ({
       }
       
     }
-  }, [data, isBaselineZero])
+  }, [data, valueKey, isBaselineZero])
 
   useEffect(() => {
     if (dataPlotRef.current === null) {

@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import TimelineChart from '~/components/TimelineChart'
 import StatsIndicator from '~/components/StatsIndicator'
+import Pill from '~/components/Pill'
 import Url from '~/icons/Url'
 import Info from 'icons/Info'
 
@@ -10,6 +12,23 @@ const IssueTracker = ({
   openIssueCountComparison,
   latestClosedIssueCount
 }) => {
+  
+  const [issueType, setIssueType] = useState({
+    key: 'open_issues',
+    label: 'Open issues'
+  })
+
+  const options = [
+    {
+      key: 'open_issues',
+      label: 'Open issues'
+    },
+    {
+      key: 'closed_issues',
+      label: 'Closed issues'
+    }
+  ] 
+
   return (
     <>
       <div id="issueTrack" className="pb-5 sm:px-10 sm:pb-10">
@@ -19,7 +38,20 @@ const IssueTracker = ({
             <Url />
           </div>
         </a>
-        <p className="mt-2 text-base text-gray-400">This is a timeline of how many open issues {repoName} has over time.</p>
+        <div className="mt-5 flex items-center flex-wrap">
+          <p className="text-white text-sm mr-2">View for:</p>
+          {options.map((option) => (
+            <Pill              
+              key={option.key}
+              label={option.label}
+              selected={option.key === issueType.key}
+              onSelectPill={() => setIssueType(option)}
+            />
+          ))}
+        </div>
+        <p className="mt-5 text-base text-gray-400">
+          This is a timeline of how many {issueType.label.toLowerCase()} {repoName} has over time.
+        </p>
       </div>
       <div className="flex-1 flex flex-col items-start">
         {issueCounts.length > 0
@@ -31,8 +63,8 @@ const IssueTracker = ({
                   uPlot={uPlot}
                   data={issueCounts}
                   dateKey="inserted_at"
-                  valueKey="open_issues"
-                  xLabel="Open issues"
+                  valueKey={issueType.key}
+                  xLabel="Issue count"
                   showBaselineToggle={true}
                 />
               </div>
