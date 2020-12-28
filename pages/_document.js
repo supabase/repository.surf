@@ -22,14 +22,14 @@ class MyDocument extends Document {
           <meta property="og:url" content="https://repository.surf/" />
           <meta property="og:title" content="repository.surf | Powered by Supabase" />
           <meta property="og:description" content="Get insights across your organization's repositories" />
-          <meta property="og:image" content="og-image.png" />
+          <meta property="og:image" content="/og-image.png" />
 
           {/* Twitter */}
           <meta property="twitter:card" content="summary_large_image" />
           <meta property="twitter:url" content="https://repository.surf/" />
           <meta property="twitter:title" content="repository.surf | Powered by Supabase" />
           <meta property="twitter:description" content="Get insights across your organization's repositories" />
-          <meta property="twitter:image" content="og-image.png" />
+          <meta property="twitter:image" content="/og-image.png" />
 
           <script type="text/javascript" src="/uPlot/uPlot.iife.min.js" />
         </Head>
