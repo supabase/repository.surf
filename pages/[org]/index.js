@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { groupBy } from 'lib/helpers'
+import Info from 'icons/Info'
 import TimelineChart from 'components/TimelineChart'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
@@ -44,15 +45,25 @@ const OrganizationOverview = ({ supabase, organization, repoNames }) => {
       </div>
       <div className="flex-1 flex flex-col items-start">
         <div className="w-full sm:pr-5">
-          <TimelineChart
-            id="overviewIssuesChart"
-            uPlot={uPlot}
-            data={issueCounts}
-            dateKey="inserted_at"
-            valueKey="open_issues"
-            xLabel="Open issues"
-            showBaselineToggle={true}
-          />
+          {issueCounts.length > 0
+            ? (
+              <TimelineChart
+                id="overviewIssuesChart"
+                uPlot={uPlot}
+                data={issueCounts}
+                dateKey="inserted_at"
+                valueKey="open_issues"
+                xLabel="Open issues"
+                showBaselineToggle={true}
+              />
+            )
+            : (
+              <div className="px-5 sm:px-10 text-gray-400 w-full flex-1 flex flex-col items-center justify-center text-center">
+                <Info />
+                <span className="mt-5">Issues under {organizationName} are not being tracked at the moment.</span>
+              </div>
+            )
+          }
         </div>
       </div>
     </>
