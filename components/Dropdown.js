@@ -1,4 +1,6 @@
-const Dropdown = ({ showDropdown, options = [] }) => (
+import Check from 'icons/Check'
+
+const Dropdown = ({ showDropdown, options = [], selectedOptionKey = '' }) => (
   <>
     {showDropdown && <div className="cursor-default fixed top-0 right-0 h-screen w-screen z-10" />}
     <div className={`
@@ -11,9 +13,10 @@ const Dropdown = ({ showDropdown, options = [] }) => (
             key={`option_${idx}`}
             role="menuitem"
             onClick={() => option.action()}
-            className="text-white text-sm block px-4 mx-1 py-2 rounded-md hover:bg-gray-600"
+            className="flex items-center justify-between text-white text-sm block px-4 mx-1 py-2 rounded-md hover:bg-gray-600"
           >
             {option.label}
+            {option.key === selectedOptionKey && <Check size={16} />}
           </div>
         ))}
       </div>

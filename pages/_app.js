@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 import Layout from 'components/Layout'
+import Meta from 'components/Meta'
 import { fetchAndWait } from 'lib/fetchWrapper'
 
 const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
@@ -37,13 +38,13 @@ function MyApp({ Component, pageProps, router }) {
           `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
           { 'Authorization': `token ${githubAccessToken}` }
         )
-        setRepos(repos.sort((a, b) => a.name < b.name ? -1 : 1))
+        setRepos(repos.sort((a, b) => a.stargazers_count > b.stargazers_count ? -1 : 1))
         setLoaded(true)
       })()
   
-      const filterListRepos = localStorage.getItem(`issueTracker_${router.query.org}`)
-      if (filterListRepos) {
-        const formattedFilterList = filterListRepos.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
+      const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${router.query.org}`))
+      if (userPreferences && userPreferences.repoFilter) {
+        const formattedFilterList = userPreferences.repoFilter.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
         setFilteredRepoNames(formattedFilterList)      
       }
     }
@@ -67,8 +68,17 @@ function MyApp({ Component, pageProps, router }) {
   }, [repos, filteredRepoNames])
 
   return (
-    router.route === '/'
-      ? <Component {...pageProps} />
+    router.route === '/' || router.query.embed
+      ? (
+        <>
+          <Meta />
+          <Component
+            {...pageProps}
+            supabase={supabase} 
+            organization={router.query.org}
+          />
+        </>
+      )
       : (
         <Layout
           view={selectedView}

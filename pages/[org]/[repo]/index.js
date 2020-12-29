@@ -119,33 +119,74 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
 
   return (
     <>
-      <div className="sm:mx-10 mb-12 sm:mb-20">
-        <p className="text-gray-400 text-xs">REPOSITORY</p>
-        <a
-          href={`https://github.com/${organization}/${repoName}`}
-          target="_blank"
-          className="text-white text-3xl mt-1 group flex items-center"
-        >
-          <h1>{repoName.toString()}</h1>
-          <div className="transition ml-3 opacity-0 group-hover:opacity-100">
-            <ExternalLink />
+      {!router.query.embed
+        ? (
+          <>
+            <div className="sm:mx-10 mb-12 sm:mb-20">
+              <p className="text-gray-400 text-xs">REPOSITORY</p>
+              <a
+                href={`https://github.com/${organization}/${repoName}`}
+                target="_blank"
+                className="text-white text-3xl mt-1 group flex items-center"
+              >
+                <h1>{repoName.toString()}</h1>
+                <div className="transition ml-3 opacity-0 group-hover:opacity-100">
+                  <ExternalLink />
+                </div>
+              </a>
+            </div>
+            <StarHistory
+              repoName={repoName}
+              lastUpdated={lastUpdated}
+              starHistory={starHistory}
+              loadingStarHistory={loadingStarHistory}
+            />
+            <IssueTracker
+              repoName={repoName}
+              issueCounts={issueCounts}
+              loadingIssueCounts={loadingIssueCounts}
+              latestOpenIssueCount={retrieveLatestOpenIssueCount()}
+              openIssueCountComparison={deriveOpenIssueCountComparison()}
+              latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+            />
+          </>
+        )
+        : (
+          <div className="p-10">
+            {!router.query.type && (
+              <div className="h-screen w-screen flex flex-col items-center justify-center">
+                <p className="mb-2 text-white">Specify what type of charts you would like to embed as such:</p>
+                <p className="text-white mb-5">{window.location.href}&type=[chartType]</p>
+                <p className="text-gray-400">
+                  Available chart types:
+                  <span className="font-mono ml-2 border-r mr-2 pr-2">stars</span>
+                  <span className="font-mono">issues</span>
+                </p>
+              </div>
+            )}
+            {router.query.type === 'stars' && (
+              <StarHistory
+                embed={true}
+                repoName={repoName}
+                lastUpdated={lastUpdated}
+                starHistory={starHistory}
+                loadingStarHistory={loadingStarHistory}
+              />
+            )}
+            {router.query.type === 'issues' && (
+              <IssueTracker
+                embed={true}
+                repoName={repoName}
+                issueCounts={issueCounts}
+                loadingIssueCounts={loadingIssueCounts}
+                latestOpenIssueCount={retrieveLatestOpenIssueCount()}
+                openIssueCountComparison={deriveOpenIssueCountComparison()}
+                latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+              />
+            )}
           </div>
-        </a>
-      </div>
-      <StarHistory
-        repoName={repoName}
-        lastUpdated={lastUpdated}
-        starHistory={starHistory}
-        loadingStarHistory={loadingStarHistory}
-      />
-      <IssueTracker
-        repoName={repoName}
-        issueCounts={issueCounts}
-        loadingIssueCounts={loadingIssueCounts}
-        latestOpenIssueCount={retrieveLatestOpenIssueCount()}
-        openIssueCountComparison={deriveOpenIssueCountComparison()}
-        latestClosedIssueCount={retrieveLatestCloseIssueCount()}
-      />
+        )
+      }
     </>
   )
 }

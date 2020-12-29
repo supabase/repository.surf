@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { updateUserPreferences } from 'lib/helpers'
 
 const SaveIcon = () => (
   <svg
@@ -26,8 +27,8 @@ const Settings = ({
   const [filterList, setFilterList] = useState('')
 
   useEffect(() => {
-    const filterListRepos = localStorage.getItem(`issueTracker_${organization}`)
-    if (filterListRepos) setFilterList(filterListRepos)
+    const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${organization}`))
+    if (userPreferences && userPreferences.repoFilter) setFilterList(userPreferences.repoFilter)
   }, [])
 
   const onSaveSettings = (event) => {
@@ -38,8 +39,6 @@ const Settings = ({
       event.preventDefault()
       event.stopPropagation()
     }
-
-    // This part below is very messy, please do refactor
 
     if (filterList.length > 0) {
       const filterListRepos = filterList.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
@@ -52,13 +51,12 @@ const Settings = ({
       }
 
       if (!error) {
-        localStorage.setItem(`issueTracker_${organization}`, filterList)
+        updateUserPreferences(organization, { repoFilter: filterList })
         onUpdateFilterList(filterListRepos)
         toast.success('Successfully updated settings!')
       }
-
     } else if (filterList.length === 0) {
-      localStorage.removeItem(`issueTracker_${organization}`)
+      updateUserPreferences(organization, { repoFilter: [] })
       onUpdateFilterList([])
       toast.success('Successfully updated settings!')
     }
