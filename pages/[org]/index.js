@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { groupBy } from 'lib/helpers'
 import Info from 'icons/Info'
+import Loader from 'icons/Loader'
 import TimelineChart from 'components/TimelineChart'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
@@ -8,10 +9,12 @@ const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const OrganizationOverview = ({ supabase, organization, repoNames }) => {
 
   const [issueCounts, setIssueCounts] = useState([])
+  const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
   const organizationName = organization.charAt(0).toUpperCase() + organization.slice(1)
 
   useEffect(() => {
     (async function retrieveOrganizationStats() {
+      setLoadingIssueCounts(true)
       const { data, error } = await supabase
         .from(issuesTable)
         .select('*')
@@ -34,8 +37,32 @@ const OrganizationOverview = ({ supabase, organization, repoNames }) => {
         const sortedIssueCounts = overviewIssueCounts.sort((a, b) => a.inserted_at - b.inserted_at)
         setIssueCounts(sortedIssueCounts)
       }
+      setLoadingIssueCounts(false)
     })()
   }, [])
+
+  const renderOrganizationIssuesTimeline = () => {
+    if (issueCounts.length > 0) {
+      return (
+        <TimelineChart
+          id="overviewIssuesChart"
+          uPlot={uPlot}
+          data={issueCounts}
+          dateKey="inserted_at"
+          valueKey="open_issues"
+          xLabel="Open issues"
+          showBaselineToggle={true}
+        />
+      )
+    } else {
+      return (
+        <div className="px-5 sm:px-10 text-gray-400 w-full flex-1 flex flex-col items-center justify-center text-center">
+          <Info />
+          <span className="mt-5">Issues under {organizationName} are not being tracked at the moment.</span>
+        </div>
+      )
+    }
+  }
 
   return (
     <>
@@ -45,24 +72,14 @@ const OrganizationOverview = ({ supabase, organization, repoNames }) => {
       </div>
       <div className="flex-1 flex flex-col items-start">
         <div className="w-full sm:pr-5">
-          {issueCounts.length > 0
+          {loadingIssueCounts
             ? (
-              <TimelineChart
-                id="overviewIssuesChart"
-                uPlot={uPlot}
-                data={issueCounts}
-                dateKey="inserted_at"
-                valueKey="open_issues"
-                xLabel="Open issues"
-                showBaselineToggle={true}
-              />
-            )
-            : (
-              <div className="px-5 sm:px-10 text-gray-400 w-full flex-1 flex flex-col items-center justify-center text-center">
-                <Info />
-                <span className="mt-5">Issues under {organizationName} are not being tracked at the moment.</span>
+              <div className="py-24 lg:py-32 text-white w-ful flex flex-col items-center justify-center">
+                <Loader />
+                <p className="text-xs mt-3 leading-5 text-center">Retrieving issues from {organizationName}</p>
               </div>
             )
+            : <>{renderOrganizationIssuesTimeline()}</>
           }
         </div>
       </div>
