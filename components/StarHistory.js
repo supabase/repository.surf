@@ -63,9 +63,7 @@ const StarHistory = ({
               </div>
             )
             : (
-              <>
-                {renderTimelineChart()}
-              </>
+              <>{renderTimelineChart()}</>
             )
           }
         </div>
