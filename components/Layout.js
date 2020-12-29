@@ -23,7 +23,12 @@ const Menu = () => (
   </svg>
 )
 
-const Layout = ({ view, repos, loaded, organization, children }) => {
+const Layout = ({
+  view,
+  repos,
+  loaded,
+  organization,
+  children }) => {
 
   const router = useRouter()
   const [uPlotLoaded, setUPlotLoaded] = useState(false)

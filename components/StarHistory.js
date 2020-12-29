@@ -1,23 +1,10 @@
 import Loader from 'icons/Loader'
 import Url from 'icons/Url'
+import Star from 'icons/Star'
 import TimelineChart from '~/components/TimelineChart'
 
-const Star = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    stroke="#FFFFFF"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-  </svg>
-)
-
 const StarHistory = ({
+  embed = false,
   repoName,
   lastUpdated,
   starHistory,
@@ -47,7 +34,7 @@ const StarHistory = ({
   }
 
   return (
-    <div id="starHistory" className="mb-12 lg:mb-20">
+    <div id="starHistory" className={`${embed ? '' : 'mb-12 lg:mb-20'}`}>
       <div className="pb-5 sm:px-10 sm:pb-10">
         <div className="flex items-center justify-between">
           <a href="#starHistory" className="text-white text-2xl flex items-center group">
@@ -67,7 +54,7 @@ const StarHistory = ({
         {lastUpdated && <p className="mt-3 text-gray-400 text-xs">Last updated on: {new Date(lastUpdated).toDateString()}</p>}
       </div>
       <div className="flex-1 flex flex-col items-start">
-        <div className="w-full pb-3 sm:pb-0 sm:pr-5">
+        <div className={`w-full ${embed ? '' : 'pb-3 sm:pb-0 sm:pr-3'}`}>
           {loadingStarHistory
             ? (
               <div className="py-24 lg:py-32 text-white w-ful flex flex-col items-center justify-center">
