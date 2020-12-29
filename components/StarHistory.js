@@ -50,7 +50,7 @@ const StarHistory = ({
             </div>
           )}
         </div>
-        <p className="mt-2 text-base text-gray-400">This is a timeline of how the stars of {repoName} has grown till today.</p>
+        <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
         {lastUpdated && <p className="mt-3 text-gray-400 text-xs">Last updated on: {new Date(lastUpdated).toDateString()}</p>}
       </div>
       <div className="flex-1 flex flex-col items-start">
