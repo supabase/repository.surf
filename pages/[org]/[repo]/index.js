@@ -46,6 +46,13 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         .select('*')
         .eq('organization', organization)
         .eq('repository', repoName)
+      
+      // data[0].star_history's format:
+      // [{date: "2019-10-25", starNumber: 33},
+      //  {date: "2019-10-26", starNumber: 41},
+      //  {date: "2019-10-27", starNumber: 46},
+      //  {date: "2019-10-28", starNumber: 51}]
+      
       if (error) {
         console.log(error)
       } else if (data) {
