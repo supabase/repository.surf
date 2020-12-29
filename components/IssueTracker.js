@@ -101,7 +101,7 @@ const IssueTracker = ({
       <div className="flex-1 flex flex-col items-start">
         {loadingIssueCounts
           ? (
-            <div className="py-24 lg:py-32 text-white w-ful flex flex-col items-center justify-center">
+            <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
               <Loader />
               <p className="text-xs mt-3 leading-5 text-center">Retrieving issues from {repoName}</p>
             </div>

@@ -57,7 +57,7 @@ const StarHistory = ({
         <div className={`w-full ${embed ? '' : 'pb-3 sm:pb-0 sm:pr-3'}`}>
           {loadingStarHistory
             ? (
-              <div className="py-24 lg:py-32 text-white w-ful flex flex-col items-center justify-center">
+              <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
                 <Loader />
                 <p className="text-xs mt-3 leading-5 text-center">Retrieving repository star history</p>
               </div>
