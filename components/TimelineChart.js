@@ -97,6 +97,7 @@ const TimelineChart = ({
           // y-axis
           {
             stroke: "#FFFFFF",
+            size: 90,
             grid: {
               width: 0,
               stroke: "transparent"
@@ -136,7 +137,7 @@ const TimelineChart = ({
         </div>
       )}
       <div className="text-white clear-both">
-        <div id={id} className="w-full h-60 sm:h-80" />
+        <div id={id} className="w-full h-60 sm:h-80 flex items-center justify-center" />
       </div>
     </>
   )
