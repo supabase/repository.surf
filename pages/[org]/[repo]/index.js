@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { getRepositoryStarHistory } from 'lib/helpers'
+import { getRepositoryStarHistory, generateIframeCode } from 'lib/helpers'
 import IssueTracker from '~/components/IssueTracker'
 import StarHistory from '~/components/StarHistory'
+import Modal from '~/components/Modal'
 import ExternalLink from '~/icons/ExternalLink'
+import Clipboard from '~/icons/Clipboard'
+import Check from '~/icons/Check'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
@@ -12,6 +15,11 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
 
   const router = useRouter()
   const repoName = router.query.repo
+
+  const [showModal, setShowModal] = useState(false)
+  const [iframeChartType, setIframeChartType] = useState('')
+  const [codeCopied, setCodeCopied] = useState(false)
+  const textAreaRef = useRef(null)
 
   const [issueCounts, setIssueCounts] = useState([])
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
@@ -93,82 +101,76 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
     }
   }
 
+  const toggleEmbedModal = (chartType) => {
+    setCodeCopied(false)
+    setIframeChartType(chartType)
+    setShowModal(true)
+  }
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(textAreaRef.current.value)
+    setCodeCopied(true)
+  }
+
   return (
     <>
-      {!router.query.embed
-        ? (
-          <>
-            <div className="sm:mx-10 mb-12 sm:mb-20">
-              <p className="text-gray-400 text-xs">REPOSITORY</p>
-              <a
-                href={`https://github.com/${organization}/${repoName}`}
-                target="_blank"
-                className="text-white text-3xl mt-1 group flex items-center"
-              >
-                <h1>{repoName.toString()}</h1>
-                <div className="transition ml-3 opacity-0 group-hover:opacity-100">
-                  <ExternalLink />
-                </div>
-              </a>
+      <Modal
+        showModal={showModal}
+        onCloseModal={() => setShowModal(false)}
+      >
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-5">
+            <p className="text-white">Embed this chart</p>
+            <div
+              onClick={() => copyCode()}
+              className={`
+                rounded-md border border-gray-400 p-2 transition
+                ${!codeCopied && 'cursor-pointer hover:bg-gray-500'}
+              `}
+            >
+              {codeCopied ? <Check size={16} className="stroke-current text-brand-700" /> : <Clipboard size={16} />}
             </div>
-            <StarHistory
-              repoName={repoName}
-              lastUpdated={lastUpdated}
-              starHistory={starHistory}
-              loadingStarHistory={loadingStarHistory}
-            />
-            <IssueTracker
-              repoName={repoName}
-              issueCounts={issueCounts}
-              loadingIssueCounts={loadingIssueCounts}
-              latestOpenIssueCount={retrieveLatestOpenIssueCount()}
-              openIssueCountComparison={deriveOpenIssueCountComparison()}
-              latestClosedIssueCount={retrieveLatestCloseIssueCount()}
-            />
-          </>
-        )
-        : (
-          <>
-            {!router.query.type
-              ? (
-                <div className="h-screen w-screen flex flex-col items-center justify-center">
-                  <p className="mb-2 text-white">Specify what type of charts you would like to embed as such:</p>
-                  <p className="text-white mb-5">{window.location.href}&type=[chartType]</p>
-                  <p className="text-gray-400">
-                    Available chart types:
-                    <span className="font-mono ml-2 border-r mr-2 pr-2">stars</span>
-                    <span className="font-mono">issues</span>
-                  </p>
-                </div>
-              )
-              : (
-                <div className="p-10">
-                  {router.query.type === 'stars' && (
-                    <StarHistory
-                      embed={true}
-                      repoName={repoName}
-                      lastUpdated={lastUpdated}
-                      starHistory={starHistory}
-                      loadingStarHistory={loadingStarHistory}
-                    />
-                  )}
-                  {router.query.type === 'issues' && (
-                    <IssueTracker
-                      embed={true}
-                      repoName={repoName}
-                      issueCounts={issueCounts}
-                      loadingIssueCounts={loadingIssueCounts}
-                      latestOpenIssueCount={retrieveLatestOpenIssueCount()}
-                      openIssueCountComparison={deriveOpenIssueCountComparison()}
-                      latestClosedIssueCount={retrieveLatestCloseIssueCount()}
-                    />
-                  )}
-                </div>
-              )
-            }
-          </>
-        )
-      }
+          </div>
+          <textarea
+            ref={textAreaRef}
+            value={generateIframeCode(organization, repoName, iframeChartType)}
+            rows={4}
+            readOnly
+            className="w-full bg-gray-500 rounded-md p-3 font-mono text-sm text-white"
+            style={{ resize: 'none' }}
+          />
+        </div>
+      </Modal>
+
+      <div className="sm:mx-10 mb-12 sm:mb-20">
+        <p className="text-gray-400 text-xs">REPOSITORY</p>
+        <a
+          href={`https://github.com/${organization}/${repoName}`}
+          target="_blank"
+          className="text-white text-3xl mt-1 group flex items-center"
+        >
+          <h1>{repoName.toString()}</h1>
+          <div className="transition ml-3 opacity-0 group-hover:opacity-100">
+            <ExternalLink />
+          </div>
+        </a>
+      </div>
+      <StarHistory
+        repoName={repoName}
+        lastUpdated={lastUpdated}
+        starHistory={starHistory}
+        loadingStarHistory={loadingStarHistory}
+        onOpenModal={(chartType) => toggleEmbedModal(chartType)}
+      />
+      <IssueTracker
+        repoName={repoName}
+        issueCounts={issueCounts}
+        loadingIssueCounts={loadingIssueCounts}
+        latestOpenIssueCount={retrieveLatestOpenIssueCount()}
+        openIssueCountComparison={deriveOpenIssueCountComparison()}
+        latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+        onOpenModal={(chartType) => toggleEmbedModal(chartType)}
+      />
     </>
   )
 }
