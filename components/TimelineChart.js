@@ -1,5 +1,24 @@
 import { useEffect, useRef, useState } from 'react'
 import Toggle from 'components/Toggle'
+import Pill from 'components/Pill'
+
+const oneDay = 1*24*60*60*1000
+const oneWeek = 7*24*60*60*1000
+
+const options = [
+  {
+    key: 'allTime',
+    label: 'All time'
+  },
+  {
+    key: 'pastWeek',
+    label: 'Past week'
+  },
+  {
+    key: 'today',
+    label: 'Today'
+  },
+]
 
 const TimelineChart = ({
   id,
@@ -10,9 +29,11 @@ const TimelineChart = ({
   xLabel = '',
   showOnlyDate = false,
   showBaselineToggle = false,
+  showTimeFilter = true,
 }) => {
   const dataPlotRef = useRef(null)
   const [isBaselineZero, setIsBaselineZero] = useState(false)
+  const [selectedTimeFilter, setSelectedTimeFilter] = useState('allTime')
 
   const handleToggle = () => {
     setIsBaselineZero(!isBaselineZero)
@@ -20,7 +41,26 @@ const TimelineChart = ({
 
   useEffect(() => {
     if (data.length > 0) {
-      const sortedData = data.sort((a, b) => {
+
+      const currentTime = new Date()
+      const formattedData = data.map(row => {
+        return { ...row, [dateKey]: new Date(row[dateKey]).toISOString() }
+      })
+      let filteredData = formattedData.slice()
+
+      if (selectedTimeFilter === 'pastWeek') {
+        const lastWeek = new Date(currentTime - oneWeek)
+        filteredData = formattedData.filter(row => {
+          if (row[dateKey] >= lastWeek.toISOString() ) return row
+        })
+      } else if (selectedTimeFilter === 'today') {
+        const pastDay = new Date(currentTime - oneDay)
+        filteredData = formattedData.filter(row => {
+          if (row[dateKey] >= pastDay.toISOString() ) return row
+        })
+      }
+
+      const sortedData = filteredData.sort((a, b) => {
         return (a[dateKey] < b[dateKey]) ? -1 : ((a[dateKey] > b[dateKey]) ? 1 : 0);
       })
       const chartData = [[], []]
@@ -40,7 +80,7 @@ const TimelineChart = ({
       }
       
     }
-  }, [data, valueKey, isBaselineZero])
+  }, [data, valueKey, isBaselineZero, selectedTimeFilter])
 
   useEffect(() => {
     if (dataPlotRef.current === null) {
@@ -108,7 +148,15 @@ const TimelineChart = ({
 
       const chartData = [[], []]
 
-      data.forEach(issue => {
+      const formattedData = data.map(row => {
+        return { ...row, [dateKey]: new Date(row[dateKey]).toISOString() }
+      })
+      
+      const sortedData = formattedData.sort((a, b) => {
+        return (a[dateKey] < b[dateKey]) ? -1 : ((a[dateKey] > b[dateKey]) ? 1 : 0);
+      })
+
+      sortedData.forEach(issue => {
         chartData[0].push(Math.floor(new Date(issue[dateKey]) / 1000))
         chartData[1].push(issue[valueKey])
       })
@@ -133,11 +181,29 @@ const TimelineChart = ({
   
   return (
     <>
-      {showBaselineToggle && chartMinValue !== 0 && (
-        <div className="sm:px-10">
-          <Toggle isOn={isBaselineZero} onToggle={handleToggle} label="Set baseline to 0" />
-        </div>
-      )}
+      <div className="sm:px-10 mb-3 flex items-center justify-between">
+        {showTimeFilter && (
+          <div className="flex items-center">
+            {options.map(option => (
+              <Pill
+                key={option.key}
+                label={option.label}
+                selected={option.key === selectedTimeFilter}
+                withoutBorder={true}
+                onSelectPill={() => setSelectedTimeFilter(option.key)}
+              />
+            ))}
+          </div>
+        )}
+        {showBaselineToggle && chartMinValue !== 0 && (
+          <Toggle
+            isOn={isBaselineZero}
+            onToggle={handleToggle}
+            label="Set baseline to 0" 
+            labelPosition="right"
+          />
+        )}
+      </div>
       <div className="text-white clear-both">
         <div id={id} className="w-full h-60 sm:h-80 flex items-center justify-center" />
       </div>

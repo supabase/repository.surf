@@ -89,14 +89,16 @@ const IssueTracker = ({
           </div>
           <div className="mt-5 flex items-center flex-wrap">
             <p className="text-white text-sm mr-2">View for:</p>
-            {options.map((option) => (
-              <Pill              
-                key={option.key}
-                label={option.label}
-                selected={option.key === issueType.key}
-                onSelectPill={() => setIssueType(option)}
-              />
-            ))}
+            <div className="space-x-2 flex items-center">
+              {options.map((option) => (
+                <Pill              
+                  key={option.key}
+                  label={option.label}
+                  selected={option.key === issueType.key}
+                  onSelectPill={() => setIssueType(option)}
+                />
+              ))}
+            </div>
           </div>
           <p className="mt-5 text-base text-gray-400">
             This is a timeline of how many {issueType.label.toLowerCase()} {repoName} has over time.

@@ -113,6 +113,7 @@ module.exports = {
       inset: ['group-hover'],
       stroke: ['dark'],
       height: ['hover'],
+      borderWidth: ['last'],
     },
   },
   plugins: [],
