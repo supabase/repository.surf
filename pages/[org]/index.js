@@ -74,7 +74,7 @@ const OrganizationOverview = ({ supabase, organization, repoNames }) => {
         <div className="w-full sm:pr-5">
           {loadingIssueCounts
             ? (
-              <div className="py-24 lg:py-32 text-white w-ful flex flex-col items-center justify-center">
+              <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
                 <Loader />
                 <p className="text-xs mt-3 leading-5 text-center">Retrieving issues from {organizationName}</p>
               </div>
