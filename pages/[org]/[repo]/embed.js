@@ -39,15 +39,17 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
     if (repoName) setLoading(false)
   }, [repoName])
 
+  console.log(repoName, chartType, loading)
+
   return (
     <>
       {!chartType && !loading && (
         <div className="h-screen w-screen flex flex-col items-center justify-center">
           <p className="mb-2 text-white">Specify what type of charts you would like to embed as such:</p>
-          <p className="text-white mb-5">/embed?type=[chartType]</p>
+          <p className="text-white mb-5">/embed?chart=[chartType]</p>
           <p className="text-gray-400">
             Available chart types:
-            <span className="font-mono ml-2 border-r mr-2 pr-2">stars</span>
+            <span className="font-mono ml-2 border-gray-400 border-r mr-2 pr-2">stars</span>
             <span className="font-mono">issues</span>
           </p>
         </div>
