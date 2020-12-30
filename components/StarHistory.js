@@ -48,23 +48,31 @@ const StarHistory = ({
                 </div>
               </div>
             </div>
-            {!loadingStarHistory && (
-              <p className="mt-3 text-gray-400 text-xs">
-                {lastUpdated ? 
-                  <>Last updated on: {new Date(lastUpdated).toDateString()}</>
-                  : starHistory.length > 0 && <>
-                      <Loader size={18} additionalClassName="inline"/>
-                      <span className="transform translate-x-0.5 translate-y-0.5 inline-block">
-                        Loading data (
-                          {(starHistory[starHistory.length - 1].starNumber / totalStarCount * 100).toString().slice(0, 5)
-                        }% complete)
-                      </span>
-                    </>
-                }
-              </p>
+            {!loadingStarHistory && starHistory.length > 0 && (
+              <div className="flex items-center">
+                <Star />
+                <span className="ml-2 text-white">{starHistory[starHistory.length - 1].starNumber}</span>
+              </div>
             )}
           </div>
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
+          {!loadingStarHistory && (
+            <p className="mt-3 text-gray-400 text-xs">
+              {lastUpdated ? 
+                <>Last updated on: {new Date(lastUpdated).toDateString()}</>
+                : starHistory.length > 0 && (
+                  <div className="flex item-center">
+                    <Loader size={18} additionalClassName="inline"/>
+                    <span className="ml-2 transform translate-x-0.5 translate-y-0.5 inline-block">
+                      Loading data (
+                        {(starHistory[starHistory.length - 1].starNumber / totalStarCount * 100).toString().slice(0, 5)
+                      }% complete)
+                    </span>
+                  </div>
+                )
+              }
+            </p>
+          )}
         </div>
       )}
       <div className="flex-1 flex flex-col items-start">

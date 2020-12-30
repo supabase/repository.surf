@@ -24,11 +24,12 @@ const Toggle = ({
   label = '',
   isOn = false,
   size = 'xsm',
+  labelPosition = 'left',
   isDisabled = false,
 }) => {
   const toggleSizes = sizes[size]
   return (
-    <>
+    <div className={`flex items-center ${labelPosition === 'left' ? 'flex-row' : 'flex-row-reverse'}`}>
       <span
           role="checkbox"
           aria-checked="false"
@@ -46,8 +47,15 @@ const Toggle = ({
           } inline-block rounded-full shadow transform transition ease-in-out duration-200`}
           ></span>
       </span>
-      <span className='text-sm inline-block ml-2 transform translate-x-1 -translate-y-1 text-gray-400'>{label}</span>
-    </>
+      <span
+        className={`
+          text-sm inline-block ml-2 transform text-gray-400
+          ${labelPosition === 'left' ? 'translate-x-1' : '-translate-x-2'}
+        `}
+      >
+        {label}
+      </span>
+    </div>
   )
 }
 
