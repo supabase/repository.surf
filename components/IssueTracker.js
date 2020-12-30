@@ -76,28 +76,30 @@ const IssueTracker = ({
 
   return (
     <>
-      <div id="issueTrack" className="pb-5 sm:px-10 sm:pb-10">
-        <a href="#issueTrack" className="text-white text-2xl flex items-center group">
-          <h1>Issues Tracking</h1>
-          <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
-            <Url />
+      {!embed && (
+        <div id="issueTrack" className="w-full pb-5 sm:px-10 sm:pb-10">
+          <a href="#issueTrack" className="text-white text-2xl flex items-center group">
+            <h1>Issues Tracking</h1>
+            <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
+              <Url />
+            </div>
+          </a>
+          <div className="mt-5 flex items-center flex-wrap">
+            <p className="text-white text-sm mr-2">View for:</p>
+            {options.map((option) => (
+              <Pill              
+                key={option.key}
+                label={option.label}
+                selected={option.key === issueType.key}
+                onSelectPill={() => setIssueType(option)}
+              />
+            ))}
           </div>
-        </a>
-        <div className="mt-5 flex items-center flex-wrap">
-          <p className="text-white text-sm mr-2">View for:</p>
-          {options.map((option) => (
-            <Pill              
-              key={option.key}
-              label={option.label}
-              selected={option.key === issueType.key}
-              onSelectPill={() => setIssueType(option)}
-            />
-          ))}
+          <p className="mt-5 text-base text-gray-400">
+            This is a timeline of how many {issueType.label.toLowerCase()} {repoName} has over time.
+          </p>
         </div>
-        <p className="mt-5 text-base text-gray-400">
-          This is a timeline of how many {issueType.label.toLowerCase()} {repoName} has over time.
-        </p>
-      </div>
+      )}
       <div className="flex-1 flex flex-col items-start">
         {loadingIssueCounts
           ? (
