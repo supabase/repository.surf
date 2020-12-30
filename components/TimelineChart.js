@@ -128,10 +128,12 @@ const TimelineChart = ({
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
   }, [])
+
+  const chartMinValue = Math.min(...data.map(issue => issue[valueKey]))
   
   return (
     <>
-      {showBaselineToggle && (
+      {showBaselineToggle && chartMinValue !== 0 && (
         <div className="sm:px-10">
           <Toggle isOn={isBaselineZero} onToggle={handleToggle} label="Set baseline to 0" />
         </div>
