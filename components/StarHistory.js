@@ -48,7 +48,7 @@ const StarHistory = ({
                 </div>
               </div>
             </div>
-            {!loadingStarHistory && starHistory.length > 0 && (
+            {!loadingStarHistory && lastUpdated && starHistory.length > 0 && (
               <div className="flex items-center">
                 <Star />
                 <span className="ml-2 text-white">{starHistory[starHistory.length - 1].starNumber}</span>
@@ -57,9 +57,9 @@ const StarHistory = ({
           </div>
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
           {!loadingStarHistory && (
-            <p className="mt-3 text-gray-400 text-xs">
-              {lastUpdated ? 
-                <>Last updated on: {new Date(lastUpdated).toDateString()}</>
+            <div className="mt-3 text-gray-400 text-xs">
+              {lastUpdated
+                ? <span>Last updated on: {new Date(lastUpdated).toDateString()}</span>
                 : starHistory.length > 0 && (
                   <div className="flex item-center">
                     <Loader size={18} additionalClassName="inline"/>
@@ -71,7 +71,7 @@ const StarHistory = ({
                   </div>
                 )
               }
-            </p>
+            </div>
           )}
         </div>
       )}
