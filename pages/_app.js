@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps, router }) {
   }, [repos, filteredRepoNames])
 
   return (
-    router.route === '/' || router.query.embed
+    router.route === '/' || router.route.indexOf('embed') > 0
       ? (
         <>
           <Meta />
