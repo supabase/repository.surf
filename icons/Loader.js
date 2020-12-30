@@ -1,6 +1,6 @@
-const Loader = ({ size = 24 }) => (
+const Loader = ({ size = 24, className=""}) => (
   <svg
-    className="animate-spin"
+    className={`animate-spin ${className}`} 
     viewBox="0 0 24 24"
     width={size}
     height={size}

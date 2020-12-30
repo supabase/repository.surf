@@ -12,9 +12,10 @@ import Check from '~/icons/Check'
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
-const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => {
+const RepositoryStatistics = ({ githubAccessToken, supabase }) => {
 
   const router = useRouter()
+  const orgName = router.query.org
   const repoName = router.query.repo
 
   const [showModal, setShowModal] = useState(false)
@@ -28,6 +29,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   const [lastUpdated, setLastUpdated] = useState(null)
   const [starHistory, setStarHistory] = useState([])
   const [loadingStarHistory, setLoadingStarHistory] = useState(false)
+  const [totalStarCount, setTotalStarCount] = useState(null)
 
   // An object of star history retrievers.
   // Example: {'supabase/supabase': RepoStarHistoryRetriever1, 'supabase/realtime': RepoStarHistoryRetriever2}
@@ -39,7 +41,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
       const { data, error } = await supabase
         .from(issuesTable)
         .select('*')
-        .eq('organization', organization)
+        .eq('organization', orgName)
         .eq('repository', repoName)
       if (error) {
         console.error(error)
@@ -53,12 +55,12 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   useEffect(() => {
     // First, check if a corresponding star history retriever exists.
     // If not, create a new one.
-    const starHistoryKey = `${organization}/${repoName}`
+    const starHistoryKey = `${orgName}/${repoName}`
     let starHistoryRetriever
     if (starHistoryKey in starHistoryRetrievers) {
       starHistoryRetriever = starHistoryRetrievers[starHistoryKey]
     } else {
-      starHistoryRetriever = new RepoStarHistoryRetriever(supabase, starsTable, organization, repoName, githubAccessToken)
+      starHistoryRetriever = new RepoStarHistoryRetriever(supabase, starsTable, orgName, repoName, githubAccessToken)
       const newRetrievers = Object.assign({}, starHistoryRetrievers)
       newRetrievers[starHistoryKey] = starHistoryRetriever
       setStarHistoryRetrievers(newRetrievers)
@@ -68,12 +70,15 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
     setStarHistory(starHistoryRetriever.starHistory)
     setLastUpdated(starHistoryRetriever.historyUpdateTime)
     setLoadingStarHistory(starHistoryRetriever.isLoading)
+    setTotalStarCount(starHistoryRetriever.totalStarCount)
 
     // Then, subscribe to any change in the star history retriever.
-    const { subscription } = starHistoryRetriever.onLoaded((starHistory, historyUpdateTime, isLoading) => {
+    const { subscription } = starHistoryRetriever.onLoaded(
+        (starHistory, historyUpdateTime, isLoading, totalStarCount) => {
       setStarHistory(starHistory)
       setLastUpdated(historyUpdateTime)
       setLoadingStarHistory(isLoading)
+      setTotalStarCount(totalStarCount)
     })
     
     return () => {
@@ -157,7 +162,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
           </div>
           <textarea
             ref={textAreaRef}
-            value={generateIframeCode(organization, repoName, iframeChartType)}
+            value={generateIframeCode(orgName, repoName, iframeChartType)}
             rows={4}
             readOnly
             className="w-full bg-gray-500 rounded-md p-3 font-mono text-sm text-white"
@@ -169,7 +174,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
       <div className="sm:mx-10 mb-12 sm:mb-20">
         <p className="text-gray-400 text-xs">REPOSITORY</p>
         <a
-          href={`https://github.com/${organization}/${repoName}`}
+          href={`https://github.com/${orgName}/${repoName}`}
           target="_blank"
           className="text-white text-3xl mt-1 group flex items-center"
         >
@@ -184,6 +189,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         lastUpdated={lastUpdated}
         starHistory={starHistory}
         loadingStarHistory={loadingStarHistory}
+        totalStarCount={totalStarCount}
         onOpenModal={(chartType) => toggleEmbedModal(chartType)}
       />
       <IssueTracker

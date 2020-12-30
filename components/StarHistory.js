@@ -9,6 +9,7 @@ const StarHistory = ({
   lastUpdated,
   starHistory,
   loadingStarHistory,
+  totalStarCount,
   onOpenModal
 }) => {
 
@@ -47,7 +48,7 @@ const StarHistory = ({
                 </div>
               </div>
             </div>
-            {!loadingStarHistory && starHistory.length > 0 && (
+            {!loadingStarHistory && lastUpdated && starHistory.length > 0 && (
               <div className="flex items-center">
                 <Star />
                 <span className="ml-2 text-white">{starHistory[starHistory.length - 1].starNumber}</span>
@@ -55,8 +56,22 @@ const StarHistory = ({
             )}
           </div>
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
-          {starHistory.length > 0  && lastUpdated && (
-            <p className="mt-3 text-gray-400 text-xs">Last updated on: {new Date(lastUpdated).toDateString()}</p>
+          {!loadingStarHistory && (
+            <div className="mt-3 text-gray-400 text-xs">
+              {lastUpdated
+                ? <span>Last updated on: {new Date(lastUpdated).toDateString()}</span>
+                : starHistory.length > 0 && (
+                  <div className="flex item-center">
+                    <Loader size={18} additionalClassName="inline"/>
+                    <span className="ml-2 transform translate-x-0.5 translate-y-0.5 inline-block">
+                      Loading data (
+                        {(starHistory[starHistory.length - 1].starNumber / totalStarCount * 100).toString().slice(0, 5)
+                      }% complete)
+                    </span>
+                  </div>
+                )
+              }
+            </div>
           )}
         </div>
       )}

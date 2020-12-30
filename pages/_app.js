@@ -90,7 +90,7 @@ function MyApp({ Component, pageProps, router }) {
             {...pageProps}
             githubAccessToken={githubAccessToken}
             supabase={supabase}
-            organization={router.query.org}
+            organization={organization}
             repoNames={repos.map(repo => repo.name)}
             onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}
           />
