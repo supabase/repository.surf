@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
-import { getRepositoryStarHistory, generateIframeCode } from 'lib/helpers'
+import { generateIframeCode } from 'lib/helpers'
 import IssueTracker from '~/components/IssueTracker'
 import StarHistory from '~/components/StarHistory'
 import Modal from '~/components/Modal'
