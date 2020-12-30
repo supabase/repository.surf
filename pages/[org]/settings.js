@@ -27,7 +27,7 @@ const Settings = ({
   const [filterList, setFilterList] = useState('')
 
   useEffect(() => {
-    const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${organization}`))
+    const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${organization.login}`))
     if (userPreferences && userPreferences.repoFilter) setFilterList(userPreferences.repoFilter)
   }, [])
 
@@ -51,12 +51,12 @@ const Settings = ({
       }
 
       if (!error) {
-        updateUserPreferences(organization, { repoFilter: filterList })
+        updateUserPreferences(organization.login, { repoFilter: filterList })
         onUpdateFilterList(filterListRepos)
         toast.success('Successfully updated settings!')
       }
     } else if (filterList.length === 0) {
-      updateUserPreferences(organization, { repoFilter: [] })
+      updateUserPreferences(organization.login, { repoFilter: [] })
       onUpdateFilterList([])
       toast.success('Successfully updated settings!')
     }
