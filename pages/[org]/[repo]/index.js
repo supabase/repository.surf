@@ -19,6 +19,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   const [lastUpdated, setLastUpdated] = useState(null)
   const [starHistory, setStarHistory] = useState([])
   const [loadingStarHistory, setLoadingStarHistory] = useState(false)
+  const [totalStarCount, setTotalStarCount] = useState(null)
 
   // An object of star history retrievers.
   // Example: {'supabase/supabase': RepoStarHistoryRetriever1, 'supabase/realtime': RepoStarHistoryRetriever2}
@@ -59,12 +60,15 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
     setStarHistory(starHistoryRetriever.starHistory)
     setLastUpdated(starHistoryRetriever.historyUpdateTime)
     setLoadingStarHistory(starHistoryRetriever.isLoading)
+    setTotalStarCount(starHistoryRetriever.totalStarCount)
 
     // Then, subscribe to any change in the star history retriever.
-    const { subscription } = starHistoryRetriever.onLoaded((starHistory, historyUpdateTime, isLoading) => {
+    const { subscription } = starHistoryRetriever.onLoaded(
+        (starHistory, historyUpdateTime, isLoading, totalStarCount) => {
       setStarHistory(starHistory)
       setLastUpdated(historyUpdateTime)
       setLoadingStarHistory(isLoading)
+      setTotalStarCount(totalStarCount)
     })
     
     return () => {
@@ -139,6 +143,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
               lastUpdated={lastUpdated}
               starHistory={starHistory}
               loadingStarHistory={loadingStarHistory}
+              totalStarCount={totalStarCount}
             />
             <IssueTracker
               repoName={repoName}
