@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { getRepositoryStarHistory, generateIframeCode } from 'lib/helpers'
+import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
+import { generateIframeCode } from 'lib/helpers'
 import IssueTracker from '~/components/IssueTracker'
 import StarHistory from '~/components/StarHistory'
 import Modal from '~/components/Modal'
@@ -28,6 +29,10 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   const [starHistory, setStarHistory] = useState([])
   const [loadingStarHistory, setLoadingStarHistory] = useState(false)
 
+  // An object of star history retrievers.
+  // Example: {'supabase/supabase': RepoStarHistoryRetriever1, 'supabase/realtime': RepoStarHistoryRetriever2}
+  const [starHistoryRetrievers, setStarHistoryRetrievers] = useState({})
+
   useEffect(() => {
     (async function retrieveRepositoryIssueCounts() {
       setLoadingIssueCounts(true)
@@ -46,15 +51,34 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
   }, [repoName])
 
   useEffect(() => {
-    (async function retrieveRepositoryStarHistory() {
-      setLoadingStarHistory(true)
-      setLastUpdated(null)
+    // First, check if a corresponding star history retriever exists.
+    // If not, create a new one.
+    const starHistoryKey = `${organization}/${repoName}`
+    let starHistoryRetriever
+    if (starHistoryKey in starHistoryRetrievers) {
+      starHistoryRetriever = starHistoryRetrievers[starHistoryKey]
+    } else {
+      starHistoryRetriever = new RepoStarHistoryRetriever(supabase, starsTable, organization, repoName, githubAccessToken)
+      const newRetrievers = Object.assign({}, starHistoryRetrievers)
+      newRetrievers[starHistoryKey] = starHistoryRetriever
+      setStarHistoryRetrievers(newRetrievers)
+    }
 
-      const {starHistory, historyUpdateTime} = await getRepositoryStarHistory(supabase, starsTable, organization, repoName, githubAccessToken)
+    // In case the star history is already retrieved, load it on on this component.
+    setStarHistory(starHistoryRetriever.starHistory)
+    setLastUpdated(starHistoryRetriever.historyUpdateTime)
+    setLoadingStarHistory(starHistoryRetriever.isLoading)
+
+    // Then, subscribe to any change in the star history retriever.
+    const { subscription } = starHistoryRetriever.onLoaded((starHistory, historyUpdateTime, isLoading) => {
       setStarHistory(starHistory)
       setLastUpdated(historyUpdateTime)
-      setLoadingStarHistory(false)
-    })()
+      setLoadingStarHistory(isLoading)
+    })
+    
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [repoName])
 
   const retrieveLatestOpenIssueCount = () => {
