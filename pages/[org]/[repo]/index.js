@@ -169,6 +169,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         latestOpenIssueCount={retrieveLatestOpenIssueCount()}
         openIssueCountComparison={deriveOpenIssueCountComparison()}
         latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+        onOpenModal={(chartType) => toggleEmbedModal(chartType)}
       />
     </>
   )

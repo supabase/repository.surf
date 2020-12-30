@@ -3,7 +3,7 @@ import TimelineChart from '~/components/TimelineChart'
 import StatsIndicator from '~/components/StatsIndicator'
 import Pill from '~/components/Pill'
 import Loader from 'icons/Loader'
-import Url from '~/icons/Url'
+import Share from '~/icons/Share'
 import Info from 'icons/Info'
 
 const IssueTracker = ({
@@ -13,7 +13,8 @@ const IssueTracker = ({
   loadingIssueCounts = false,
   latestOpenIssueCount,
   openIssueCountComparison,
-  latestClosedIssueCount
+  latestClosedIssueCount,
+  onOpenModal,
 }) => {
 
   const options = [
@@ -78,12 +79,14 @@ const IssueTracker = ({
     <>
       {!embed && (
         <div id="issueTrack" className="w-full pb-5 sm:px-10 sm:pb-10">
-          <a href="#issueTrack" className="text-white text-2xl flex items-center group">
+          <div className="text-white text-2xl flex items-center group">
             <h1>Issues Tracking</h1>
             <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
-              <Url />
+              <div className="cursor-pointer" onClick={() => onOpenModal('issues')}>
+                <Share size={20} className="stroke-current text-gray-400" />
+              </div>
             </div>
-          </a>
+          </div>
           <div className="mt-5 flex items-center flex-wrap">
             <p className="text-white text-sm mr-2">View for:</p>
             {options.map((option) => (

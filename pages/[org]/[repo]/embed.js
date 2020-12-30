@@ -53,7 +53,7 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
         </div>
       )}
       {chartType === 'stars' && (
-        <div className="h-screen w-screen flex items-center">
+        <div className="h-screen w-screen pr-8 flex items-center">
           <StarHistory
             embed={true}
             repoName={repoName}
@@ -63,7 +63,7 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
         </div>
       )}
       {chartType === 'issues' && (
-        <div className="h-screen w-screen">
+        <div className="h-screen w-screen pr-8">
           <IssueTracker
             embed={true}
             repoName={repoName}
