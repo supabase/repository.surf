@@ -118,34 +118,27 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         showModal={showModal}
         onCloseModal={() => setShowModal(false)}
       >
-        <div className="flex items-center justify-between">
-          <iframe
-            width={400}
-            height={250}
-            src={`https://repository-surf-9kxnp4o2y.vercel.app/${organization}/${repoName}/embed?chart=${iframeChartType}`}
-          />
-          <div className="ml-5 flex-1">
-            <div className="flex items-center justify-between mb-5">
-              <p className="text-white">Embed this chart</p>
-              <div
-                onClick={() => copyCode()}
-                className={`
-                  rounded-md border border-gray-400 p-2 transition
-                  ${!codeCopied && 'cursor-pointer hover:bg-gray-500'}
-                `}
-              >
-                {codeCopied ? <Check size={16} className="stroke-current text-brand-700" /> : <Clipboard size={16} />}
-              </div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between mb-5">
+            <p className="text-white">Embed this chart</p>
+            <div
+              onClick={() => copyCode()}
+              className={`
+                rounded-md border border-gray-400 p-2 transition
+                ${!codeCopied && 'cursor-pointer hover:bg-gray-500'}
+              `}
+            >
+              {codeCopied ? <Check size={16} className="stroke-current text-brand-700" /> : <Clipboard size={16} />}
             </div>
-            <textarea
-              ref={textAreaRef}
-              value={generateIframeCode(organization, repoName, iframeChartType)}
-              rows={5}
-              readOnly
-              className="w-full bg-gray-500 rounded-md p-3 font-mono text-sm text-white"
-              style={{ resize: 'none' }}
-            />
           </div>
+          <textarea
+            ref={textAreaRef}
+            value={generateIframeCode(organization, repoName, iframeChartType)}
+            rows={4}
+            readOnly
+            className="w-full bg-gray-500 rounded-md p-3 font-mono text-sm text-white"
+            style={{ resize: 'none' }}
+          />
         </div>
       </Modal>
 
