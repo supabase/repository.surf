@@ -61,7 +61,7 @@ export default function Home() {
                   Get <span className="text-brand-700">insights</span> across your organization's repositories
                 </h1>
               </div>
-              <p className="text-white w-3/4 sm:w-auto text-lg xl:text-xl text-gray-400">Star history, issue tracking, and more to come</p>
+              <p className="text-white sm:w-auto text-lg xl:text-xl text-gray-400">Star history, issue tracking, and more to come</p>
             </div>
             <div className="mb-10">
               <form
@@ -93,11 +93,11 @@ export default function Home() {
           <div 
             className={`
               col-span-12 lg:col-start-9 lg:col-span-5 flex items-center justify-center
-              transform skew-y-12 w-4/5 h-40 mx-auto lg:w-full lg:h-56 mb-24 lg:mb-0
+              transform skew-y-12 w-4/5 h-40 mx-auto lg:w-full lg:h-56 mb-20 lg:mb-0
             `}
           >
             <div className="relative h-full w-full border-b border-gray-400">
-              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-5 z-20">
+              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-8 lg:px-5 z-20">
                 <div className={`w-5 transition-all duration-300 bg-brand-800 ${loadGraphic ? 'h-3/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-75 duration-300 bg-brand-800 ${loadGraphic ? 'h-2/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-100 duration-300 bg-brand-700 ${loadGraphic ? 'h-1/5' : 'h-0'}`} />
@@ -106,7 +106,7 @@ export default function Home() {
                 <div className={`w-5 transition-all delay-300 duration-300 bg-brand-600 ${loadGraphic ? 'h-2/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-300 duration-300 bg-brand-600 ${loadGraphic ? 'h-1/5' : 'h-0'}`} />
               </div>
-              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-5 z-10 left-1 -top-1">
+              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-8 lg:px-5 z-10 left-1 -top-1">
                 <div className={`w-5 transition-all duration-300 bg-brand-900 ${loadGraphic ? 'h-3/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-75 duration-300 bg-brand-900 ${loadGraphic ? 'h-2/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-100 duration-300 bg-brand-900 ${loadGraphic ? 'h-1/5' : 'h-0'}`} />
@@ -118,7 +118,7 @@ export default function Home() {
               <div 
                 className={`
                   absolute bg-gray-600 h-16 w-24 rounded-md top-0 left-0 flex items-center justify-center transform transition-all
-                  duration-200 ${loadGraphic ? 'opacity-100 scale-x-100 translate-y-0' : 'opacity-0 scale-x-95 translate-y-2'}
+                  duration-200 ${loadGraphic ? 'opacity-100 scale-x-100 -translate-y-4 lg:translate-y-0' : 'opacity-0 scale-x-95 translate-y-2'}
                 `}
                 style={{ transitionDelay: '1500ms' }}
               >

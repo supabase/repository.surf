@@ -53,7 +53,7 @@ const Layout = ({
       </Head>
 
       {/* Sidebar on mobile */}
-      <div className={`absolute top-0 z-50 transform transition ${sidebarOpen ? 'translate-x-0' : '-translate-x-64'}`}>
+      <div className={`fixed top-0 z-50 transform transition ${sidebarOpen ? 'translate-x-0' : '-translate-x-64'}`}>
         <Sidebar
           repositories={repos}
           selectedView={view}

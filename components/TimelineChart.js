@@ -181,9 +181,9 @@ const TimelineChart = ({
   
   return (
     <>
-      <div className="sm:px-10 mb-3 flex items-center justify-between">
+      <div className="sm:px-10 mb-3 flex flex-col items-start lg:flex-row lg:items-center lg:justify-between">
         {showTimeFilter && (
-          <div className="flex items-center">
+          <div className="flex items-center mb-5 lg:mb-0">
             {options.map(option => (
               <Pill
                 key={option.key}
