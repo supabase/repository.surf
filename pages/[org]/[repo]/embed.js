@@ -39,8 +39,6 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
     if (repoName) setLoading(false)
   }, [repoName])
 
-  console.log(repoName, chartType, loading)
-
   return (
     <>
       {!chartType && !loading && (
@@ -55,7 +53,7 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
         </div>
       )}
       {chartType === 'stars' && (
-        <div className="h-screen w-screen p-10 flex items-center">
+        <div className="h-screen w-screen flex items-center">
           <StarHistory
             embed={true}
             repoName={repoName}
@@ -65,7 +63,7 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
         </div>
       )}
       {chartType === 'issues' && (
-        <div className="h-screen w-screen p-10">
+        <div className="h-screen w-screen">
           <IssueTracker
             embed={true}
             repoName={repoName}

@@ -1,6 +1,7 @@
 import Loader from 'icons/Loader'
 import Url from 'icons/Url'
 import Star from 'icons/Star'
+import Share from '~/icons/Share'
 import TimelineChart from '~/components/TimelineChart'
 
 const StarHistory = ({
@@ -8,7 +9,8 @@ const StarHistory = ({
   repoName,
   lastUpdated,
   starHistory,
-  loadingStarHistory
+  loadingStarHistory,
+  onOpenModal
 }) => {
 
   const renderTimelineChart = () => {
@@ -38,12 +40,14 @@ const StarHistory = ({
       {!embed && (
         <div className="pb-5 sm:px-10 sm:pb-10">
           <div className="flex items-center justify-between">
-            <a href="#starHistory" className="text-white text-2xl flex items-center group">
+            <div className="text-white text-2xl flex items-center group flex-1">
               <h1>Star History</h1>
-              <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
-                <Url />
+              <div className="hidden lg:flex items-center ml-3 transition opacity-0 group-hover:opacity-100">
+                <div className="cursor-pointer" onClick={() => onOpenModal('stars')}>
+                  <Share size={20} className="stroke-current text-gray-400" />
+                </div>
               </div>
-            </a>
+            </div>
             {!loadingStarHistory && starHistory.length > 0 && (
               <div className="flex items-center">
                 <Star />

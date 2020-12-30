@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
-import { getRepositoryStarHistory } from 'lib/helpers'
+import { getRepositoryStarHistory, generateIframeCode } from 'lib/helpers'
 import IssueTracker from '~/components/IssueTracker'
 import StarHistory from '~/components/StarHistory'
+import Modal from '~/components/Modal'
 import ExternalLink from '~/icons/ExternalLink'
+import Clipboard from '~/icons/Clipboard'
+import Check from '~/icons/Check'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
@@ -12,6 +15,11 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
 
   const router = useRouter()
   const repoName = router.query.repo
+
+  const [showModal, setShowModal] = useState(false)
+  const [iframeChartType, setIframeChartType] = useState('')
+  const [codeCopied, setCodeCopied] = useState(false)
+  const textAreaRef = useRef(null)
 
   const [issueCounts, setIssueCounts] = useState([])
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
@@ -93,8 +101,54 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
     }
   }
 
+  const toggleEmbedModal = (chartType) => {
+    setCodeCopied(false)
+    setIframeChartType(chartType)
+    setShowModal(true)
+  }
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(textAreaRef.current.value)
+    setCodeCopied(true)
+  }
+
   return (
     <>
+      <Modal
+        showModal={showModal}
+        onCloseModal={() => setShowModal(false)}
+      >
+        <div className="flex items-center justify-between">
+          <iframe
+            width={400}
+            height={250}
+            src={`https://repository-surf-9kxnp4o2y.vercel.app/${organization}/${repoName}/embed?chart=${iframeChartType}`}
+          />
+          <div className="ml-5 flex-1">
+            <div className="flex items-center justify-between mb-5">
+              <p className="text-white">Embed this chart</p>
+              <div
+                onClick={() => copyCode()}
+                className={`
+                  rounded-md border border-gray-400 p-2 transition
+                  ${!codeCopied && 'cursor-pointer hover:bg-gray-500'}
+                `}
+              >
+                {codeCopied ? <Check size={16} className="stroke-current text-brand-700" /> : <Clipboard size={16} />}
+              </div>
+            </div>
+            <textarea
+              ref={textAreaRef}
+              value={generateIframeCode(organization, repoName, iframeChartType)}
+              rows={5}
+              readOnly
+              className="w-full bg-gray-500 rounded-md p-3 font-mono text-sm text-white"
+              style={{ resize: 'none' }}
+            />
+          </div>
+        </div>
+      </Modal>
+
       <div className="sm:mx-10 mb-12 sm:mb-20">
         <p className="text-gray-400 text-xs">REPOSITORY</p>
         <a
@@ -113,6 +167,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, organization }) => 
         lastUpdated={lastUpdated}
         starHistory={starHistory}
         loadingStarHistory={loadingStarHistory}
+        onOpenModal={(chartType) => toggleEmbedModal(chartType)}
       />
       <IssueTracker
         repoName={repoName}
