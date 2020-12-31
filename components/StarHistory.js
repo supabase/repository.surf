@@ -59,7 +59,11 @@ const StarHistory = ({
           {!loadingStarHistory && (
             <div className="mt-3 text-gray-400 text-xs">
               {lastUpdated
-                ? <span>Last updated on: {new Date(lastUpdated).toDateString()}</span>
+                ? (
+                  <span>
+                    Last updated on: {new Date(lastUpdated).toLocaleDateString()}, {new Date(lastUpdated).toTimeString().split('(')[0]}
+                  </span>
+                )
                 : starHistory.length > 0 && (
                   <div className="flex item-center">
                     <Loader size={18} additionalClassName="inline"/>
