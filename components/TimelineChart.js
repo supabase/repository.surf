@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import Toggle from 'components/Toggle'
 import Pill from 'components/Pill'
 
-const oneDay = 1*24*60*60*1000
 const oneWeek = 7*24*60*60*1000
+const oneMonth = 30*24*60*60*1000
 
 const options = [
   {
@@ -11,12 +11,12 @@ const options = [
     label: 'All time'
   },
   {
-    key: 'pastWeek',
-    label: 'Past week'
+    key: 'pastMonth',
+    label: 'Past month'
   },
   {
-    key: 'today',
-    label: 'Today'
+    key: 'pastWeek',
+    label: 'Past week'
   },
 ]
 
@@ -53,10 +53,10 @@ const TimelineChart = ({
         filteredData = formattedData.filter(row => {
           if (row[dateKey] >= lastWeek.toISOString() ) return row
         })
-      } else if (selectedTimeFilter === 'today') {
-        const pastDay = new Date(currentTime - oneDay)
+      } else if (selectedTimeFilter === 'pastMonth') {
+        const pastMonth = new Date(currentTime - oneMonth)
         filteredData = formattedData.filter(row => {
-          if (row[dateKey] >= pastDay.toISOString() ) return row
+          if (row[dateKey] >= pastMonth.toISOString() ) return row
         })
       }
 
