@@ -65,7 +65,9 @@ const OrganizationOverview = ({
     const starHistory = aggregator.aggregatedStarHistory
     setAggregatedStarHistory(starHistory)
     setAggregationLoadedTime(aggregator.aggregationLoadedTime)
-    if(aggregator.aggregatedStarHistory.length > 0){
+    // If aggregationLoadedTime is not null, then that means that
+    // the aggregation has finished.
+    if(aggregator.aggregationLoadedTime){
       setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
       setAggregationLoading(false)
     }
