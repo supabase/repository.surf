@@ -117,14 +117,16 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
           }
         </div>
       </div>
-      <StarHistory
-        repoName={'all repos (up to 100) in this organization'}
-        lastUpdated={aggregationLoadedTime}
-        starHistory={aggregatedStarHistory}
-        totalStarCount={totalStarCount}
-        loadingStarHistory={aggregationLoading}
-        onOpenModal={false}
-      />
+      <div className="mt-16">
+        <StarHistory
+          repoName={'all repos (up to 100) in this organization'}
+          lastUpdated={aggregationLoadedTime}
+          starHistory={aggregatedStarHistory}
+          totalStarCount={totalStarCount}
+          loadingStarHistory={aggregationLoading}
+          onOpenModal={false}
+        />
+      </div>
     </>
   )
 }
