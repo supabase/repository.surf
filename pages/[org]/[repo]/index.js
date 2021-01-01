@@ -12,7 +12,7 @@ import Check from '~/icons/Check'
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
-const RepositoryStatistics = ({ githubAccessToken, supabase }) => {
+const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, setStarRetrievers }) => {
 
   const router = useRouter()
   const orgName = router.query.org
@@ -30,10 +30,6 @@ const RepositoryStatistics = ({ githubAccessToken, supabase }) => {
   const [starHistory, setStarHistory] = useState([])
   const [loadingStarHistory, setLoadingStarHistory] = useState(false)
   const [totalStarCount, setTotalStarCount] = useState(null)
-
-  // An object of star history retrievers.
-  // Example: {'supabase/supabase': RepoStarHistoryRetriever1, 'supabase/realtime': RepoStarHistoryRetriever2}
-  const [starHistoryRetrievers, setStarHistoryRetrievers] = useState({})
 
   useEffect(() => {
     (async function retrieveRepositoryIssueCounts() {
@@ -57,13 +53,13 @@ const RepositoryStatistics = ({ githubAccessToken, supabase }) => {
     // If not, create a new one.
     const starHistoryKey = `${orgName}/${repoName}`
     let starHistoryRetriever
-    if (starHistoryKey in starHistoryRetrievers) {
-      starHistoryRetriever = starHistoryRetrievers[starHistoryKey]
+    if (starHistoryKey in starRetrievers) {
+      starHistoryRetriever = starRetrievers[starHistoryKey]
     } else {
       starHistoryRetriever = new RepoStarHistoryRetriever(supabase, starsTable, orgName, repoName, githubAccessToken)
-      const newRetrievers = Object.assign({}, starHistoryRetrievers)
+      const newRetrievers = Object.assign({}, starRetrievers)
       newRetrievers[starHistoryKey] = starHistoryRetriever
-      setStarHistoryRetrievers(newRetrievers)
+      setStarRetrievers(newRetrievers)
     }
 
     // In case the star history is already retrieved, load it on on this component.

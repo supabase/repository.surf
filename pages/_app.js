@@ -31,6 +31,10 @@ function MyApp({ Component, pageProps, router }) {
   const [viewableRepos, setViewableRepos] = useState([])
   const [filteredRepoNames, setFilteredRepoNames] = useState([])
 
+  // An object of star history retrievers.
+  // Example: {'supabase/supabase': RepoStarHistoryRetriever1, 'supabase/realtime': RepoStarHistoryRetriever2}
+  const [starRetrievers, setStarRetrievers] = useState({})
+
   useEffect(() => {
     if (router.pathname !== '/' && router.query.org) {
       (async function retrieveGithub() {
@@ -93,6 +97,8 @@ function MyApp({ Component, pageProps, router }) {
             organization={organization}
             repoNames={repos.map(repo => repo.name)}
             onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}
+            starRetrievers={starRetrievers}
+            setStarRetrievers={setStarRetrievers}
           />
         </Layout>
       )
