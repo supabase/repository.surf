@@ -51,7 +51,7 @@ const StarHistory = ({
             {!loadingStarHistory && lastUpdated && starHistory.length > 0 && (
               <div className="flex items-center">
                 <Star />
-                <span className="ml-2 text-white">{starHistory[starHistory.length - 1].starNumber}</span>
+                <span className="ml-2 text-white">{totalStarCount}</span>
               </div>
             )}
           </div>

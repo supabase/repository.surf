@@ -37,7 +37,11 @@ function MyApp({ Component, pageProps, router }) {
 
   useEffect(() => {
     if (router.pathname !== '/' && router.query.org) {
-      (async function retrieveGithub() {
+      (async function retrieveOrganizationProfile() {
+        setLoaded(false)
+        const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
+        setOrganization(org)
+
         const repos = await fetchAndWait(
           `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
           { 'Authorization': `token ${githubAccessToken}` }
@@ -45,21 +49,12 @@ function MyApp({ Component, pageProps, router }) {
         setRepos(repos.sort((a, b) => a.stargazers_count > b.stargazers_count ? -1 : 1))
         setLoaded(true)
       })()
-  
+
       const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${router.query.org}`))
       if (userPreferences && userPreferences.repoFilter) {
         const formattedFilterList = userPreferences.repoFilter.split(',').map(repo => repo.replace(/^[ ]+/g, ""))
         setFilteredRepoNames(formattedFilterList)      
       }
-    }
-  }, [router.query.org])
-
-  useEffect(() => {
-    if (router.pathname !== '/' && router.query.org) {
-      (async function retrieveOrganizationProfile() {
-        const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
-        setOrganization(org)
-      })()
     }
   }, [router.query.org])
 
@@ -92,6 +87,7 @@ function MyApp({ Component, pageProps, router }) {
         >
           <Component
             {...pageProps}
+            loaded={loaded}
             githubAccessToken={githubAccessToken}
             supabase={supabase}
             organization={organization}
