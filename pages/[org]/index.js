@@ -1,13 +1,20 @@
 import { useState, useEffect } from 'react'
 import { groupBy } from 'lib/helpers'
+import StarHistoryAggregator from 'lib/StarHistoryAggregator'
+import StarHistory from '~/components/StarHistory'
 import Info from 'icons/Info'
 import Loader from 'icons/Loader'
 import TimelineChart from 'components/TimelineChart'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
+const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
-const OrganizationOverview = ({ supabase, organization, repoNames }) => {
+const OrganizationOverview = ({ supabase, organization, repoNames,
+              starRetrievers, setStarRetrievers, githubAccessToken }) => {
   const [issueCounts, setIssueCounts] = useState([])
+  const [aggregatedStarHistory, setAggregatedStarHistory] = useState([])
+  const [aggregationLoading, setAggregationLoading] = useState(true)
+  const [aggregationLoadedTime, setAggregationLoadedTime] = useState(null)
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
   const orgName = organization.login
   const formattedOrgName = organization.name
@@ -39,6 +46,25 @@ const OrganizationOverview = ({ supabase, organization, repoNames }) => {
       }
       setLoadingIssueCounts(false)
     })()
+  }, [organization])
+
+  useEffect(() => {
+    const aggregator = new StarHistoryAggregator(supabase, starsTable,
+      orgName, githubAccessToken, starRetrievers, repoNames)
+    setAggregatedStarHistory(aggregator.aggregatedStarHistory)
+    setAggregationLoadedTime(aggregator.aggregationLoadedTime)
+    if(aggregator.aggregatedStarHistory.length > 0){
+      setAggregationLoading(false)
+    }
+
+    const { subscription } = aggregator.onAggregationFinished((aggregatedStarHistory, aggregationLoadedTime) => {
+      setAggregatedStarHistory(aggregatedStarHistory)
+      setAggregationLoadedTime(aggregationLoadedTime)
+      setAggregationLoading(false)
+    })
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [organization])
 
   const renderOrganizationIssuesTimeline = () => {
@@ -83,6 +109,13 @@ const OrganizationOverview = ({ supabase, organization, repoNames }) => {
           }
         </div>
       </div>
+      <StarHistory
+        repoName={'all repos (up to 100) in this organization'}
+        lastUpdated={aggregationLoadedTime}
+        starHistory={aggregatedStarHistory}
+        loadingStarHistory={aggregationLoading}
+        onOpenModal={false}
+      />
     </>
   )
 }
