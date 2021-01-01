@@ -9,8 +9,14 @@ import TimelineChart from 'components/TimelineChart'
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
-const OrganizationOverview = ({ supabase, organization, repoNames,
-              starRetrievers, setStarRetrievers, githubAccessToken }) => {
+const OrganizationOverview = ({
+  loaded,
+  supabase,
+  organization,
+  repoNames,
+  starRetrievers,
+  githubAccessToken
+}) => {
   const [issueCounts, setIssueCounts] = useState([])
   const [aggregatedStarHistory, setAggregatedStarHistory] = useState([])
   const [aggregationLoading, setAggregationLoading] = useState(true)
@@ -51,7 +57,7 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
 
   useEffect(() => {
     // If orgName is not loaded yet, do nothing.
-    if (!orgName) {
+    if (!loaded || !orgName || repoNames.length === 0) {
       return
     }
     const aggregator = new StarHistoryAggregator(supabase, starsTable,
@@ -73,7 +79,7 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
     return () => {
       subscription.unsubscribe()
     }
-  }, [orgName])
+  }, [repoNames])
 
   const renderOrganizationIssuesTimeline = () => {
     if (issueCounts.length > 0) {
