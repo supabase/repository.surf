@@ -4,7 +4,9 @@ import Share from '~/icons/Share'
 import TimelineChart from '~/components/TimelineChart'
 
 const StarHistory = ({
+  header = 'Star History',
   embed = false,
+  enableSharing = true,
   repoName,
   lastUpdated,
   starHistory,
@@ -41,12 +43,14 @@ const StarHistory = ({
         <div className="pb-5 sm:px-10 sm:pb-10">
           <div className="flex items-center justify-between">
             <div className="text-white text-2xl flex items-center group flex-1">
-              <h1>Star History</h1>
-              <div className="hidden lg:flex items-center ml-3 transition opacity-0 group-hover:opacity-100">
-                <div className="cursor-pointer" onClick={() => onOpenModal('stars')}>
-                  <Share size={20} className="stroke-current text-gray-400" />
+              <h1>{header}</h1>
+              {enableSharing && (
+                <div className="hidden lg:flex items-center ml-3 transition opacity-0 group-hover:opacity-100">
+                  <div className="cursor-pointer" onClick={() => onOpenModal('stars')}>
+                    <Share size={20} className="stroke-current text-gray-400" />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
             {!loadingStarHistory && lastUpdated && starHistory.length > 0 && (
               <div className="flex items-center">

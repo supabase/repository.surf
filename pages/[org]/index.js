@@ -106,6 +106,15 @@ const OrganizationOverview = ({
 
   return (
     <>
+      <StarHistory
+        header={`Overview of ${formattedOrgName}'s star history`}
+        repoName={'all repositories (up to 100) in this organization'}
+        lastUpdated={aggregationLoadedTime}
+        starHistory={aggregatedStarHistory}
+        totalStarCount={totalStarCount}
+        loadingStarHistory={aggregationLoading}
+        enableSharing={false}
+      />
       <div className="pb-5 sm:px-10 sm:pb-10">
         <h1 className="text-white text-2xl">Overview of {formattedOrgName} on Github</h1>
         <p className="mt-2 text-base text-gray-400">Timeline of open issues across all {repoNames.length} repositories</p>
@@ -122,16 +131,6 @@ const OrganizationOverview = ({
             : <>{renderOrganizationIssuesTimeline()}</>
           }
         </div>
-      </div>
-      <div className="mt-16">
-        <StarHistory
-          repoName={'all repos (up to 100) in this organization'}
-          lastUpdated={aggregationLoadedTime}
-          starHistory={aggregatedStarHistory}
-          totalStarCount={totalStarCount}
-          loadingStarHistory={aggregationLoading}
-          onOpenModal={false}
-        />
       </div>
     </>
   )
