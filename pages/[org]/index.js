@@ -49,6 +49,10 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
   }, [organization])
 
   useEffect(() => {
+    // If orgName is not loaded yet, do nothing.
+    if (!orgName) {
+      return
+    }
     const aggregator = new StarHistoryAggregator(supabase, starsTable,
       orgName, githubAccessToken, starRetrievers, repoNames)
     setAggregatedStarHistory(aggregator.aggregatedStarHistory)
@@ -65,7 +69,7 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
     return () => {
       subscription.unsubscribe()
     }
-  }, [organization])
+  }, [orgName])
 
   const renderOrganizationIssuesTimeline = () => {
     if (issueCounts.length > 0) {
