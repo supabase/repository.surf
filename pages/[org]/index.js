@@ -15,6 +15,7 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
   const [aggregatedStarHistory, setAggregatedStarHistory] = useState([])
   const [aggregationLoading, setAggregationLoading] = useState(true)
   const [aggregationLoadedTime, setAggregationLoadedTime] = useState(null)
+  const [totalStarCount, setTotalStarCount] = useState(null)
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
   const orgName = organization.login
   const formattedOrgName = organization.name
@@ -55,14 +56,17 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
     }
     const aggregator = new StarHistoryAggregator(supabase, starsTable,
       orgName, githubAccessToken, starRetrievers, repoNames)
-    setAggregatedStarHistory(aggregator.aggregatedStarHistory)
+    const starHistory = aggregator.aggregatedStarHistory
+    setAggregatedStarHistory(starHistory)
     setAggregationLoadedTime(aggregator.aggregationLoadedTime)
     if(aggregator.aggregatedStarHistory.length > 0){
+      setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
       setAggregationLoading(false)
     }
 
-    const { subscription } = aggregator.onAggregationFinished((aggregatedStarHistory, aggregationLoadedTime) => {
-      setAggregatedStarHistory(aggregatedStarHistory)
+    const { subscription } = aggregator.onAggregationFinished((starHistory, aggregationLoadedTime) => {
+      setAggregatedStarHistory(starHistory)
+      setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
       setAggregationLoadedTime(aggregationLoadedTime)
       setAggregationLoading(false)
     })
@@ -117,6 +121,7 @@ const OrganizationOverview = ({ supabase, organization, repoNames,
         repoName={'all repos (up to 100) in this organization'}
         lastUpdated={aggregationLoadedTime}
         starHistory={aggregatedStarHistory}
+        totalStarCount={totalStarCount}
         loadingStarHistory={aggregationLoading}
         onOpenModal={false}
       />
