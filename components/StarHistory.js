@@ -11,6 +11,7 @@ const StarHistory = ({
   lastUpdated,
   starHistory,
   loadingStarHistory,
+  loadingMessage = null,
   totalStarCount,
   onOpenModal
 }) => {
@@ -89,7 +90,9 @@ const StarHistory = ({
             ? (
               <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
                 <Loader />
-                <p className="text-xs mt-3 leading-5 text-center">Retrieving repository star history</p>
+                <p className="text-xs mt-3 leading-5 text-center">
+                  {loadingMessage || "Retrieving repository star history"}
+                </p>
               </div>
             )
             : (
