@@ -21,6 +21,7 @@ const OrganizationOverview = ({
   const [aggregatedStarHistory, setAggregatedStarHistory] = useState([])
   const [aggregationLoading, setAggregationLoading] = useState(true)
   const [aggregationLoadedTime, setAggregationLoadedTime] = useState(null)
+  const [aggregationCount, setAggregationCount] = useState(0)
   const [totalStarCount, setTotalStarCount] = useState(null)
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
   const orgName = organization.login
@@ -65,6 +66,7 @@ const OrganizationOverview = ({
     const starHistory = aggregator.aggregatedStarHistory
     setAggregatedStarHistory(starHistory)
     setAggregationLoadedTime(aggregator.aggregationLoadedTime)
+    setAggregationCount(aggregator.aggregationCount)
     // If aggregationLoadedTime is not null, then that means that
     // the aggregation has finished.
     if(aggregator.aggregationLoadedTime){
@@ -72,11 +74,15 @@ const OrganizationOverview = ({
       setAggregationLoading(false)
     }
 
-    const { subscription } = aggregator.onAggregationFinished((starHistory, aggregationLoadedTime) => {
+    const { subscription } = aggregator.onAggregationUpdated(
+        (starHistory, aggregationLoadedTime, aggregationCount) => {
       setAggregatedStarHistory(starHistory)
-      setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
       setAggregationLoadedTime(aggregationLoadedTime)
-      setAggregationLoading(false)
+      setAggregationCount(aggregationCount)
+      if(aggregator.aggregationLoadedTime){
+        setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
+        setAggregationLoading(false)
+      }
     })
     return () => {
       subscription.unsubscribe()
@@ -115,6 +121,7 @@ const OrganizationOverview = ({
         starHistory={aggregatedStarHistory}
         totalStarCount={totalStarCount}
         loadingStarHistory={aggregationLoading}
+        loadingMessage={`Preparing star history... ${aggregationCount} out of ${repoNames.length} repos loaded.`}
         enableSharing={false}
       />
       <div className="pb-5 sm:px-10 sm:pb-10">
