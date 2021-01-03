@@ -29,6 +29,14 @@ const IssueTracker = ({
   ] 
   
   const [issueType, setIssueType] = useState(options[0])
+  const lastUpdated = issueCounts.length > 0
+    ? `
+      ${new Date(issueCounts[issueCounts.length - 1].inserted_at).toLocaleDateString()},
+      ${new Date(issueCounts[issueCounts.length - 1].inserted_at).toTimeString().split('(')[0]}
+    `
+    : ''
+
+  
 
   const renderTimelineChart = () => {
     if (issueCounts.length > 0) {
@@ -103,6 +111,11 @@ const IssueTracker = ({
           <p className="mt-5 text-base text-gray-400">
             This is a timeline of how many {issueType.label.toLowerCase()} {repoName} has over time.
           </p>
+          {lastUpdated && (
+            <p className="mt-5 text-gray-400 text-xs">
+              Last updated on: {lastUpdated}
+            </p>
+          )}
         </div>
       )}
       <div className="flex-1 flex flex-col items-start">
