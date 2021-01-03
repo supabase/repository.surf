@@ -1,13 +1,18 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
-import { generateIframeCode } from 'lib/helpers'
-import IssueTracker from '~/components/IssueTracker'
-import StarHistory from '~/components/StarHistory'
-import Modal from '~/components/Modal'
-import ExternalLink from '~/icons/ExternalLink'
-import Clipboard from '~/icons/Clipboard'
-import Check from '~/icons/Check'
+import {
+  generateIframeCode,
+  retrieveLatestOpenIssueCount,
+  retrieveLatestCloseIssueCount,
+  deriveOpenIssueCountComparison,
+} from 'lib/helpers'
+import IssueTracker from 'components/IssueTracker'
+import StarHistory from 'components/StarHistory'
+import Modal from 'components/Modal'
+import ExternalLink from 'icons/ExternalLink'
+import Clipboard from 'icons/Clipboard'
+import Check from 'icons/Check'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
@@ -82,50 +87,6 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, set
     }
   }, [repoName])
 
-  const retrieveLatestOpenIssueCount = () => {
-    if (issueCounts.length > 0) {
-      const latestCount = issueCounts[issueCounts.length - 1]
-      return latestCount.open_issues
-    } else {
-      return 0
-    }
-  }
-
-  const retrieveLatestCloseIssueCount = () => {
-    if (issueCounts.length > 0) {
-      const latestCount = issueCounts[issueCounts.length - 1]
-      return latestCount.closed_issues
-    } else {
-      return 0
-    }
-  }
-
-  const deriveOpenIssueCountComparison = () => {
-    if (issueCounts.length > 0) {
-      const formattedIssueCounts = issueCounts.map(repo => {
-        return {
-          open_issues: repo.open_issues,
-          inserted_at: (Math.floor(new Date(repo.inserted_at) / 1000))
-        }
-      })
-
-      const latestCount = formattedIssueCounts[formattedIssueCounts.length - 1]
-      const previousDayTimestamp = latestCount.inserted_at - 86400
-      const previousDayIssueCounts = formattedIssueCounts.filter(repo => {
-        if (repo.inserted_at <= previousDayTimestamp) return repo
-      })
-
-      if (previousDayIssueCounts.length > 0) {
-        const previousDayCount = previousDayIssueCounts[previousDayIssueCounts.length - 1]
-        return (latestCount.open_issues - previousDayCount.open_issues)
-      } else {
-        return 0
-      }
-    } else {
-      return 0
-    }
-  }
-
   const toggleEmbedModal = (chartType) => {
     setCodeCopied(false)
     setIframeChartType(chartType)
@@ -192,9 +153,9 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, set
         repoName={repoName}
         issueCounts={issueCounts}
         loadingIssueCounts={loadingIssueCounts}
-        latestOpenIssueCount={retrieveLatestOpenIssueCount()}
-        openIssueCountComparison={deriveOpenIssueCountComparison()}
-        latestClosedIssueCount={retrieveLatestCloseIssueCount()}
+        latestOpenIssueCount={retrieveLatestOpenIssueCount(issueCounts)}
+        openIssueCountComparison={deriveOpenIssueCountComparison(issueCounts)}
+        latestClosedIssueCount={retrieveLatestCloseIssueCount(issueCounts)}
         onOpenModal={(chartType) => toggleEmbedModal(chartType)}
       />
     </>
