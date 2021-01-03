@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import TimelineChart from '~/components/TimelineChart'
-import StatsIndicator from '~/components/StatsIndicator'
-import Pill from '~/components/Pill'
+import TimelineChart from 'components/TimelineChart'
+import StatsIndicator from 'components/StatsIndicator'
+import Pill from 'components/Pill'
 import Loader from 'icons/Loader'
-import Share from '~/icons/Share'
+import Share from 'icons/Share'
 import Info from 'icons/Info'
 
 const IssueTracker = ({
+  header = 'Issues Tracking',
   embed = false,
+  enableSharing = true,
   repoName,
   issueCounts,
   loadingIssueCounts = false,
@@ -88,12 +90,14 @@ const IssueTracker = ({
       {!embed && (
         <div id="issueTrack" className="w-full pb-5 sm:px-10 sm:pb-10">
           <div className="text-white text-2xl flex items-center group">
-            <h1>Issues Tracking</h1>
-            <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
-              <div className="cursor-pointer" onClick={() => onOpenModal('issues')}>
-                <Share size={20} className="stroke-current text-gray-400" />
-              </div>
-            </div>
+            <h1>{header}</h1>
+            {enableSharing && (
+                <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
+                  <div className="cursor-pointer" onClick={() => onOpenModal('issues')}>
+                    <Share size={20} className="stroke-current text-gray-400" />
+                  </div>
+                </div>
+              )}
           </div>
           <div className="mt-5 flex items-center flex-wrap">
             <p className="text-white text-sm mr-2">View for:</p>
