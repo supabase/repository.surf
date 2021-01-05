@@ -76,28 +76,26 @@ const StarHistory = ({
             )}
           </div>
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
-          {!loadingStarHistory && (
+          {!loadingStarHistory && (<>
+            <div className="mt-5 flex items-center flex-wrap">
+              <p className="text-white text-sm mr-2">View for:</p>
+              <div className="space-x-2 flex items-center">
+                {options.map((option) => (
+                  <Pill
+                    key={option.key}
+                    label={option.label}
+                    selected={option.key === chartType}
+                    onSelectPill={() => setChartType(option.key)}
+                  />
+                ))}
+              </div>
+            </div>
             <div className="mt-3 text-gray-400 text-xs">
               {lastUpdated
                 ? (
-                  <>
-                    <span>
-                      Last updated on: {new Date(lastUpdated).toLocaleDateString()}, {new Date(lastUpdated).toTimeString().split('(')[0]}
-                    </span>
-                    <div className="mt-5 flex items-center flex-wrap">
-                      <p className="text-white text-sm mr-2">View for:</p>
-                      <div className="space-x-2 flex items-center">
-                        {options.map((option) => (
-                          <Pill
-                            key={option.key}
-                            label={option.label}
-                            selected={option.key === chartType}
-                            onSelectPill={() => setChartType(option.key)}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  </>
+                  <span>
+                    Last updated on: {new Date(lastUpdated).toLocaleDateString()}, {new Date(lastUpdated).toTimeString().split('(')[0]}
+                  </span>
                 )
                 : starHistory.length > 0 && (
                   <div className="flex item-center">
@@ -111,7 +109,7 @@ const StarHistory = ({
                 )
               }
             </div>
-          )}
+          </>)}
         </div>
       )}
       <div className="flex-1 flex flex-col items-start">
