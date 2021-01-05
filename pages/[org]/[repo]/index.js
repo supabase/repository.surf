@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
 import {
@@ -31,8 +31,6 @@ const RepositoryStatistics = ({
   const [showModal, setShowModal] = useState(false)
   const [modalType, setModalType] = useState('')
   const [iframeChartType, setIframeChartType] = useState('')
-  const [codeCopied, setCodeCopied] = useState(false)
-  const textAreaRef = useRef(null)
 
   const [issueCounts, setIssueCounts] = useState([])
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
@@ -94,7 +92,6 @@ const RepositoryStatistics = ({
   }, [repoName])
 
   const toggleShareModal = (chartType) => {
-    setCodeCopied(false)
     setModalType('share')
     setIframeChartType(chartType)
     setShowModal(true)
