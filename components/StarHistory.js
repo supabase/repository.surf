@@ -16,7 +16,7 @@ const StarHistory = ({
   loadingStarHistory,
   loadingMessage = null,
   totalStarCount,
-  onOpenModal
+  onOpenShare
 }) => {
 
   const options = [
@@ -83,7 +83,7 @@ const StarHistory = ({
               <h1>{header}</h1>
               {enableSharing && (
                 <div className="hidden lg:flex items-center ml-3 transition opacity-0 group-hover:opacity-100">
-                  <div className="cursor-pointer" onClick={() => onOpenModal('stars')}>
+                  <div className="cursor-pointer" onClick={() => onOpenShare('stars')}>
                     <Share size={20} className="stroke-current text-gray-400" />
                   </div>
                 </div>
@@ -111,7 +111,7 @@ const StarHistory = ({
                 ))}
               </div>
             </div>
-            <div className="mt-3 text-gray-400 text-xs">
+            <div className="mt-5 text-gray-400 text-xs">
               {lastUpdated
                 ? (
                   <span>

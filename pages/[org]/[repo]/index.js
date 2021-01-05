@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
 import {
-  generateIframeCode,
   retrieveLatestOpenIssueCount,
   retrieveLatestCloseIssueCount,
   deriveOpenIssueCountComparison,
@@ -10,20 +9,27 @@ import {
 import IssueTracker from 'components/IssueTracker'
 import StarHistory from 'components/StarHistory'
 import Modal from 'components/Modal'
+import ChartShareModal from 'components/Modals/ChartShareModal'
+import IssueTrackerInfoModal from 'components/Modals/IssueTrackerInfoModal'
 import ExternalLink from 'icons/ExternalLink'
-import Clipboard from 'icons/Clipboard'
-import Check from 'icons/Check'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
-const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, setStarRetrievers }) => {
+const RepositoryStatistics = ({
+  githubAccessToken,
+  organization,
+  supabase,
+  starRetrievers,
+  setStarRetrievers
+}) => {
 
   const router = useRouter()
   const orgName = router.query.org
   const repoName = router.query.repo
 
   const [showModal, setShowModal] = useState(false)
+  const [modalType, setModalType] = useState('')
   const [iframeChartType, setIframeChartType] = useState('')
   const [codeCopied, setCodeCopied] = useState(false)
   const textAreaRef = useRef(null)
@@ -87,15 +93,16 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, set
     }
   }, [repoName])
 
-  const toggleEmbedModal = (chartType) => {
+  const toggleShareModal = (chartType) => {
     setCodeCopied(false)
+    setModalType('share')
     setIframeChartType(chartType)
     setShowModal(true)
   }
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(textAreaRef.current.value)
-    setCodeCopied(true)
+  const toggleInfoModal = () => {
+    setModalType('info')
+    setShowModal(true)
   }
 
   return (
@@ -103,29 +110,16 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, set
       <Modal
         showModal={showModal}
         onCloseModal={() => setShowModal(false)}
+        className={`${modalType === 'info' ? 'sm:max-w-xl' : 'sm:max-w-md'}`}
       >
-        <div className="flex-1">
-          <div className="flex items-center justify-between mb-5">
-            <p className="text-white">Embed this chart</p>
-            <div
-              onClick={() => copyCode()}
-              className={`
-                rounded-md border border-gray-400 p-2 transition
-                ${!codeCopied && 'cursor-pointer hover:bg-gray-500'}
-              `}
-            >
-              {codeCopied ? <Check size={16} className="stroke-current text-brand-700" /> : <Clipboard size={16} />}
-            </div>
-          </div>
-          <textarea
-            ref={textAreaRef}
-            value={generateIframeCode(orgName, repoName, iframeChartType)}
-            rows={4}
-            readOnly
-            className="w-full bg-gray-500 rounded-md p-3 font-mono text-sm text-white"
-            style={{ resize: 'none' }}
+        {modalType === 'share' && (
+          <ChartShareModal
+            orgName={orgName}
+            repoName={repoName}
+            iframeChartType={iframeChartType}
           />
-        </div>
+        )}
+        {modalType === 'info' && <IssueTrackerInfoModal orgName={organization.name} />}
       </Modal>
 
       <div className="sm:mx-10 mb-12 sm:mb-20">
@@ -147,7 +141,7 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, set
         starHistory={starHistory}
         loadingStarHistory={loadingStarHistory}
         totalStarCount={totalStarCount}
-        onOpenModal={(chartType) => toggleEmbedModal(chartType)}
+        onOpenShare={(chartType) => toggleShareModal(chartType)}
       />
       <IssueTracker
         repoName={repoName}
@@ -156,7 +150,8 @@ const RepositoryStatistics = ({ githubAccessToken, supabase, starRetrievers, set
         latestOpenIssueCount={retrieveLatestOpenIssueCount(issueCounts)}
         openIssueCountComparison={deriveOpenIssueCountComparison(issueCounts)}
         latestClosedIssueCount={retrieveLatestCloseIssueCount(issueCounts)}
-        onOpenModal={(chartType) => toggleEmbedModal(chartType)}
+        onOpenShare={(chartType) => toggleShareModal(chartType)}
+        onOpenInfo={() => toggleInfoModal()}
       />
     </>
   )

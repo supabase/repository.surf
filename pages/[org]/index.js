@@ -116,6 +116,7 @@ const OrganizationOverview = ({
         openIssueCountComparison={deriveOpenIssueCountComparison(issueCounts)}
         latestClosedIssueCount={retrieveLatestCloseIssueCount(issueCounts)}
         enableSharing={false}
+        onOpenInfo={() => {}}
       />
     </>
   )
