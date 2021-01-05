@@ -8,6 +8,8 @@ import {
 } from 'lib/helpers'
 import StarHistory from 'components/StarHistory'
 import IssueTracker from 'components/IssueTracker'
+import Modal from 'components/Modal'
+import IssueTrackerInfoModal from 'components/Modals/IssueTrackerInfoModal'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
@@ -20,6 +22,7 @@ const OrganizationOverview = ({
   starRetrievers,
   githubAccessToken
 }) => {
+  const [showModal, setShowModal] = useState(false)
   const [issueCounts, setIssueCounts] = useState([])
   const [aggregatedStarHistory, setAggregatedStarHistory] = useState([])
   const [aggregationLoading, setAggregationLoading] = useState(true)
@@ -96,6 +99,13 @@ const OrganizationOverview = ({
 
   return (
     <>
+      <Modal
+        showModal={showModal}
+        onCloseModal={() => setShowModal(false)}
+        className="sm:max-w-xl"
+      >
+        <IssueTrackerInfoModal orgName={organization.name} />
+      </Modal>
       <StarHistory
         header={`Overview of ${formattedOrgName}'s star history`}
         repoName="all repositories (up to 100) in this organization"
@@ -116,6 +126,7 @@ const OrganizationOverview = ({
         openIssueCountComparison={deriveOpenIssueCountComparison(issueCounts)}
         latestClosedIssueCount={retrieveLatestCloseIssueCount(issueCounts)}
         enableSharing={false}
+        onOpenInfo={() => setShowModal(true)}
       />
     </>
   )

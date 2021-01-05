@@ -16,7 +16,8 @@ const IssueTracker = ({
   latestOpenIssueCount,
   openIssueCountComparison,
   latestClosedIssueCount,
-  onOpenModal,
+  onOpenShare,
+  onOpenInfo,
 }) => {
 
   const options = [
@@ -77,9 +78,16 @@ const IssueTracker = ({
       )
     } else {
       return (
-        <div className="px-5 sm:px-10 text-gray-400 w-full flex-1 flex flex-col items-center justify-center text-center">
-          <Info />
-          <span className="mt-5">Issues under {repoName} are not being tracked at the moment.</span>
+        <div
+          className={`
+            px-5 sm:px-10 py-24 lg:py-36 text-gray-400 mx-auto w-full flex-1
+            flex flex-col items-center justify-center text-center
+          `}
+        >
+          <div className="cursor-pointer transition opacity-25 hover:opacity-75" onClick={() => onOpenInfo()}>
+            <Info size={24} className="stroke-current text-white" />
+          </div>
+          <span className="mt-5">Issues are not being tracked at the moment.</span>
         </div>
       )
     }
@@ -93,7 +101,7 @@ const IssueTracker = ({
             <h1>{header}</h1>
             {enableSharing && (
                 <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
-                  <div className="cursor-pointer" onClick={() => onOpenModal('issues')}>
+                  <div className="cursor-pointer" onClick={() => onOpenShare('issues')}>
                     <Share size={20} className="stroke-current text-gray-400" />
                   </div>
                 </div>

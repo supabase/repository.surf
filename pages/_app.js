@@ -84,7 +84,7 @@ function MyApp({ Component, pageProps, router }) {
           repos={viewableRepos}
           loaded={loaded}
           organization={organization}
-        >
+        > 
           <Component
             {...pageProps}
             loaded={loaded}
