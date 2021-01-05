@@ -15,7 +15,7 @@ const IssueTrackerInfoModal = ({ orgName }) => {
       </p>
       <p className="leading-relaxed mt-3 text-sm">
         If you'd like us to start tracking your issues, let us know right {' '}
-        <a target="_blank" href="https://github.com/supabase/supabase/discussions" className="text-brand-700">here</a>
+        <a target="_blank" href="https://github.com/supabase/repository.surf/discussions" className="text-brand-700">here</a>
       </p>
     </div>
   )
