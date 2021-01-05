@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { retrieveStarGrowthToday, retrieveStarGrowthMonth } from 'lib/helpers' 
 
 const StarHistory = ({
-  header = 'Star History',
+  header = 'Stars',
   embed = false,
   enableSharing = true,
   repoName,
@@ -52,9 +52,23 @@ const StarHistory = ({
           valueKey="starNumber"
           xLabel="Number of stars"
           showOnlyDate={true}
+          renderAdditionalActions={() => {
+            return (
+              <div className="space-x-2 flex items-center">
+                {options.map((option) => (
+                  <Pill
+                    key={option.key}
+                    label={option.label}
+                    selected={option.key === chartType}
+                    onSelectPill={() => setChartType(option.key)}
+                  />
+                ))}
+              </div>
+            )
+          }}
         />
         {!embed && (
-          <div className="sm:px-10 w-full mt-10 flex flex-col">
+          <div className="sm:px-10 w-full mt-6 flex flex-col">
             <p className="text-white">Growth statistics</p>
             <div className="mt-5 grid grid-cols-12 gap-x-5">
               <div className="col-span-6 sm:col-span-5 xl:col-span-4">
@@ -77,7 +91,7 @@ const StarHistory = ({
   return (
     <div id="starHistory" className={`w-full ${embed ? '' : 'mb-12 lg:mb-20'}`}>
       {!embed && (
-        <div className="pb-5 sm:px-10 sm:pb-10">
+        <div className="pb-5 sm:px-10 sm:pb-7">
           <div className="flex items-center justify-between">
             <div className="text-white text-2xl flex items-center group flex-1">
               <h1>{header}</h1>
@@ -97,40 +111,16 @@ const StarHistory = ({
             )}
           </div>
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
-          {!loadingStarHistory && (<>
-            <div className="mt-5 flex items-center flex-wrap">
-              <p className="text-white text-sm mr-2">View for:</p>
-              <div className="space-x-2 flex items-center">
-                {options.map((option) => (
-                  <Pill
-                    key={option.key}
-                    label={option.label}
-                    selected={option.key === chartType}
-                    onSelectPill={() => setChartType(option.key)}
-                  />
-                ))}
-              </div>
+          {!loadingStarHistory && !lastUpdated && starHistory.length > 0 && (
+            <div className="mt-5 flex item-center text-xs text-gray-400">
+              <Loader size={18} additionalClassName="inline"/>
+              <span className="ml-2 transform translate-x-0.5 translate-y-0.5 inline-block">
+                Loading data (
+                  {(starHistory[starHistory.length - 1].starNumber / totalStarCount * 100).toString().slice(0, 5)
+                }% complete)
+              </span>
             </div>
-            <div className="mt-5 text-gray-400 text-xs">
-              {lastUpdated
-                ? (
-                  <span>
-                    Last updated on: {new Date(lastUpdated).toLocaleDateString()}, {new Date(lastUpdated).toTimeString().split('(')[0]}
-                  </span>
-                )
-                : starHistory.length > 0 && (
-                  <div className="flex item-center">
-                    <Loader size={18} additionalClassName="inline"/>
-                    <span className="ml-2 transform translate-x-0.5 translate-y-0.5 inline-block">
-                      Loading data (
-                        {(starHistory[starHistory.length - 1].starNumber / totalStarCount * 100).toString().slice(0, 5)
-                      }% complete)
-                    </span>
-                  </div>
-                )
-              }
-            </div>
-          </>)}
+          )}
         </div>
       )}
       <div className="flex-1 flex flex-col items-start">
@@ -144,9 +134,7 @@ const StarHistory = ({
                 </p>
               </div>
             )
-            : (
-              <>{renderTimelineChart()}</>
-            )
+            : (<>{renderTimelineChart()}</>)
           }
         </div>
       </div>

@@ -7,7 +7,7 @@ import Share from 'icons/Share'
 import Info from 'icons/Info'
 
 const IssueTracker = ({
-  header = 'Issues Tracking',
+  header = 'Issues',
   embed = false,
   enableSharing = true,
   repoName,
@@ -100,12 +100,12 @@ const IssueTracker = ({
           <div className="text-white text-2xl flex items-center group">
             <h1>{header}</h1>
             {enableSharing && (
-                <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
-                  <div className="cursor-pointer" onClick={() => onOpenShare('issues')}>
-                    <Share size={20} className="stroke-current text-gray-400" />
-                  </div>
+              <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
+                <div className="cursor-pointer" onClick={() => onOpenShare('issues')}>
+                  <Share size={20} className="stroke-current text-gray-400" />
                 </div>
-              )}
+              </div>
+            )}
           </div>
           <div className="mt-5 flex items-center flex-wrap">
             <p className="text-white text-sm mr-2">View for:</p>

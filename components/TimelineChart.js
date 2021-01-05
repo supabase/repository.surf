@@ -36,6 +36,7 @@ const TimelineChart = ({
   showOnlyDate = false,
   showBaselineToggle = false,
   showTimeFilter = true,
+  renderAdditionalActions = null,
 }) => {
   const dataPlotRef = useRef(null)
   const [isBaselineZero, setIsBaselineZero] = useState(false)
@@ -247,6 +248,8 @@ const TimelineChart = ({
             ))}
           </div>
         )}
+        {renderAdditionalActions && renderAdditionalActions()}
+        {/* Will need to change position of toggle */}
         {showBaselineToggle && chartMinValue !== 0 && (
           <Toggle
             isOn={isBaselineZero}

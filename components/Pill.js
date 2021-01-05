@@ -11,7 +11,7 @@ const Pill = ({
       onClick={() => onSelectPill()}
       className={`
         text-xs text-gray-300 px-3 py-1 cursor-pointer transition
-        ${withoutBorder ? 'border-r last:border-r-0 text-gray-400' : 'border rounded-full text-gray-300'}
+        ${withoutBorder ? 'border-r border-gray-400 last:border-r-0 text-gray-400' : 'border rounded-full text-gray-300'}
         ${selected ? selectedPillStyle : unselectedPillStyle}
       `}
     >
