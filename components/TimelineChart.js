@@ -5,11 +5,16 @@ import { convertCumulativeToDailyNewStars } from '~/lib/helpers'
 
 const oneWeek = 7*24*60*60*1000
 const oneMonth = 30*24*60*60*1000
+const ninetyDays = 90*24*60*60*1000
 
 const options = [
   {
     key: 'allTime',
     label: 'All time'
+  },
+  {
+    key: 'pastNinetyDays',
+    label: 'Past 90 days'
   },
   {
     key: 'pastMonth',
@@ -68,6 +73,11 @@ const TimelineChart = ({
         const pastMonth = new Date(currentTime - oneMonth)
         filteredData = filteredData.filter(row => {
           if (row[dateKey] >= pastMonth.toISOString() ) return row
+        })
+      } else if (selectedTimeFilter === 'pastNinetyDays') {
+        const pastNinetyDays = new Date(currentTime - ninetyDays)
+        filteredData = filteredData.filter(row => {
+          if (row[dateKey] >= pastNinetyDays.toISOString() ) return row
         })
       }
 
