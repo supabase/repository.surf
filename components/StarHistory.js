@@ -4,6 +4,8 @@ import Share from '~/icons/Share'
 import TimelineChart from '~/components/TimelineChart'
 import Pill from '~/components/Pill'
 import { useState } from 'react'
+import Share from 'icons/Share'
+import { retrieveStarGrowthToday, retrieveStarGrowthMonth } from 'lib/helpers' 
 
 const StarHistory = ({
   header = 'Star History',
@@ -13,6 +15,7 @@ const StarHistory = ({
   lastUpdated,
   starHistory,
   loadingStarHistory,
+  loadingMessage = null,
   totalStarCount,
   onOpenModal
 }) => {
@@ -31,26 +34,45 @@ const StarHistory = ({
   const [chartType, setChartType] = useState(options[0].key)
 
   const renderTimelineChart = () => {
-    if (starHistory.length == 0) {
+    if (starHistory.length > 0) {
+      return (
+        <>
+          <TimelineChart
+            id="starHistoryChart"
+            uPlot={uPlot}
+            data={starHistory}
+            chartType={chartType}
+            dateKey="date"
+            valueKey="starNumber"
+            xLabel="Number of stars"
+            showOnlyDate={true}
+          />
+          {!embed && (
+            <div className="sm:px-10 w-full mt-10 flex flex-col">
+              <p className="text-white">Growth statistics</p>
+              <div className="mt-5 grid grid-cols-12 gap-x-5">
+                <div className="col-span-6 sm:col-span-5 xl:col-span-4">
+                  <p className="text-gray-400">Past day</p>
+                  <div id="numbers" className="flex items-center mt-2">
+                    <p className="text-white text-3xl mr-2">{retrieveStarGrowthToday(starHistory)}</p>
+                  </div>
+                </div>
+                <div className="col-span-6 sm:col-span-5 xl:col-span-4">
+                  <p className="text-gray-400">For the month</p>
+                  <p className="mt-2 text-white text-3xl">{retrieveStarGrowthMonth(starHistory)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )
+    } else {
       return (
         <div className="py-24 lg:py-36 flex items-center justify-center text-gray-400">
           Repository has no stars
         </div>
       )
     }
-
-    return (
-      <TimelineChart
-        id="starHistoryChart"
-        uPlot={uPlot}
-        data={starHistory}
-        chartType={chartType}
-        dateKey="date"
-        valueKey="starNumber"
-        xLabel="Number of stars"
-        showOnlyDate={true}
-      />
-    )
   }
 
   return (
@@ -118,7 +140,9 @@ const StarHistory = ({
             ? (
               <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
                 <Loader />
-                <p className="text-xs mt-3 leading-5 text-center">Retrieving repository star history</p>
+                <p className="text-xs mt-3 leading-5 text-center">
+                  {loadingMessage || "Retrieving repository star history"}
+                </p>
               </div>
             )
             : (

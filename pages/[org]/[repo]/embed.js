@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { getRepositoryStarHistory } from 'lib/helpers'
-import IssueTracker from '~/components/IssueTracker'
-import StarHistory from '~/components/StarHistory'
+import IssueTracker from 'components/IssueTracker'
+import StarHistory from 'components/StarHistory'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE

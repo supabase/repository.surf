@@ -1,13 +1,15 @@
 import { useState } from 'react'
-import TimelineChart from '~/components/TimelineChart'
-import StatsIndicator from '~/components/StatsIndicator'
-import Pill from '~/components/Pill'
+import TimelineChart from 'components/TimelineChart'
+import StatsIndicator from 'components/StatsIndicator'
+import Pill from 'components/Pill'
 import Loader from 'icons/Loader'
-import Share from '~/icons/Share'
+import Share from 'icons/Share'
 import Info from 'icons/Info'
 
 const IssueTracker = ({
+  header = 'Issues Tracking',
   embed = false,
+  enableSharing = true,
   repoName,
   issueCounts,
   loadingIssueCounts = false,
@@ -29,6 +31,14 @@ const IssueTracker = ({
   ] 
   
   const [issueType, setIssueType] = useState(options[0])
+  const lastUpdated = issueCounts.length > 0
+    ? `
+      ${new Date(issueCounts[issueCounts.length - 1].inserted_at).toLocaleDateString()},
+      ${new Date(issueCounts[issueCounts.length - 1].inserted_at).toTimeString().split('(')[0]}
+    `
+    : ''
+
+  
 
   const renderTimelineChart = () => {
     if (issueCounts.length > 0) {
@@ -80,12 +90,14 @@ const IssueTracker = ({
       {!embed && (
         <div id="issueTrack" className="w-full pb-5 sm:px-10 sm:pb-10">
           <div className="text-white text-2xl flex items-center group">
-            <h1>Issues Tracking</h1>
-            <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
-              <div className="cursor-pointer" onClick={() => onOpenModal('issues')}>
-                <Share size={20} className="stroke-current text-gray-400" />
-              </div>
-            </div>
+            <h1>{header}</h1>
+            {enableSharing && (
+                <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
+                  <div className="cursor-pointer" onClick={() => onOpenModal('issues')}>
+                    <Share size={20} className="stroke-current text-gray-400" />
+                  </div>
+                </div>
+              )}
           </div>
           <div className="mt-5 flex items-center flex-wrap">
             <p className="text-white text-sm mr-2">View for:</p>
@@ -103,6 +115,11 @@ const IssueTracker = ({
           <p className="mt-5 text-base text-gray-400">
             This is a timeline of how many {issueType.label.toLowerCase()} {repoName} has over time.
           </p>
+          {lastUpdated && (
+            <p className="mt-5 text-gray-400 text-xs">
+              Last updated on: {lastUpdated}
+            </p>
+          )}
         </div>
       )}
       <div className="flex-1 flex flex-col items-start">
