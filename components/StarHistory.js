@@ -1,10 +1,9 @@
 import Loader from 'icons/Loader'
 import Star from 'icons/Star'
-import Share from '~/icons/Share'
-import TimelineChart from '~/components/TimelineChart'
-import Pill from '~/components/Pill'
-import { useState } from 'react'
 import Share from 'icons/Share'
+import TimelineChart from '~/components/TimelineChart'
+import Pill from 'components/Pill'
+import { useState } from 'react'
 import { retrieveStarGrowthToday, retrieveStarGrowthMonth } from 'lib/helpers' 
 
 const StarHistory = ({
