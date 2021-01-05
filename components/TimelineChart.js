@@ -4,7 +4,7 @@ import Pill from 'components/Pill'
 import { convertCumulativeToDailyNewStars } from '~/lib/helpers'
 
 const oneWeek = 7*24*60*60*1000
-const oneMonth = 30*24*60*60*1000
+const thirtyDays = 30*24*60*60*1000
 const ninetyDays = 90*24*60*60*1000
 
 const options = [
@@ -17,8 +17,8 @@ const options = [
     label: 'Past 90 days'
   },
   {
-    key: 'pastMonth',
-    label: 'Past month'
+    key: 'pastThirtyDays',
+    label: 'Past 30 days'
   },
   {
     key: 'pastWeek',
@@ -64,20 +64,19 @@ const TimelineChart = ({
         filteredData = convertCumulativeToDailyNewStars(filteredData)
       }
 
+      // We'll show data after the cutoffDate
+      let cutoffDate
       if (selectedTimeFilter === 'pastWeek') {
-        const lastWeek = new Date(currentTime - oneWeek)
-        filteredData = filteredData.filter(row => {
-          if (row[dateKey] >= lastWeek.toISOString() ) return row
-        })
-      } else if (selectedTimeFilter === 'pastMonth') {
-        const pastMonth = new Date(currentTime - oneMonth)
-        filteredData = filteredData.filter(row => {
-          if (row[dateKey] >= pastMonth.toISOString() ) return row
-        })
+        cutoffDate = new Date(currentTime - oneWeek)
+      } else if (selectedTimeFilter === 'pastThirtyDays') {
+        cutoffDate = new Date(currentTime - thirtyDays)
       } else if (selectedTimeFilter === 'pastNinetyDays') {
-        const pastNinetyDays = new Date(currentTime - ninetyDays)
+        cutoffDate = new Date(currentTime - ninetyDays)
+      }
+
+      if (selectedTimeFilter != 'allTime') {
         filteredData = filteredData.filter(row => {
-          if (row[dateKey] >= pastNinetyDays.toISOString() ) return row
+          if (row[dateKey] >= cutoffDate.toISOString() ) return row
         })
       }
 
