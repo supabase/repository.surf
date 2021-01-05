@@ -2,6 +2,7 @@ import Loader from 'icons/Loader'
 import Star from 'icons/Star'
 import Share from '~/icons/Share'
 import TimelineChart from '~/components/TimelineChart'
+// import { convertCumulativeToDailyNewStars } from '~/lib/helpers'
 
 const StarHistory = ({
   header = 'Star History',
