@@ -169,7 +169,7 @@ const TimelineChart = ({
               stroke: "transparent"
             }
           }
-        ]
+        ],
       };
 
       const chartData = [[], []]
@@ -191,6 +191,10 @@ const TimelineChart = ({
       dataPlotRef.current = plot
     }
 
+    const legend = dataPlotRef.current?.root.querySelector(".u-legend")
+    const chartRegion = dataPlotRef.current?.root.querySelector(".u-over")
+    if (legend) legend.style.visibility = 'hidden'
+
     const handleResize = () => {
       const chartDiv = document.getElementById(id)
       dataPlotRef.current?.setSize({
@@ -199,8 +203,22 @@ const TimelineChart = ({
       })
     }
 
+    const handleMouseEnter = () => {
+      if (legend) legend.style.visibility = 'visible'
+    }
+
+    const handleMouseLeave = () => {
+      if (legend) legend.style.visibility = 'hidden'
+    }
+
     window.addEventListener("resize", handleResize)
-    return () => window.removeEventListener("resize", handleResize)
+    chartRegion.addEventListener("mouseenter", handleMouseEnter)
+    chartRegion.addEventListener("mouseleave", handleMouseLeave)
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      chartRegion.removeEventListener("mouseenter", handleMouseEnter)
+      chartRegion.removeEventListener("mouseleave", handleMouseLeave)
+    }
   }, [])
 
   const chartMinValue = Math.min(...data.map(issue => issue[valueKey]))
@@ -231,7 +249,10 @@ const TimelineChart = ({
         )}
       </div>
       <div className="text-white clear-both">
-        <div id={id} className="w-full h-60 sm:h-80 flex items-center justify-center" />
+        <div
+          id={id}
+          className="w-full h-60 sm:h-80 flex items-center justify-center"
+        />
       </div>
     </>
   )
