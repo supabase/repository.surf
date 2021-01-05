@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Toggle from 'components/Toggle'
 import Pill from 'components/Pill'
+import { convertCumulativeToDailyNewStars } from '~/lib/helpers'
 
 const oneWeek = 7*24*60*60*1000
 const oneMonth = 30*24*60*60*1000
@@ -26,6 +27,7 @@ const TimelineChart = ({
   data,
   dateKey,
   valueKey,
+  chartType = null,
   xLabel = '',
   showOnlyDate = false,
   showBaselineToggle = false,
@@ -48,14 +50,23 @@ const TimelineChart = ({
       })
       let filteredData = formattedData.slice()
 
+      // If the chartType exists and is 'daily_new_counts', then
+      // convert our data from cumulative to daily increase counts.
+      // NOTE: convertCumulativeToDailyNewStars currently only works
+      // for star counts.
+      // ASSUMPTION: When looking at star counts, the data is already sorted.
+      if (chartType && chartType === 'daily_new_counts') {
+        filteredData = convertCumulativeToDailyNewStars(filteredData)
+      }
+
       if (selectedTimeFilter === 'pastWeek') {
         const lastWeek = new Date(currentTime - oneWeek)
-        filteredData = formattedData.filter(row => {
+        filteredData = filteredData.filter(row => {
           if (row[dateKey] >= lastWeek.toISOString() ) return row
         })
       } else if (selectedTimeFilter === 'pastMonth') {
         const pastMonth = new Date(currentTime - oneMonth)
-        filteredData = formattedData.filter(row => {
+        filteredData = filteredData.filter(row => {
           if (row[dateKey] >= pastMonth.toISOString() ) return row
         })
       }
@@ -64,10 +75,15 @@ const TimelineChart = ({
         return (a[dateKey] < b[dateKey]) ? -1 : ((a[dateKey] > b[dateKey]) ? 1 : 0);
       })
       const chartData = [[], []]
-      sortedData.forEach(issue => {
-        chartData[0].push(Math.floor(new Date(issue[dateKey]) / 1000))
-        chartData[1].push(issue[valueKey])
+      sortedData.forEach(row => {
+        chartData[0].push(Math.floor(new Date(row[dateKey]) / 1000))
+        chartData[1].push(row[valueKey])
       })
+      // sortedData format example:
+      // [{<dateKey>: "2019-10-15T00:00:00.000Z", <valueKey>: 1},
+      //  {<dateKey>: "2020-01-15T00:00:00.000Z", <valueKey>: 2},
+      //  {<dateKey>: "2020-01-16T00:00:00.000Z", <valueKey>: 15}]
+      
       // We need to pass true as the second argument of setData
       // in order to reset the scale.
       dataPlotRef.current?.setData(chartData, true)
@@ -80,7 +96,7 @@ const TimelineChart = ({
       }
       
     }
-  }, [data, valueKey, isBaselineZero, selectedTimeFilter])
+  }, [data, valueKey, chartType, isBaselineZero, selectedTimeFilter])
 
   useEffect(() => {
     if (dataPlotRef.current === null) {

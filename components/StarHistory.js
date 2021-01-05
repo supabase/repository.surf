@@ -1,7 +1,9 @@
 import Loader from 'icons/Loader'
 import Star from 'icons/Star'
 import Share from 'icons/Share'
-import TimelineChart from 'components/TimelineChart'
+import TimelineChart from '~/components/TimelineChart'
+import Pill from 'components/Pill'
+import { useState } from 'react'
 import { retrieveStarGrowthToday, retrieveStarGrowthMonth } from 'lib/helpers' 
 
 const StarHistory = ({
@@ -17,6 +19,19 @@ const StarHistory = ({
   onOpenModal
 }) => {
 
+  const options = [
+    {
+      key: 'cumulative_counts',
+      label: 'Cumulative counts'
+    },
+    {
+      key: 'daily_new_counts',
+      label: 'Daily new counts'
+    }
+  ] 
+  
+  const [chartType, setChartType] = useState(options[0].key)
+
   const renderTimelineChart = () => {
     if (starHistory.length > 0) {
       return (
@@ -25,6 +40,7 @@ const StarHistory = ({
             id="starHistoryChart"
             uPlot={uPlot}
             data={starHistory}
+            chartType={chartType}
             dateKey="date"
             valueKey="starNumber"
             xLabel="Number of stars"
@@ -81,7 +97,20 @@ const StarHistory = ({
             )}
           </div>
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
-          {!loadingStarHistory && (
+          {!loadingStarHistory && (<>
+            <div className="mt-5 flex items-center flex-wrap">
+              <p className="text-white text-sm mr-2">View for:</p>
+              <div className="space-x-2 flex items-center">
+                {options.map((option) => (
+                  <Pill
+                    key={option.key}
+                    label={option.label}
+                    selected={option.key === chartType}
+                    onSelectPill={() => setChartType(option.key)}
+                  />
+                ))}
+              </div>
+            </div>
             <div className="mt-3 text-gray-400 text-xs">
               {lastUpdated
                 ? (
@@ -101,7 +130,7 @@ const StarHistory = ({
                 )
               }
             </div>
-          )}
+          </>)}
         </div>
       )}
       <div className="flex-1 flex flex-col items-start">
