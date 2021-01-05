@@ -2,7 +2,8 @@ import Loader from 'icons/Loader'
 import Star from 'icons/Star'
 import Share from '~/icons/Share'
 import TimelineChart from '~/components/TimelineChart'
-// import { convertCumulativeToDailyNewStars } from '~/lib/helpers'
+import Pill from '~/components/Pill'
+import { useState } from 'react'
 
 const StarHistory = ({
   header = 'Star History',
@@ -16,26 +17,40 @@ const StarHistory = ({
   onOpenModal
 }) => {
 
+  const options = [
+    {
+      key: 'cumulative_counts',
+      label: 'Cumulative counts'
+    },
+    {
+      key: 'daily_new_counts',
+      label: 'Daily new counts'
+    }
+  ] 
+  
+  const [chartType, setChartType] = useState(options[0].key)
+
   const renderTimelineChart = () => {
-    if (starHistory.length > 0) {
-      return (
-        <TimelineChart
-          id="starHistoryChart"
-          uPlot={uPlot}
-          data={starHistory}
-          dateKey="date"
-          valueKey="starNumber"
-          xLabel="Number of stars"
-          showOnlyDate={true}
-        />
-      )
-    } else {
+    if (starHistory.length == 0) {
       return (
         <div className="py-24 lg:py-36 flex items-center justify-center text-gray-400">
           Repository has no stars
         </div>
       )
     }
+
+    return (
+      <TimelineChart
+        id="starHistoryChart"
+        uPlot={uPlot}
+        data={starHistory}
+        chartType={chartType}
+        dateKey="date"
+        valueKey="starNumber"
+        xLabel="Number of stars"
+        showOnlyDate={true}
+      />
+    )
   }
 
   return (
@@ -65,9 +80,24 @@ const StarHistory = ({
             <div className="mt-3 text-gray-400 text-xs">
               {lastUpdated
                 ? (
-                  <span>
-                    Last updated on: {new Date(lastUpdated).toLocaleDateString()}, {new Date(lastUpdated).toTimeString().split('(')[0]}
-                  </span>
+                  <>
+                    <span>
+                      Last updated on: {new Date(lastUpdated).toLocaleDateString()}, {new Date(lastUpdated).toTimeString().split('(')[0]}
+                    </span>
+                    <div className="mt-5 flex items-center flex-wrap">
+                      <p className="text-white text-sm mr-2">View for:</p>
+                      <div className="space-x-2 flex items-center">
+                        {options.map((option) => (
+                          <Pill
+                            key={option.key}
+                            label={option.label}
+                            selected={option.key === chartType}
+                            onSelectPill={() => setChartType(option.key)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </>
                 )
                 : starHistory.length > 0 && (
                   <div className="flex item-center">
