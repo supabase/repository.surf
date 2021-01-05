@@ -3,26 +3,25 @@ import Toggle from 'components/Toggle'
 import Pill from 'components/Pill'
 import { convertCumulativeToDailyNewStars } from '~/lib/helpers'
 
-const oneWeek = 7*24*60*60*1000
-const thirtyDays = 30*24*60*60*1000
-const ninetyDays = 90*24*60*60*1000
-
 const options = [
   {
     key: 'allTime',
-    label: 'All time'
+    label: 'All time',
   },
   {
     key: 'pastNinetyDays',
-    label: 'Past 90 days'
+    label: 'Past 90 days',
+    duration: 90*24*60*60*1000,
   },
   {
     key: 'pastThirtyDays',
-    label: 'Past 30 days'
+    label: 'Past 30 days',
+    duration: 30*24*60*60*1000,
   },
   {
     key: 'pastWeek',
-    label: 'Past week'
+    label: 'Past week',
+    duration: 7*24*60*60*1000,
   },
 ]
 
@@ -41,6 +40,23 @@ const TimelineChart = ({
   const dataPlotRef = useRef(null)
   const [isBaselineZero, setIsBaselineZero] = useState(false)
   const [selectedTimeFilter, setSelectedTimeFilter] = useState('allTime')
+
+  const deriveOptions = () => {
+    const currentTime = new Date()
+    const formattedData = data.map(row => {
+      return { ...row, [dateKey]: new Date(row[dateKey]).toISOString() }
+    })
+    return options.filter(option => {
+      if (option.key === 'allTime') return option
+      else {
+        const cutoffDate = new Date(currentTime - option.duration)
+        const filteredData = formattedData.filter(row => {
+          if (row[dateKey] >= cutoffDate.toISOString() ) return row
+        })
+        if (filteredData.length !== data.length) return option
+      }
+    })
+  }
 
   const handleToggle = () => {
     setIsBaselineZero(!isBaselineZero)
@@ -64,17 +80,10 @@ const TimelineChart = ({
         filteredData = convertCumulativeToDailyNewStars(filteredData)
       }
 
-      // We'll show data after the cutoffDate
-      let cutoffDate
-      if (selectedTimeFilter === 'pastWeek') {
-        cutoffDate = new Date(currentTime - oneWeek)
-      } else if (selectedTimeFilter === 'pastThirtyDays') {
-        cutoffDate = new Date(currentTime - thirtyDays)
-      } else if (selectedTimeFilter === 'pastNinetyDays') {
-        cutoffDate = new Date(currentTime - ninetyDays)
-      }
-
+      // We'll show data after the cutoffDate if other than allTime is selected
       if (selectedTimeFilter != 'allTime') {
+        const [selectedTimeFilterOption] = options.filter(option => option.key === selectedTimeFilter)
+        const cutoffDate = new Date(currentTime - selectedTimeFilterOption.duration)
         filteredData = filteredData.filter(row => {
           if (row[dateKey] >= cutoffDate.toISOString() ) return row
         })
@@ -227,7 +236,7 @@ const TimelineChart = ({
       <div className="sm:px-10 mb-3 flex flex-col items-start lg:flex-row lg:items-center lg:justify-between">
         {showTimeFilter && (
           <div className="flex items-center mb-5 lg:mb-0">
-            {options.map(option => (
+            {deriveOptions().map(option => (
               <Pill
                 key={option.key}
                 label={option.label}
