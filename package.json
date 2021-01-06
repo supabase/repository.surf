@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^1.1.2",
+    "@supabase/ui": "^0.1.7",
     "autoprefixer": "^10.1.0",
     "next": "10.0.3",
     "postcss": "^8.2.1",

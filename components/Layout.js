@@ -3,7 +3,9 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 
-import Sidebar from 'components/Sidebar'
+// import Sidebar from 'components/Sidebar'
+import SidebarV2 from 'components/SidebarV2'
+import Header from 'components/Header'
 import Loader from 'icons/Loader'
 
 const Menu = () => (
@@ -32,14 +34,14 @@ const Layout = ({
 
   const router = useRouter()
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     if (uPlot) setUPlotLoaded(true)
   }, [])
 
   return (
-    <div className="sm:flex">
+    <div className="flex flex-col">
       <ToastContainer
         position="bottom-right"
         autoClose={3000}
@@ -53,7 +55,7 @@ const Layout = ({
       </Head>
 
       {/* Sidebar on mobile */}
-      <div className={`fixed top-0 z-50 transform transition ${sidebarOpen ? 'translate-x-0' : '-translate-x-64'}`}>
+      {/* <div className={`fixed top-0 z-50 transform transition ${sidebarOpen ? 'translate-x-0' : '-translate-x-64'}`}>
         <Sidebar
           repositories={repos}
           selectedView={view}
@@ -66,14 +68,26 @@ const Layout = ({
         <div onClick={() => setSidebarOpen(!sidebarOpen)}>
           <Menu />
         </div>
-      </div>
+      </div> */}
 
-      <Sidebar
+      {/* <Sidebar
         className="hidden sm:flex"
         repositories={repos}
         selectedView={view}
         organizationAvatar={organization.avatar_url}
         organizationName={organization.name}
+      /> */}
+
+      <SidebarV2
+        showSidebar={showSidebar}
+        onCloseSidebar={() => setShowSidebar(false)}
+      />
+
+      <Header
+        organizationSlug={organization.login}
+        organizationAvatar={organization.avatar_url}
+        organizationName={organization.name}
+        openSidebar={() => setShowSidebar(true)}
       />
 
       {uPlotLoaded && (
