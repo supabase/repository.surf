@@ -107,7 +107,6 @@ const OrganizationOverview = ({
         <IssueTrackerInfoModal orgName={organization.name} />
       </Modal>
       <StarHistory
-        header={`Overview of ${formattedOrgName}'s star history`}
         repoName="all repositories (up to 100) in this organization"
         lastUpdated={aggregationLoadedTime}
         starHistory={aggregatedStarHistory}
@@ -118,7 +117,6 @@ const OrganizationOverview = ({
       />
 
       <IssueTracker
-        header={`Overview of ${formattedOrgName}'s issues`}
         repoName="all repositories (up to 100) in this organization"
         issueCounts={issueCounts}
         loadingIssueCounts={loadingIssueCounts}

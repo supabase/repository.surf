@@ -36,6 +36,7 @@ const TimelineChart = ({
   showOnlyDate = false,
   showBaselineToggle = false,
   showTimeFilter = true,
+  renderAdditionalActions = null,
 }) => {
   const dataPlotRef = useRef(null)
   const [isBaselineZero, setIsBaselineZero] = useState(false)
@@ -247,20 +248,23 @@ const TimelineChart = ({
             ))}
           </div>
         )}
-        {showBaselineToggle && chartMinValue !== 0 && (
-          <Toggle
-            isOn={isBaselineZero}
-            onToggle={handleToggle}
-            label="Set baseline to 0" 
-            labelPosition="right"
-          />
-        )}
+        {renderAdditionalActions && renderAdditionalActions()}
       </div>
       <div className="text-white clear-both">
         <div
           id={id}
           className="w-full h-60 sm:h-80 flex items-center justify-center"
         />
+        <div className="sm:px-10 -mt-6">
+          {showBaselineToggle && chartMinValue !== 0 && (
+            <Toggle
+              isOn={isBaselineZero}
+              onToggle={handleToggle}
+              label="Set baseline to 0" 
+              labelPosition="right"
+            />
+          )}
+        </div>
       </div>
     </>
   )
