@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Icon } from '@supabase/ui'
 import { toast } from 'react-toastify'
+import Link from 'next/link'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
 
@@ -14,7 +15,6 @@ const Header = ({
 
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [organization, setOrganization] = useState('')
 
   useEffect(() => {
@@ -42,7 +42,9 @@ const Header = ({
       <div className="bg-gray-900 h-14 flex items-center">
         <div className="mx-auto container flex items-center justify-between">
           <div className="flex-1 flex items-center justify-start">
-            <img className="h-6" src="logo.png" />
+            <Link href="/">
+              <img className="h-6 cursor-pointer" src="logo.png" />
+            </Link>
           </div>
           <div className="flex-1 flex items-center justify-center">
             <form

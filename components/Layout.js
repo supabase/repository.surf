@@ -79,7 +79,9 @@ const Layout = ({
       /> */}
 
       <SidebarV2
+        repositories={repos}
         showSidebar={showSidebar}
+        organizationSlug={organization.login}
         onCloseSidebar={() => setShowSidebar(false)}
       />
 
