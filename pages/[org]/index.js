@@ -117,7 +117,6 @@ const OrganizationOverview = ({
       />
 
       <IssueTracker
-        header={`Overview of ${formattedOrgName}'s issues`}
         repoName="all repositories (up to 100) in this organization"
         issueCounts={issueCounts}
         loadingIssueCounts={loadingIssueCounts}
