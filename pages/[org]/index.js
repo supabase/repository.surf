@@ -31,7 +31,6 @@ const OrganizationOverview = ({
   const [totalStarCount, setTotalStarCount] = useState(null)
   const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
   const orgName = organization.login
-  const formattedOrgName = organization.name
 
   useEffect(() => {
     (async function retrieveOrganizationStats() {

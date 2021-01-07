@@ -8,7 +8,10 @@ const Sidebar = ({
   showSidebar = false,
   direction='right',
   repositories = [],
+  selectedRepositories = [],
   organizationSlug,
+  onToggleRepo = () => {},
+  onToggleAllRepos = () => {},
   onCloseSidebar = () => {},
 }) => {
 
@@ -105,22 +108,38 @@ const Sidebar = ({
         </div>
 
         <div className="flex items-center justify-between">
-          <Checkbox label="Select all" onChange={() => console.log("Select all")} />
-          <p className="text-sm text-gray-400">5 repos selected</p>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded-sm"
+              name="selectAll"
+              checked={selectedRepositories.length === repositories.length}
+              onChange={() => onToggleAllRepos()}
+            />
+            <label htmlFor="selectAll" className="ml-3 text-white text-sm">Select all</label>
+          </div>
+          <p className="text-sm text-gray-400">
+            {selectedRepositories.length > 0 ? selectedRepositories.length : 'No'} repo{selectedRepositories.length > 1 && 's'} selected
+          </p>
         </div>
 
         <div className="border-t border-gray-500 my-4" />
 
         <div className="space-y-4">
-          {repoList.map((repo, idx) => (
-            <Checkbox
-              key={`repo_${idx}`}
-              label={repo.name}
-              layout="vertical"
-              className="font-sans text-gray-400"
-              onChange={() => {console.log("selecting", repo.name)}}
-            />
-          ))}
+          {repoList.map((repo, idx) => {
+            return (
+              <div key={`repo_${idx}`} className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="rounded-sm"
+                  name={repo.name}
+                  checked={selectedRepositories.indexOf(repo.name) >= 0}
+                  onChange={() => onToggleRepo(repo.name)}
+                />
+                <label htmlFor={repo.name} className="ml-3 text-white text-sm">{repo.name}</label>
+              </div>
+            )
+          })}
         </div>
       </div>
     </Transition>

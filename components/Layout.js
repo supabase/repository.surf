@@ -33,12 +33,35 @@ const Layout = ({
   children }) => {
 
   const router = useRouter()
+  const [selectedRepos, setSelectedRepos] = useState([])
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     if (uPlot) setUPlotLoaded(true)
   }, [])
+
+  useEffect(() => {
+    setSelectedRepos(repos.map(repo => repo.name))
+  }, [repos])
+
+  const toggleRepo = (repoName) => {
+    let updatedSelectedRepos = selectedRepos.slice()
+    if (selectedRepos.indexOf(repoName) !== -1) {
+      updatedSelectedRepos = updatedSelectedRepos.filter(repo => repo !== repoName)
+    } else {
+      updatedSelectedRepos.push(repoName)
+    }
+    setSelectedRepos(updatedSelectedRepos)
+  }
+
+  const toggleAllRepos = () => {
+    if (selectedRepos.length === repos.length) {
+      setSelectedRepos([])
+    } else {
+      setSelectedRepos(repos.map(repo => repo.name))
+    }
+  }
 
   return (
     <div className="flex flex-col">
@@ -80,8 +103,11 @@ const Layout = ({
 
       <SidebarV2
         repositories={repos}
+        selectedRepositories={selectedRepos}
         showSidebar={showSidebar}
         organizationSlug={organization.login}
+        onToggleRepo={(repoName) => toggleRepo(repoName)}
+        onToggleAllRepos={() => toggleAllRepos()}
         onCloseSidebar={() => setShowSidebar(false)}
       />
 
