@@ -28,7 +28,7 @@ const Header = ({
     setLoading(true)
     const org = await fetchAndWait(`https://api.github.com/orgs/${organization}`)
     if (org.name) {
-      router.push(organization.toLowerCase())
+      router.push(`/${organization.toLowerCase()}`)
     } else {
       toast.error(`The organization ${organization} cannot be found`)
     }
@@ -67,9 +67,11 @@ const Header = ({
             </form>
           </div>
           <div className="flex-1 flex items-center justify-end space-x-4 sm:space-x-8">
-            <div className="cursor-pointer" onClick={() => {console.log("Settings")}}>
-              <Icon type="Settings" size={20} strokeWidth={2} className="text-white" />
-            </div>
+            <Link href={`${organizationSlug}/settings`}>
+              <div className="cursor-pointer">
+                <Icon type="Settings" size={20} strokeWidth={2} className="text-white" />
+              </div>
+            </Link>
             <div className="cursor-pointer" onClick={() => {console.log("User")}}>
               <Icon type="User" size={20} strokeWidth={2} className="text-white" />
             </div>

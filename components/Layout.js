@@ -7,32 +7,18 @@ import Sidebar from 'components/Sidebar'
 import Header from 'components/Header'
 import Loader from 'icons/Loader'
 
-const Menu = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    stroke="#FFF"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="3" y1="6" x2="21" y2="6" />
-    <line x1="3" y1="18" x2="21" y2="18" />
-  </svg>
-)
-
 const Layout = ({
-  view,
   repos,
+  selectedRepos,
   loaded,
   organization,
-  children }) => {
+  children,
+  toggleRepo = () => {},
+  toggleAllRepos = () => {},
+}) => {
 
   const router = useRouter()
-  const [selectedRepos, setSelectedRepos] = useState([])
+  // const [selectedRepos, setSelectedRepos] = useState([])
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
 
@@ -40,27 +26,23 @@ const Layout = ({
     if (uPlot) setUPlotLoaded(true)
   }, [])
 
-  useEffect(() => {
-    setSelectedRepos(repos.map(repo => repo.name))
-  }, [repos])
+  // const toggleRepo = (repoName) => {
+  //   let updatedSelectedRepos = selectedRepos.slice()
+  //   if (selectedRepos.indexOf(repoName) !== -1) {
+  //     updatedSelectedRepos = updatedSelectedRepos.filter(repo => repo !== repoName)
+  //   } else {
+  //     updatedSelectedRepos.push(repoName)
+  //   }
+  //   setSelectedRepos(updatedSelectedRepos)
+  // }
 
-  const toggleRepo = (repoName) => {
-    let updatedSelectedRepos = selectedRepos.slice()
-    if (selectedRepos.indexOf(repoName) !== -1) {
-      updatedSelectedRepos = updatedSelectedRepos.filter(repo => repo !== repoName)
-    } else {
-      updatedSelectedRepos.push(repoName)
-    }
-    setSelectedRepos(updatedSelectedRepos)
-  }
-
-  const toggleAllRepos = () => {
-    if (selectedRepos.length === repos.length) {
-      setSelectedRepos([])
-    } else {
-      setSelectedRepos(repos.map(repo => repo.name))
-    }
-  }
+  // const toggleAllRepos = () => {
+  //   if (selectedRepos.length === repos.length) {
+  //     setSelectedRepos([])
+  //   } else {
+  //     setSelectedRepos(repos.map(repo => repo.name))
+  //   }
+  // }
 
   return (
     <div className="flex flex-col">
@@ -75,30 +57,6 @@ const Layout = ({
         <title>{router.query.org ? `${organization.name} ${router.query.repo ? '| ' + router.query.repo : ''}` : 'repository.surf'}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      {/* Sidebar on mobile */}
-      {/* <div className={`fixed top-0 z-50 transform transition ${sidebarOpen ? 'translate-x-0' : '-translate-x-64'}`}>
-        <Sidebar
-          repositories={repos}
-          selectedView={view}
-          organizationAvatar={organization.avatar_url}
-          organizationName={organization.name}
-          closeSidebar={() => setSidebarOpen(false)}
-        />
-      </div>
-      <div className="sm:hidden h-16 bg-gray-900 px-4 py-2 flex items-center">
-        <div onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <Menu />
-        </div>
-      </div> */}
-
-      {/* <Sidebar
-        className="hidden sm:flex"
-        repositories={repos}
-        selectedView={view}
-        organizationAvatar={organization.avatar_url}
-        organizationName={organization.name}
-      /> */}
 
       <Sidebar
         repositories={repos}
