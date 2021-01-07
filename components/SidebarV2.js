@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Icon, Transition, Checkbox } from '@supabase/ui'
+import { Icon, Transition, Input, Checkbox } from '@supabase/ui'
 
 import Dropdown from 'components/Dropdown'
 import { updateUserPreferences } from 'lib/helpers'
@@ -59,7 +59,8 @@ const Sidebar = ({
   }
 
   const onSearchRepository = (text) => {
-    console.log("Search", text)
+    const filteredRepos = repositories.filter(repo => repo.name.indexOf(text) >= 0)
+    setRepoList(filteredRepos)
   }
 
   return (
@@ -96,14 +97,12 @@ const Sidebar = ({
           </div>
         </div>
 
-        <div className="my-6">
-          <input
-            className={`
-              w-full rounded-md bg-gray-800 border border-gray-600 text-sm py-2 px-3 text-white
-              focus:outline-none focus:border-brand-800
-            `}
+        <div className="mt-3 mb-6">
+          <Input
+            icon={<Icon type="Search" />}
+            onChange={(text) => onSearchRepository(text)}
+            type="text"
             placeholder="Search for a repository"
-            onChange={(e) => onSearchRepository(e.target.value)}
           />
         </div>
 
