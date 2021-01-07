@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Icon, Badge } from '@supabase/ui'
+import { Icon } from '@supabase/ui'
 import { toast } from 'react-toastify'
 import Link from 'next/link'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
+import Dropdown from 'components/Dropdown'
 
 const Header = ({
   organizationSlug,
@@ -17,6 +18,7 @@ const Header = ({
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [organization, setOrganization] = useState('')
+  const [showUserDropdown, setShowUserDropdown] = useState(false)
 
   useEffect(() => {
     if (organizationSlug) setOrganization(organizationSlug)
@@ -35,6 +37,16 @@ const Header = ({
     }
     setLoading(false)
   }
+
+  const userOptions = [
+    {
+      key: 'signIn',
+      label: 'Sign in',
+      action: () => {
+        console.log("Github Login")
+      }
+    },
+  ]
 
   return (
     <div className="sticky top-0 z-30">
@@ -73,8 +85,12 @@ const Header = ({
                 <Icon type="Settings" size={20} strokeWidth={2} className="text-white" />
               </div>
             </Link>
-            <div className="cursor-pointer" onClick={() => {console.log("User")}}>
+            <div className="cursor-pointer relative" onClick={() => setShowUserDropdown(!showUserDropdown)}>
               <Icon type="User" size={20} strokeWidth={2} className="text-white" />
+              <Dropdown
+                showDropdown={showUserDropdown}
+                options={userOptions}
+              />
             </div>
           </div>
         </div>
