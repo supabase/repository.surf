@@ -72,6 +72,7 @@ const Layout = ({
         organizationSlug={organization.login}
         organizationAvatar={organization.avatar_url}
         organizationName={organization.name}
+        numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
       />
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Icon } from '@supabase/ui'
+import { Icon, Badge } from '@supabase/ui'
 import { toast } from 'react-toastify'
 import Link from 'next/link'
 
@@ -10,7 +10,8 @@ const Header = ({
   organizationSlug,
   organizationAvatar,
   organizationName,
-  openSidebar,
+  numberOfSelectedRepos = 0,
+  openSidebar = () => {},
 }) => {
 
   const router = useRouter()
@@ -104,6 +105,9 @@ const Header = ({
             <p>Issues</p>
           </div>
           <div className="flex-1 flex items-center justify-end">
+            <div className="px-2 py-1 text-white rounded-full border flex items-center justify-center mr-2" style={{ fontSize: '0.65rem' }}>
+              {numberOfSelectedRepos} repo{numberOfSelectedRepos > 1 && 's'} selected
+            </div>
             <div className="cursor-pointer" onClick={() => openSidebar()}>
               <Icon type="Filter" size={20} strokeWidth={2} className="text-white" />
             </div>

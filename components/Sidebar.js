@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Icon, Transition, Input, Checkbox } from '@supabase/ui'
+import { Icon, Transition, Input } from '@supabase/ui'
 
 import Dropdown from 'components/Dropdown'
 import { updateUserPreferences } from 'lib/helpers'
@@ -91,7 +91,10 @@ const Sidebar = ({
                 selectedOptionKey={selectedSort.key}
               />
             </div>
-            <div className="cursor-pointer" onClick={() => onCloseSidebar()}>
+            <div className="cursor-pointer" onClick={() => {
+              onCloseSidebar()
+              setRepoList(repositories)
+            }}>
               <Icon type="X" size={20} strokeWidth={2} />
             </div>
           </div>
