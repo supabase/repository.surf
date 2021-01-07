@@ -21,7 +21,7 @@ const Header = ({
   const [showUserDropdown, setShowUserDropdown] = useState(false)
 
   useEffect(() => {
-    if (organizationSlug) setOrganization(organizationSlug)
+    if (organizationSlug) setOrganization(organizationSlug.toLowerCase())
   }, [organizationSlug])
 
   const goToOrganization = async(event) => {
@@ -121,7 +121,7 @@ const Header = ({
             <p>Issues</p>
           </div>
           <div className="flex-1 flex items-center justify-end">
-            <div className="px-2 py-1 text-white rounded-full border flex items-center justify-center mr-2" style={{ fontSize: '0.65rem' }}>
+            <div className="hidden sm:flex px-2 py-1 text-white rounded-full border items-center justify-center mr-2" style={{ fontSize: '0.65rem' }}>
               {numberOfSelectedRepos} repo{numberOfSelectedRepos > 1 && 's'} selected
             </div>
             <div className="cursor-pointer" onClick={() => openSidebar()}>
