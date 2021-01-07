@@ -1,73 +1,54 @@
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
-import { updateUserPreferences } from 'lib/helpers'
+import { Icon, Transition, Input } from '@supabase/ui'
+
 import Dropdown from 'components/Dropdown'
-import ExternalLink from 'icons/ExternalLink'
-import Slider from 'icons/Slider'
-import Close from 'icons/Close'
+import { updateUserPreferences } from 'lib/helpers'
 
-const ChevronDown = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    stroke="currentColor"
-    strokeWidth="1"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <polyline points="6 9 12 15 18 9" />
-  </svg>
-)
-
-const ChevronLeft = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    stroke="currentColor"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round">
-      <polyline points="15 18 9 12 15 6" />
-    </svg>
-)
-
-const SideBar = ({
-  className = '',
-  organizationAvatar,
-  organizationName,
-  repositories,
-  selectedView,
-  closeSidebar = () => {},
+const Sidebar = ({
+  showSidebar = false,
+  direction='right',
+  repositories = [],
+  selectedRepositories = [],
+  organizationSlug,
+  onToggleRepo = () => {},
+  onToggleAllRepos = () => {},
+  onCloseSidebar = () => {},
 }) => {
 
-  const router = useRouter()
+  const [showSortMenu, setShowSortMenu] = useState(false)
   const [repoList, setRepoList] = useState(repositories)
   const [selectedSort, setSelectedSort] = useState({ key: 'stargazers_count', order: 'desc' })
-  const [showSortMenu, setShowSortMenu] = useState(false)
-  const [expandRepositories, setExpandRepositories] = useState(false)
 
   useEffect(() => {
-    const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${router.query.org}`))
+    const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${organizationSlug}`))
     if (userPreferences && userPreferences.sort) {
       const [key, order] = userPreferences.sort.split(' ')
       sortRepositories(key, order)
     }
-  }, [router.query.org])
+  }, [organizationSlug])
 
   useEffect(() => {
-    sortRepositories(selectedSort.key, selectedSort.order)
+    if (repositories.length > 0) sortRepositories(selectedSort.key, selectedSort.order)
   }, [repositories])
-
-  const toggleSortMenu = (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setShowSortMenu(!showSortMenu)
-  }
+  
+  const sortOptions = [
+    {
+      key: 'stargazers_count',
+      label: 'Sort by most stars ',
+      action: () => {
+        sortRepositories('stargazers_count', 'desc')
+        updateUserPreferences(organizationSlug, { sort: "stargazers_count desc" })
+      }
+    },
+    {
+      key: 'name',
+      label: 'Sort by alphabetical',
+      action: () => {
+        sortRepositories('name', 'asc')
+        updateUserPreferences(organizationSlug, { sort: "name asc" })
+      }
+    }
+  ]
 
   const sortRepositories = (key, order) => {
     const sortedRepoList = order === 'asc'
@@ -77,122 +58,94 @@ const SideBar = ({
     setSelectedSort({ key, order })
   }
 
-  const sortOptions = [
-    {
-      key: 'stargazers_count',
-      label: 'Sort by most stars ',
-      action: () => {
-        sortRepositories('stargazers_count', 'desc')
-        updateUserPreferences(router.query.org, { sort: "stargazers_count desc" })
-      }
-    },
-    {
-      key: 'name',
-      label: 'Sort by alphabetical',
-      action: () => {
-        sortRepositories('name', 'asc')
-        updateUserPreferences(router.query.org, { sort: "name asc" })
-      }
-    }
-  ]
+  const onSearchRepository = (text) => {
+    const filteredRepos = repositories.filter(repo => repo.name.indexOf(text) >= 0)
+    setRepoList(filteredRepos)
+  }
 
   return (
-    <div className={`bg-gray-500 flex flex-col h-screen w-64 ${className}`}>
-      <div className="flex items-center h-16 flex-shrink-0 px-2 bg-gray-900">
-        <div className="flex w-full items-center justify-between h-8 w-auto text-white">
-          <div className="flex items-center">
-            <Link href={'/'}>
-              <div className="cursor-pointer mr-2">
-                <ChevronLeft />
-              </div>
-            </Link>
-            <div
-              className="h-8 w-8 rounded-md bg-cover bg-center no-repeat"
-              style={{ backgroundImage: `url(${organizationAvatar})`}}
-            />
-            <div className="ml-4 flex flex-col ">
-              <p className="text-gray-400" style={{ fontSize: '0.6rem'}}>ORGANIZATION</p>
-              <a
-                className="text-white group flex items-center"
-                href={`https://github.com/${router.query.org}`}
-                target="_blank"
-                style={{ marginTop: '-2px'}}
-              >
-                <span>{organizationName}</span>
-                <div className="ml-2 transition opacity-0 group-hover:opacity-100">
-                  <ExternalLink size={14} />
-                </div>
-              </a>
+    <Transition
+      show={showSidebar}
+      enter="transition ease-out duration-100"
+      enterFrom={`transform ${direction === 'right' ? 'translate-x-80' : '-translate-x-80'}`}
+      enterTo="transform translate-x-0"
+      leave="transition ease-in duration-75"
+      leaveFrom="transform translate-x-0"
+      leaveTo={`transform ${direction === 'right' ? 'translate-x-80' : '-translate-x-80'}`}
+    >
+      <div
+        className={`
+          bg-gray-800 flex flex-col w-80 z-50 fixed top-14 p-4 overflow-y-auto
+          ${direction === 'right' ? 'right-0' : 'left-0'}
+        `}
+        style={{ height: 'calc(100vh - 3.5rem)'}}
+      >
+        <div className="flex items-center justify-between text-white">
+          <p>Repositories</p>
+          <div className="flex items-center space-x-4">
+            <div className="cursor-pointer relative" onClick={() => setShowSortMenu(!showSortMenu)}>
+              <Icon type="Sliders" size={16} strokeWidth={2} />
+              <Dropdown
+                showDropdown={showSortMenu}
+                options={sortOptions}
+                selectedOptionKey={selectedSort.key}
+              />
             </div>
-          </div>
-          <div className="sm:hidden" onClick={() => closeSidebar()}>
-            <Close />
+            <div className="cursor-pointer" onClick={() => {
+              onCloseSidebar()
+              setRepoList(repositories)
+            }}>
+              <Icon type="X" size={20} strokeWidth={2} />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="flex-1 flex flex-col overflow-y-auto bg-gray-800 py-3">
-        <nav className="flex-1 px-2 py-4 space-y-2">
-          <Link href={`/${router.query.org}`}>
-            <div
-              onClick={() => closeSidebar()}
-              className={`
-              px-2 py-2 rounded-md cursor-pointer
-              ${selectedView === 'Overview' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
-              `}
-            >
-              <span>Overview</span>
-            </div>
-          </Link>
-          <div
-            onClick={() => setExpandRepositories(!expandRepositories)}
-            className="px-2 py-2 rounded-md cursor-pointer flex items-center justify-between text-gray-200 hover:bg-gray-600 hover:text-white"
-          >
-            <span>Repositories</span>
-            <div className="flex items-center">
-              <div
-                onClick={(e) => toggleSortMenu(e)}
-                className={`relative ${expandRepositories ? 'block' : 'hidden'}`}
-              >
-                <Slider size={16} />
-                <Dropdown showDropdown={showSortMenu} options={sortOptions} selectedOptionKey={selectedSort.key} />
-              </div>              
-              <div className={`ml-4 transform transition ${expandRepositories ? 'rotate-180' : 'rotate-0'}`}>
-                <ChevronDown />
-              </div>
-            </div>
+
+        <div className="mt-3 mb-6">
+          <Input
+            icon={<Icon type="Search" />}
+            onChange={(text) => onSearchRepository(text)}
+            type="text"
+            placeholder="Search for a repository"
+          />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              className="rounded-sm"
+              name="selectAll"
+              checked={selectedRepositories.length === repositories.length}
+              onChange={() => onToggleAllRepos()}
+            />
+            <label htmlFor="selectAll" className="ml-3 text-white text-sm">Select all</label>
           </div>
-          {expandRepositories && (
-            <div className="overflow-y-hidden space-y-1">
-              {repoList.map((repo, idx) => (
-                <Link key={`repo_${idx}`} href={`/${router.query.org}/${repo.name}`}>
-                  <div
-                    onClick={() => closeSidebar()}
-                    className={`
-                      pl-5 pr-2 py-2 rounded-md cursor-pointer text-sm
-                      ${selectedView === repo.name ? 'bg-gray-900 text-brand-700' : 'text-gray-400 hover:bg-gray-600 hover:text-white'}
-                    `}
-                  >
-                    {repo.name}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-          <Link href={`/${router.query.org}/settings`}>
-            <div
-              onClick={() => closeSidebar()}
-              className={`
-              px-2 py-2 rounded-md cursor-pointer
-              ${selectedView === 'Settings' ? 'bg-gray-900 text-brand-700' : 'text-gray-200 hover:bg-gray-600 hover:text-white'}
-              `}
-            >
-              <span>Settings</span>
-            </div>
-          </Link>
-        </nav>
+          <p className="text-sm text-gray-400">
+            {selectedRepositories.length > 0 ? selectedRepositories.length : 'No'} repo{selectedRepositories.length > 1 && 's'} selected
+          </p>
+        </div>
+
+        <div className="border-t border-gray-500 my-4" />
+
+        <div className="space-y-4">
+          {repoList.map((repo, idx) => {
+            return (
+              <div key={`repo_${idx}`} className="flex items-center">
+                <input
+                  type="checkbox"
+                  className="rounded-sm"
+                  name={repo.name}
+                  checked={selectedRepositories.indexOf(repo.name) >= 0}
+                  onChange={() => onToggleRepo(repo.name)}
+                />
+                <label htmlFor={repo.name} className="ml-3 text-white text-sm">{repo.name}</label>
+              </div>
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </Transition>
   )
 }
 
-export default SideBar
+export default Sidebar

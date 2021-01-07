@@ -56,7 +56,7 @@ const Settings = ({
         toast.success('Successfully updated settings!')
       }
     } else if (filterList.length === 0) {
-      updateUserPreferences(organization.login, { repoFilter: [] })
+      updateUserPreferences(organization.login, { repoFilter: "" })
       onUpdateFilterList([])
       toast.success('Successfully updated settings!')
     }

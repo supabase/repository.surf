@@ -4,42 +4,48 @@ import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 
 import Sidebar from 'components/Sidebar'
+import Header from 'components/Header'
 import Loader from 'icons/Loader'
 
-const Menu = () => (
-  <svg
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    stroke="#FFF"
-    strokeWidth="2"
-    fill="none"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="3" y1="12" x2="21" y2="12" />
-    <line x1="3" y1="6" x2="21" y2="6" />
-    <line x1="3" y1="18" x2="21" y2="18" />
-  </svg>
-)
-
 const Layout = ({
-  view,
   repos,
+  selectedRepos,
   loaded,
   organization,
-  children }) => {
+  children,
+  toggleRepo = () => {},
+  toggleAllRepos = () => {},
+}) => {
 
   const router = useRouter()
+  // const [selectedRepos, setSelectedRepos] = useState([])
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     if (uPlot) setUPlotLoaded(true)
   }, [])
 
+  // const toggleRepo = (repoName) => {
+  //   let updatedSelectedRepos = selectedRepos.slice()
+  //   if (selectedRepos.indexOf(repoName) !== -1) {
+  //     updatedSelectedRepos = updatedSelectedRepos.filter(repo => repo !== repoName)
+  //   } else {
+  //     updatedSelectedRepos.push(repoName)
+  //   }
+  //   setSelectedRepos(updatedSelectedRepos)
+  // }
+
+  // const toggleAllRepos = () => {
+  //   if (selectedRepos.length === repos.length) {
+  //     setSelectedRepos([])
+  //   } else {
+  //     setSelectedRepos(repos.map(repo => repo.name))
+  //   }
+  // }
+
   return (
-    <div className="sm:flex">
+    <div className="flex flex-col">
       <ToastContainer
         position="bottom-right"
         autoClose={3000}
@@ -52,28 +58,22 @@ const Layout = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Sidebar on mobile */}
-      <div className={`fixed top-0 z-50 transform transition ${sidebarOpen ? 'translate-x-0' : '-translate-x-64'}`}>
-        <Sidebar
-          repositories={repos}
-          selectedView={view}
-          organizationAvatar={organization.avatar_url}
-          organizationName={organization.name}
-          closeSidebar={() => setSidebarOpen(false)}
-        />
-      </div>
-      <div className="sm:hidden h-16 bg-gray-900 px-4 py-2 flex items-center">
-        <div onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <Menu />
-        </div>
-      </div>
-
       <Sidebar
-        className="hidden sm:flex"
         repositories={repos}
-        selectedView={view}
+        selectedRepositories={selectedRepos}
+        showSidebar={showSidebar}
+        organizationSlug={organization.login}
+        onToggleRepo={(repoName) => toggleRepo(repoName)}
+        onToggleAllRepos={() => toggleAllRepos()}
+        onCloseSidebar={() => setShowSidebar(false)}
+      />
+
+      <Header
+        organizationSlug={organization.login}
         organizationAvatar={organization.avatar_url}
         organizationName={organization.name}
+        numberOfSelectedRepos={selectedRepos.length}
+        openSidebar={() => setShowSidebar(true)}
       />
 
       {uPlotLoaded && (

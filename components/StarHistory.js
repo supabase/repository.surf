@@ -16,7 +16,8 @@ const StarHistory = ({
   loadingStarHistory,
   loadingMessage = null,
   totalStarCount,
-  onOpenShare
+  noStarHistory = false,
+  onOpenShare = () => {},
 }) => {
 
   const options = [
@@ -36,7 +37,7 @@ const StarHistory = ({
     if (starHistory.length == 0) {
       return (
         <div className="py-24 lg:py-36 flex items-center justify-center text-gray-400">
-          Repository has no stars
+          {noStarHistory ? 'Selected repositories have no stars' : 'Select a repository first to view its star history'}
         </div>
       )
     }

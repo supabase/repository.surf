@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { groupBy } from 'lib/helpers'
+import { formatOrganizationIssueCount } from 'lib/helpers'
 import StarHistoryAggregator from 'lib/StarHistoryAggregator'
 import {
   retrieveLatestOpenIssueCount,
@@ -23,15 +23,16 @@ const OrganizationOverview = ({
   githubAccessToken
 }) => {
   const [showModal, setShowModal] = useState(false)
-  const [issueCounts, setIssueCounts] = useState([])
+  const [allIssueCounts, setAllIssueCounts] = useState([])
+  const [selectedIssueCounts, setSelectedIssueCounts] = useState([])
+  const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
+
   const [aggregatedStarHistory, setAggregatedStarHistory] = useState([])
   const [aggregationLoading, setAggregationLoading] = useState(true)
   const [aggregationLoadedTime, setAggregationLoadedTime] = useState(null)
   const [aggregationCount, setAggregationCount] = useState(0)
   const [totalStarCount, setTotalStarCount] = useState(null)
-  const [loadingIssueCounts, setLoadingIssueCounts] = useState(false)
   const orgName = organization.login
-  const formattedOrgName = organization.name
 
   useEffect(() => {
     (async function retrieveOrganizationStats() {
@@ -43,22 +44,9 @@ const OrganizationOverview = ({
       if (error) {
         console.error(error)
       } else if (data) {
-        const overviewIssueCounts = []
-        const formattedData = data.map(row => {
-          return { ...row, inserted_at: Math.floor(new Date(row.inserted_at))}
-        })
-        const groupedData = groupBy(formattedData, row => row.inserted_at)
-        groupedData.forEach(group => {
-          const openIssueCounts = group.map(row => row.open_issues)
-          const closedIssueCounts = group.map(row => row.closed_issues)
-          overviewIssueCounts.push({
-            'open_issues': openIssueCounts.reduce((a, b) => a + b, 0),
-            'closed_issues': closedIssueCounts.reduce((a, b) => a + b, 0),
-            'inserted_at': group[0].inserted_at
-          })
-        })
-        const sortedIssueCounts = overviewIssueCounts.sort((a, b) => a.inserted_at - b.inserted_at)
-        setIssueCounts(sortedIssueCounts)
+        setAllIssueCounts(data)
+        const formattedIssueCounts = formatOrganizationIssueCount(data)
+        setSelectedIssueCounts(formattedIssueCounts)
       }
       setLoadingIssueCounts(false)
     })()
@@ -67,6 +55,7 @@ const OrganizationOverview = ({
   useEffect(() => {
     // If orgName is not loaded yet, do nothing.
     if (!loaded || !orgName || repoNames.length === 0) {
+      setAggregatedStarHistory([])
       return
     }
     const aggregator = new StarHistoryAggregator(supabase, starsTable,
@@ -77,7 +66,7 @@ const OrganizationOverview = ({
     setAggregationCount(aggregator.aggregationCount)
     // If aggregationLoadedTime is not null, then that means that
     // the aggregation has finished.
-    if(aggregator.aggregationLoadedTime){
+    if(aggregator.aggregationLoadedTime && starHistory.length > 0){
       setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
       setAggregationLoading(false)
     }
@@ -97,6 +86,16 @@ const OrganizationOverview = ({
     }
   }, [repoNames])
 
+  useEffect(() => {
+    if (allIssueCounts.length > 0) {
+      const filteredRepoIssueCounts = allIssueCounts.filter(issueCountEvent => {
+        if (repoNames.indexOf(issueCountEvent.repository) >= 0) return issueCountEvent
+      })
+      const formattedIssueCounts = formatOrganizationIssueCount(filteredRepoIssueCounts)
+      setSelectedIssueCounts(formattedIssueCounts)
+    }
+  }, [repoNames])
+
   return (
     <>
       <Modal
@@ -107,24 +106,25 @@ const OrganizationOverview = ({
         <IssueTrackerInfoModal orgName={organization.name} />
       </Modal>
       <StarHistory
-        repoName="all repositories (up to 100) in this organization"
+        repoName={`the selected ${repoNames.length} repositories (up to 100)`}
         lastUpdated={aggregationLoadedTime}
         starHistory={aggregatedStarHistory}
         totalStarCount={totalStarCount}
         loadingStarHistory={aggregationLoading}
         loadingMessage={`Preparing star history... ${aggregationCount} out of ${repoNames.length} repos loaded.`}
         enableSharing={false}
+        noStarHistory={repoNames.length > 0 && aggregatedStarHistory.length === 0}
       />
-
       <IssueTracker
-        repoName="all repositories (up to 100) in this organization"
-        issueCounts={issueCounts}
+        repoName={`the selected ${repoNames.length} repositories (up to 100)`}
+        issueCounts={selectedIssueCounts}
         loadingIssueCounts={loadingIssueCounts}
-        latestOpenIssueCount={retrieveLatestOpenIssueCount(issueCounts)}
-        openIssueCountComparison={deriveOpenIssueCountComparison(issueCounts)}
-        latestClosedIssueCount={retrieveLatestCloseIssueCount(issueCounts)}
+        latestOpenIssueCount={retrieveLatestOpenIssueCount(selectedIssueCounts)}
+        openIssueCountComparison={deriveOpenIssueCountComparison(selectedIssueCounts)}
+        latestClosedIssueCount={retrieveLatestCloseIssueCount(selectedIssueCounts)}
         enableSharing={false}
         onOpenInfo={() => setShowModal(true)}
+        noIssueCounts={repoNames.length > 0 && selectedIssueCounts.length === 0}
       />
     </>
   )
