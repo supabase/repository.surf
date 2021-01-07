@@ -39,7 +39,7 @@ const Header = ({
     <div className="sticky top-0 z-30">
 
       {/* Repository.surf Context Nav Bar */}
-      <div className="bg-gray-900 h-14 flex items-center">
+      <div className="px-4 2xl:px-0 bg-gray-900 h-14 flex items-center">
         <div className="mx-auto container flex items-center justify-between">
           <div className="flex-1 flex items-center justify-start">
             <Link href="/">
@@ -61,12 +61,12 @@ const Header = ({
                 onChange={(e) => setOrganization(e.target.value)}
                 placeholder="organization"
                 disabled={loading}
-                className="flex-1 bg-gray-500 text-white focus:outline-none"
+                className="flex-1 bg-gray-500 text-white focus:outline-none text-center sm:text-left"
               />
               {loading && <Icon type="Loader" size={18} strokeWidth={2} className="animate-spin" />}
             </form>
           </div>
-          <div className="flex-1 flex items-center justify-end space-x-8">
+          <div className="flex-1 flex items-center justify-end space-x-4 sm:space-x-8">
             <div className="cursor-pointer" onClick={() => {console.log("Settings")}}>
               <Icon type="Settings" size={20} strokeWidth={2} className="text-white" />
             </div>
@@ -78,7 +78,7 @@ const Header = ({
       </div>
 
       {/* Organization Context Nav Bar */}
-      <div className="bg-gray-700 h-14 flex items-center shadow-md ">
+      <div className="px-4 2xl:px-0 bg-gray-700 h-14 flex items-center shadow-md ">
         <div className="mx-auto container flex items-center justify-between">
           <div className="flex-1 flex items-center justify-start">
             <div
@@ -86,7 +86,7 @@ const Header = ({
               style={{ backgroundImage: `url(${organizationAvatar})`}}
             />
             <a
-              className="ml-4 text-white group flex items-center"
+              className="hidden sm:flex ml-4 text-white group items-center"
               href={`https://github.com/${router.query.org}`}
               target="_blank"
               style={{ marginTop: '-2px'}}

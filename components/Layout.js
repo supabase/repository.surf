@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 
 // import Sidebar from 'components/Sidebar'
-import SidebarV2 from 'components/SidebarV2'
+import Sidebar from 'components/SidebarV2'
 import Header from 'components/Header'
 import Loader from 'icons/Loader'
 
@@ -101,7 +101,7 @@ const Layout = ({
         organizationName={organization.name}
       /> */}
 
-      <SidebarV2
+      <Sidebar
         repositories={repos}
         selectedRepositories={selectedRepos}
         showSidebar={showSidebar}
