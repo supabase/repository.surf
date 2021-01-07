@@ -16,8 +16,9 @@ const IssueTracker = ({
   latestOpenIssueCount,
   openIssueCountComparison,
   latestClosedIssueCount,
-  onOpenShare,
-  onOpenInfo,
+  noIssueCounts = false,
+  onOpenShare = () => {},
+  onOpenInfo = () => {},
 }) => {
 
   const options = [
@@ -90,10 +91,19 @@ const IssueTracker = ({
             flex flex-col items-center justify-center text-center
           `}
         >
-          <div className="cursor-pointer transition opacity-25 hover:opacity-75" onClick={() => onOpenInfo()}>
-            <Info size={24} className="stroke-current text-white" />
-          </div>
-          <span className="mt-5">Issues are not being tracked at the moment.</span>
+          {noIssueCounts
+            ? (
+              <>
+                <div className="cursor-pointer transition opacity-25 hover:opacity-75" onClick={() => onOpenInfo()}>
+                  <Info size={24} className="stroke-current text-white" />
+                </div>
+                <span className="mt-5">Issues are not being tracked at the moment.</span>
+              </>
+            )
+            : (
+              <span className="mt-5">Select a repository first to view its issues trend.</span>
+            )
+          }
         </div>
       )
     }

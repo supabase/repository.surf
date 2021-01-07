@@ -109,7 +109,7 @@ function MyApp({ Component, pageProps, router }) {
             githubAccessToken={githubAccessToken}
             supabase={supabase}
             organization={organization}
-            repoNames={repos.map(repo => repo.name)}
+            repoNames={selectedRepos}
             onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}
             starRetrievers={starRetrievers}
             setStarRetrievers={setStarRetrievers}
