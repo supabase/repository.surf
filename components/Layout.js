@@ -3,8 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
 
-// import Sidebar from 'components/Sidebar'
-import Sidebar from 'components/SidebarV2'
+import Sidebar from 'components/Sidebar'
 import Header from 'components/Header'
 import Loader from 'icons/Loader'
 
