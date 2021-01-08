@@ -63,7 +63,7 @@ const Header = ({
         <div className="mx-auto container flex items-center justify-between">
           <div className="flex-1 flex items-center justify-start">
             <Link href="/">
-              <img className="h-6 cursor-pointer" src="logo.png" />
+              <img className="h-6 cursor-pointer" src="/logo.png" />
             </Link>
           </div>
           <div className="flex-1 flex items-center justify-center">

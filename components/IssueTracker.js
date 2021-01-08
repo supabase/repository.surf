@@ -1,10 +1,8 @@
 import { useState } from 'react'
+import { Icon } from '@supabase/ui'
 import TimelineChart from 'components/TimelineChart'
 import StatsIndicator from 'components/StatsIndicator'
 import Pill from 'components/Pill'
-import Loader from 'icons/Loader'
-import Share from 'icons/Share'
-import Info from 'icons/Info'
 
 const IssueTracker = ({
   issuesRef,
@@ -96,7 +94,7 @@ const IssueTracker = ({
             ? (
               <>
                 <div className="cursor-pointer transition opacity-25 hover:opacity-75" onClick={() => onOpenInfo()}>
-                  <Info size={24} className="stroke-current text-white" />
+                  <Icon type="Info" size={24} strokeWidth={2} className="text-white" />
                 </div>
                 <span className="mt-5">Issues are not being tracked at the moment.</span>
               </>
@@ -116,10 +114,10 @@ const IssueTracker = ({
         <div ref={issuesRef} id="issueTrack" className="w-full pb-5 sm:px-10 sm:pb-10">
           <div className="text-white text-2xl flex items-center group">
             <h1>{header}</h1>
-            {enableSharing && (
+            {!enableSharing && (
               <div className="hidden lg:block ml-3 transition opacity-0 group-hover:opacity-100">
                 <div className="cursor-pointer" onClick={() => onOpenShare('issues')}>
-                  <Share size={20} className="stroke-current text-gray-400" />
+                  <Icon type="Share2" size={20} strokeWidth={2} className="text-gray-400" />
                 </div>
               </div>
             )}
@@ -133,7 +131,7 @@ const IssueTracker = ({
         {loadingIssueCounts
           ? (
             <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
-              <Loader />
+              <Icon type="Loader" className="animate-spin text-white" size={24} strokeWidth={2} />
               <p className="text-xs mt-3 leading-5 text-center">Retrieving issues from {repoName}</p>
             </div>
           )

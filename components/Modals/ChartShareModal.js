@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react'
-import Clipboard from 'icons/Clipboard'
-import Check from 'icons/Check'
+import { Icon } from '@supabase/ui'
 import { generateIframeCode } from 'lib/helpers'
 
 const ChartShareModal = ({
@@ -28,7 +27,10 @@ const ChartShareModal = ({
             ${!codeCopied && 'cursor-pointer hover:bg-gray-500'}
           `}
         >
-          {codeCopied ? <Check size={16} className="stroke-current text-brand-700" /> : <Clipboard size={16} />}
+          {codeCopied
+            ? <Icon type="Check" size={16} strokeWidth={2} className="text-brand-700" />
+            : <Icon type="Clipboard" size={16} strokeWidth={2} className="text-white" />
+          }
         </div>
       </div>
       <textarea

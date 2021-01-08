@@ -1,5 +1,4 @@
-import UpArrow from 'icons/UpArrow'
-import DownArrow from 'icons/DownArrow'
+import { Icon } from '@supabase/ui'
 
 const StatsIndicator = ({ countDiff }) => {
 
@@ -7,13 +6,13 @@ const StatsIndicator = ({ countDiff }) => {
   let color;
 
   if (countDiff > 0) {
-    arrowIndicator = <UpArrow />
+    arrowIndicator = <><Icon type="ArrowUp" size={18} strokeWidth={2} className="text-red-500" /></>
     color = 'text-red-400'
   } else if (countDiff === 0) {
     arrowIndicator = <div />
     color = 'text-gray-400'
   } else {
-    arrowIndicator = <DownArrow />
+    arrowIndicator = <Icon type="ArrowDown" size={18} strokeWidth={2} className="text-brand-600" />
     color = 'text-brand-600'
   }
 

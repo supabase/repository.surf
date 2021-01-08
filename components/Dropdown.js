@@ -1,5 +1,4 @@
-import Transition from 'lib/Transition'
-import Check from 'icons/Check'
+import { Transition, Icon } from '@supabase/ui'
 
 const Dropdown = ({ showDropdown, options = [], selectedOptionKey = '' }) => (
   <Transition
@@ -26,7 +25,7 @@ const Dropdown = ({ showDropdown, options = [], selectedOptionKey = '' }) => (
               className="flex items-center justify-between text-white text-sm block px-4 mx-1 py-2 rounded-md hover:bg-gray-600"
             >
               {option.label}
-              {option.key === selectedOptionKey && <Check size={16} />}
+              {option.key === selectedOptionKey && <Icon type="Check" size={16} strokeWidth={2} className="text-white" />}
             </div>
           ))}
         </div>

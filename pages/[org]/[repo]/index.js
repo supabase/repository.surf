@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { Icon } from '@supabase/ui'
 import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
 import {
   retrieveLatestOpenIssueCount,
@@ -11,7 +12,6 @@ import StarHistory from 'components/StarHistory'
 import Modal from 'components/Modal'
 import ChartShareModal from 'components/Modals/ChartShareModal'
 import IssueTrackerInfoModal from 'components/Modals/IssueTrackerInfoModal'
-import ExternalLink from 'icons/ExternalLink'
 
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
@@ -128,7 +128,7 @@ const RepositoryStatistics = ({
         >
           <h1>{repoName.toString()}</h1>
           <div className="transition ml-3 opacity-0 group-hover:opacity-100">
-            <ExternalLink />
+            <Icon type="ExternalLink" size={20} strokeWidth={2} className="text-gray-400" />
           </div>
         </a>
       </div>

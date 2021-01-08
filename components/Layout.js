@@ -19,31 +19,12 @@ const Layout = ({
 }) => {
 
   const router = useRouter()
-  // const [selectedRepos, setSelectedRepos] = useState([])
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     if (uPlot) setUPlotLoaded(true)
   }, [])
-
-  // const toggleRepo = (repoName) => {
-  //   let updatedSelectedRepos = selectedRepos.slice()
-  //   if (selectedRepos.indexOf(repoName) !== -1) {
-  //     updatedSelectedRepos = updatedSelectedRepos.filter(repo => repo !== repoName)
-  //   } else {
-  //     updatedSelectedRepos.push(repoName)
-  //   }
-  //   setSelectedRepos(updatedSelectedRepos)
-  // }
-
-  // const toggleAllRepos = () => {
-  //   if (selectedRepos.length === repos.length) {
-  //     setSelectedRepos([])
-  //   } else {
-  //     setSelectedRepos(repos.map(repo => repo.name))
-  //   }
-  // }
 
   return (
     <div className="flex flex-col">

@@ -1,9 +1,7 @@
-import Loader from 'icons/Loader'
-import Star from 'icons/Star'
-import Share from 'icons/Share'
+import { useState } from 'react'
+import { Icon } from '@supabase/ui'
 import TimelineChart from '~/components/TimelineChart'
 import Pill from 'components/Pill'
-import { useState } from 'react'
 import { retrieveStarGrowthToday, retrieveStarGrowthMonth } from 'lib/helpers' 
 
 const StarHistory = ({
@@ -100,14 +98,14 @@ const StarHistory = ({
               {enableSharing && (
                 <div className="hidden lg:flex items-center ml-3 transition opacity-0 group-hover:opacity-100">
                   <div className="cursor-pointer" onClick={() => onOpenShare('stars')}>
-                    <Share size={20} className="stroke-current text-gray-400" />
+                    <Icon type="Share2" size={20} strokeWidth={2} className="text-gray-400" />
                   </div>
                 </div>
               )}
             </div>
             {!loadingStarHistory && lastUpdated && starHistory.length > 0 && (
               <div className="flex items-center">
-                <Star />
+                <Icon type="Star" size={20} strokeWidth={2} className="text-white" />
                 <span className="ml-2 text-white">{totalStarCount}</span>
               </div>
             )}
@@ -115,7 +113,7 @@ const StarHistory = ({
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
           {!loadingStarHistory && !lastUpdated && starHistory.length > 0 && (
             <div className="mt-5 flex item-center text-xs text-gray-400">
-              <Loader size={18} additionalClassName="inline"/>
+              <Icon type="Loader" className="animate-spin text-white inline" size={18} strokeWidth={2} />
               <span className="ml-2 transform translate-x-0.5 translate-y-0.5 inline-block">
                 Loading data (
                   {(starHistory[starHistory.length - 1].starNumber / totalStarCount * 100).toString().slice(0, 5)
@@ -130,7 +128,7 @@ const StarHistory = ({
           {loadingStarHistory
             ? (
               <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
-                <Loader />
+                <Icon type="Loader" className="animate-spin text-white" size={24} strokeWidth={2} />
                 <p className="text-xs mt-3 leading-5 text-center">
                   {loadingMessage || "Retrieving repository star history"}
                 </p>

@@ -1,4 +1,4 @@
-import Transition from 'lib/Transition'
+import { Transition } from '@supabase/ui'
 
 const Modal = ({
   showModal,
