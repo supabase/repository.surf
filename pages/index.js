@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
 import { toast, ToastContainer } from 'react-toastify'
+import { Icon } from '@supabase/ui'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
 import CountUp from 'components/CountUp'
@@ -83,10 +84,20 @@ export default function Home() {
                 {loading && <Loader size={18} />}
               </form>
             </div>
-            <a href="https://supabase.io" target="_blank" className="text-white text-gray-200 flex items-center opacity-75 hover:opacity-100 transition cursor-pointer">
-              <span>Powered by</span>
-              <img src='logo-dark.png' className="ml-2 h-5 relative" style={{ top: '2px'}}/>
-            </a>
+            <div className="flex items-center justify-between">
+              <a href="https://supabase.io" target="_blank" className="text-white text-gray-200 flex items-center opacity-75 hover:opacity-100 transition cursor-pointer">
+                <span>Powered by</span>
+                <img src='logo-dark.png' className="ml-2 h-5 relative" style={{ top: '2px'}}/>
+              </a>
+              <div className="flex items-center space-x-6">
+                <a href="https://twitter.com/supabase_io" target="_blank">
+                  <Icon type="Twitter" size={20} strokeWidth={2} className="text-white" />
+                </a>
+                <a href="https://github.com/supabase/repository.surf" target="_blank">
+                  <Icon type="GitHub" size={20} strokeWidth={2} className="text-white" />
+                </a>
+              </div>
+            </div>
           </div>
 
           {/* Graphic */}

@@ -2,10 +2,11 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { ToastContainer } from 'react-toastify';
+import { Icon } from '@supabase/ui'
 
 import Sidebar from 'components/Sidebar'
 import Header from 'components/Header'
-import Loader from 'icons/Loader'
+import Footer from 'components/Footer'
 
 const Layout = ({
   references,
@@ -64,7 +65,7 @@ const Layout = ({
           {!loaded
             ? (
               <div className="text-white flex-1 flex flex-col justify-center items-center">
-                <Loader />
+                <Icon type="Loader" size={20} strokeWidth={2} className="animate-spin text-white" />
                 <p className="text-xs mt-3 leading-5 text-center">Retrieving organization data</p>
               </div>
             )
@@ -72,6 +73,8 @@ const Layout = ({
           }
         </main>
       )}
+
+      <Footer />
     </div>
   )
 }
