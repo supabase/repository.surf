@@ -6,9 +6,6 @@ import { Icon } from '@supabase/ui'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
 import CountUp from 'components/CountUp'
-import Loader from 'icons/Loader'
-import Star from 'icons/Star'
-import DownArrow from 'icons/DownArrow'
 
 export default function Home() {
 
@@ -81,7 +78,7 @@ export default function Home() {
                   disabled={loading}
                   className="flex-1 bg-gray-500 text-white focus:outline-none"
                 />
-                {loading && <Loader size={18} />}
+                {loading && <Icon type="Loader" size={18}  strokeWidth={2} className="text-white animate-spin" />}
               </form>
             </div>
             <div className="flex items-center justify-between">
@@ -134,10 +131,10 @@ export default function Home() {
                 style={{ transitionDelay: '1500ms' }}
               >
                 <span className="text-white mr-1">9,000</span>
-                <Star />
+                <Icon type="Star" size={20} strokeWidth={2} className="text-white" />
               </div>
               <div className="absolute -bottom-10 right-0 text-brand-700 flex items-center">
-                <DownArrow />
+                <Icon type="ArrowDown" size={20} strokeWidth={2} className="text-brand-600 mr-1" />
                 <CountUp>150</CountUp>
                 <span className="text-xs ml-2 relative" style={{ top: '1px' }}>Issues</span>
               </div>
