@@ -9,11 +9,14 @@ import Dropdown from 'components/Dropdown'
 
 const Header = ({
   references,
+  userProfile,
   organizationSlug,
   organizationAvatar,
   organizationName,
   numberOfSelectedRepos = 0,
   openSidebar = () => {},
+  login = () => {},
+  logout = () => {},
 }) => {
 
   const router = useRouter()
@@ -43,9 +46,12 @@ const Header = ({
     {
       key: 'signIn',
       label: 'Sign in',
-      action: () => {
-        console.log("Github Login")
-      }
+      action: () => login()
+    },
+    {
+      key: 'signOut',
+      label: 'Sign out',
+      action: () => logout()
     },
   ]
 
@@ -93,7 +99,15 @@ const Header = ({
               </div>
             </Link>
             <div className="cursor-pointer relative" onClick={() => setShowUserDropdown(!showUserDropdown)}>
-              <Icon type="User" size={20} strokeWidth={2} className="text-white" />
+              {userProfile
+                ? (
+                  <div
+                    style={{ backgroundImage: `url('${userProfile.avatar_url}')` }}
+                    className="h-8 w-8 bg-no-repeat bg-center bg-cover rounded-full" 
+                  />
+                )
+                : (<Icon type="User" size={20} strokeWidth={2} className="text-white" />)
+              }
               <Dropdown
                 showDropdown={showUserDropdown}
                 options={userOptions}

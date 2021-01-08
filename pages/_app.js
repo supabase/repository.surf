@@ -103,6 +103,7 @@ function MyApp({ Component, pageProps, router }) {
         <Layout
           references={references}
           repos={viewableRepos}
+          supabase={supabase}
           selectedRepos={selectedRepos}
           loaded={loaded}
           organization={organization}

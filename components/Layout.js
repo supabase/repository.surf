@@ -1,12 +1,14 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { Icon } from '@supabase/ui'
 
 import Sidebar from 'components/Sidebar'
 import Header from 'components/Header'
 import Footer from 'components/Footer'
+
+import { login, logout } from 'lib/auth'
 
 const Layout = ({
   references,
@@ -14,17 +16,24 @@ const Layout = ({
   selectedRepos,
   loaded,
   organization,
+  supabase,
   children,
   toggleRepo = () => {},
   toggleAllRepos = () => {},
 }) => {
 
   const router = useRouter()
+  const [userProfile, setUserProfile] = useState(null)
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     if (uPlot) setUPlotLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    const user = supabase.auth.user()
+    if (user) setUserProfile(user.user_metadata)
   }, [])
 
   return (
@@ -53,11 +62,20 @@ const Layout = ({
 
       <Header
         references={references}
+        userProfile={userProfile}
         organizationSlug={organization.login}
         organizationAvatar={organization.avatar_url}
         organizationName={organization.name}
         numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
+        login={() => {
+          login(supabase)
+        }}
+        logout={() => {
+          logout(supabase)
+          setUserProfile(null)
+          toast.success('Succesfully logged out')
+        }}
       />
 
       {uPlotLoaded && (
