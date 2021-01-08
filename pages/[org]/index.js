@@ -15,6 +15,7 @@ const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
 const OrganizationOverview = ({
+  references,
   loaded,
   supabase,
   organization,
@@ -106,6 +107,7 @@ const OrganizationOverview = ({
         <IssueTrackerInfoModal orgName={organization.name} />
       </Modal>
       <StarHistory
+        starHistoryRef={references.stars}
         repoName={`the selected ${repoNames.length} repositories (up to 100)`}
         lastUpdated={aggregationLoadedTime}
         starHistory={aggregatedStarHistory}
@@ -116,6 +118,7 @@ const OrganizationOverview = ({
         noStarHistory={repoNames.length > 0 && aggregatedStarHistory.length === 0}
       />
       <IssueTracker
+        issuesRef={references.issues}
         repoName={`the selected ${repoNames.length} repositories (up to 100)`}
         issueCounts={selectedIssueCounts}
         loadingIssueCounts={loadingIssueCounts}

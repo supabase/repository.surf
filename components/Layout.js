@@ -8,6 +8,7 @@ import Header from 'components/Header'
 import Loader from 'icons/Loader'
 
 const Layout = ({
+  references,
   repos,
   selectedRepos,
   loaded,
@@ -69,6 +70,7 @@ const Layout = ({
       />
 
       <Header
+        references={references}
         organizationSlug={organization.login}
         organizationAvatar={organization.avatar_url}
         organizationName={organization.name}

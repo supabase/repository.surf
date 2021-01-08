@@ -2,7 +2,7 @@ import '../styles/globals.css'
 import "tailwindcss/tailwind.css";
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@supabase/supabase-js'
 
 import Layout from 'components/Layout'
@@ -31,6 +31,11 @@ function MyApp({ Component, pageProps, router }) {
   // An object of star history retrievers.
   // Example: {'supabase/supabase': RepoStarHistoryRetriever1, 'supabase/realtime': RepoStarHistoryRetriever2}
   const [starRetrievers, setStarRetrievers] = useState({})
+
+  const references = {
+    stars: useRef(null),
+    issues: useRef(null),
+  }
 
   useEffect(() => {
     if (router.pathname !== '/' && router.query.org) {
@@ -96,6 +101,7 @@ function MyApp({ Component, pageProps, router }) {
       )
       : (
         <Layout
+          references={references}
           repos={viewableRepos}
           selectedRepos={selectedRepos}
           loaded={loaded}
@@ -106,6 +112,7 @@ function MyApp({ Component, pageProps, router }) {
           <Component
             {...pageProps}
             loaded={loaded}
+            references={references}
             githubAccessToken={githubAccessToken}
             supabase={supabase}
             organization={organization}

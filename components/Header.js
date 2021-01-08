@@ -8,6 +8,7 @@ import { fetchAndWait } from 'lib/fetchWrapper'
 import Dropdown from 'components/Dropdown'
 
 const Header = ({
+  references,
   organizationSlug,
   organizationAvatar,
   organizationName,
@@ -47,6 +48,12 @@ const Header = ({
       }
     },
   ]
+
+  const scrollTo = (key) => {
+    if (references[key]) {
+      references[key].current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   return (
     <div className="sticky top-0 z-30">
@@ -116,9 +123,9 @@ const Header = ({
               </div>
             </a>
           </div>
-          <div className="flex-1 flex items-center justify-center space-x-6 text-white">
-            <p>Stars</p>
-            <p>Issues</p>
+          <div className="flex-1 flex items-center justify-center space-x-8 text-white">
+            <p className="cursor-pointer" onClick={() => scrollTo('stars')}>Stars</p>
+            <p className="cursor-pointer" onClick={() => scrollTo('issues')}>Issues</p>
           </div>
           <div className="flex-1 flex items-center justify-end">
             <div className="hidden sm:flex px-2 py-1 text-white rounded-full border items-center justify-center mr-2" style={{ fontSize: '0.65rem' }}>

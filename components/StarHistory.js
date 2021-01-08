@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { retrieveStarGrowthToday, retrieveStarGrowthMonth } from 'lib/helpers' 
 
 const StarHistory = ({
+  starHistoryRef,
   header = 'Stars',
   embed = false,
   enableSharing = true,
@@ -90,7 +91,7 @@ const StarHistory = ({
   }
 
   return (
-    <div id="starHistory" className={`w-full ${embed ? '' : 'mb-12 lg:mb-20'}`}>
+    <div ref={starHistoryRef} id="starHistory" className={`w-full ${embed ? '' : 'mb-12 lg:mb-20'}`}>
       {!embed && (
         <div className="pb-5 sm:px-10 sm:pb-7">
           <div className="flex items-center justify-between">

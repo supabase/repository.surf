@@ -7,6 +7,7 @@ import Share from 'icons/Share'
 import Info from 'icons/Info'
 
 const IssueTracker = ({
+  issuesRef,
   header = 'Issues',
   embed = false,
   enableSharing = true,
@@ -112,7 +113,7 @@ const IssueTracker = ({
   return (
     <>
       {!embed && (
-        <div id="issueTrack" className="w-full pb-5 sm:px-10 sm:pb-10">
+        <div ref={issuesRef} id="issueTrack" className="w-full pb-5 sm:px-10 sm:pb-10">
           <div className="text-white text-2xl flex items-center group">
             <h1>{header}</h1>
             {enableSharing && (
