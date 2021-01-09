@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { formatOrganizationIssueCount } from 'lib/helpers'
 import StarHistoryAggregator from 'lib/StarHistoryAggregator'
+import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
 import {
   retrieveLatestOpenIssueCount,
   retrieveLatestCloseIssueCount,
@@ -59,6 +60,45 @@ const OrganizationOverview = ({
       setAggregatedStarHistory([])
       return
     }
+
+    // If we're looking at a single repo, create a
+    // starHistoryRetriever instead of a starHistoryAggregator.
+    if (repoNames.length === 1) {
+      const repoName = repoNames[0]
+      const starHistoryKey = `${orgName}/${repoName[0]}`
+      let starHistoryRetriever
+      if (starHistoryKey in starRetrievers) {
+        starHistoryRetriever = starRetrievers[starHistoryKey]
+      } else {
+        starHistoryRetriever = new RepoStarHistoryRetriever(supabase,
+            starsTable, orgName, repoName, githubAccessToken)
+        starRetrievers[starHistoryKey] = starHistoryRetriever
+      }
+
+      // In case the star history is already retrieved, load it on on this component.
+      setAggregatedStarHistory(starHistoryRetriever.starHistory)
+      setAggregationLoadedTime(starHistoryRetriever.historyUpdateTime)
+      setAggregationLoading(starHistoryRetriever.isLoading)
+      setTotalStarCount(starHistoryRetriever.totalStarCount)
+      setAggregationCount(starHistoryRetriever.isLoading ? 0 : 1)
+
+      // Then, subscribe to any change in the star history retriever.
+      const { subscription } = starHistoryRetriever.onLoaded(
+          (starHistory, historyUpdateTime, isLoading, totalStarCount) => {
+        setAggregatedStarHistory(starHistory)
+        setAggregationLoadedTime(historyUpdateTime)
+        setAggregationLoading(isLoading)
+        setTotalStarCount(totalStarCount)
+        setAggregationCount(starHistoryRetriever.isLoading ? 0 : 1)
+      })
+      
+      return () => {
+        subscription.unsubscribe()
+        setAggregationLoading(true)
+        setAggregationCount(0)
+      }
+    }
+
     const aggregator = new StarHistoryAggregator(supabase, starsTable,
       orgName, githubAccessToken, starRetrievers, repoNames)
     const starHistory = aggregator.aggregatedStarHistory
@@ -84,6 +124,8 @@ const OrganizationOverview = ({
     })
     return () => {
       subscription.unsubscribe()
+      setAggregationLoading(true)
+      setAggregationCount(0)
     }
   }, [repoNames])
 
