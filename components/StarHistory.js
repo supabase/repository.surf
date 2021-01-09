@@ -16,6 +16,7 @@ const StarHistory = ({
   loadingMessage = null,
   totalStarCount,
   noStarHistory = false,
+  noReposSelected,
   onOpenShare = () => {},
 }) => {
 
@@ -127,6 +128,10 @@ const StarHistory = ({
         <div className={`w-full ${embed ? '' : 'pb-3 sm:pb-0 sm:pr-3'}`}>
           {loadingStarHistory
             ? (
+              noReposSelected ?
+              <div className="py-24 lg:py-36 flex items-center justify-center text-gray-400">
+                Select a repository first to view its star history
+              </div> :
               <div className="py-24 lg:py-32 text-white w-full flex flex-col items-center justify-center">
                 <Icon type="Loader" className="animate-spin text-white" size={24} strokeWidth={2} />
                 <p className="text-xs mt-3 leading-5 text-center">
