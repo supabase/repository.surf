@@ -1,5 +1,7 @@
 import { fetchAndWait, postAndWait } from 'lib/fetchWrapper'
+import { encryptString } from 'lib/helpers'
 import { createClient } from '@supabase/supabase-js'
+const CryptoJS = require('crypto-js')
 
 const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET
@@ -15,23 +17,25 @@ export default async function callback(req, res) {
   const result = await postAndWait(url)
   if (result.error) {
     console.error("Failed to retrieve GH access token")
-  } else if (result) {
-    console.log(result)
-  }
-
-  const githubUserProfile = await fetchAndWait(
-    `https://api.github.com/user`,
-    { 'Authorization': `token ${result.access_token}` }
-  )
-
-  const { error } = await supabase
-    .from('users')
-    .update({
-      name: githubUserProfile.name,
-      access_token: result.access_token
-    })
+  } else {
+    const githubUserProfile = await fetchAndWait(
+      `https://api.github.com/user`,
+      { 'Authorization': `token ${result.access_token}` }
+    )
   
-  if (error) console.error(error)
+    const { error } = await supabase
+      .from('users')
+      .update({
+        name: githubUserProfile.name,
+        access_token: encryptString(result.access_token),
+        access_token: CryptoJS.AES.encrypt(
+          result.access_token,
+          process.env.REPOSITORY_SURF_ENCRYPTION_KEY
+        ).toString()
+      })
+    
+    if (error) console.error(error)
+  }
 
   res.redirect('http://localhost:3000/settings')
 }

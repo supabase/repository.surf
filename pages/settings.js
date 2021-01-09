@@ -4,9 +4,7 @@ import { retrieveUserOrganizations } from 'lib/helpers'
 import { login, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
 
-const Settings = ({
-  organization,
-}) => {
+const Settings = ({}) => {
 
   const [toggle, setToggle] = useState(false)
   const [userProfile, setUserProfile] = useState(null)
@@ -33,6 +31,7 @@ const Settings = ({
   }, [organizations])
 
   const onSaveOrganizationSettings = (event, org) => {
+    // At the moment this is only for saving org access token
     if (event) {
       document.activeElement.blur();
       event.preventDefault()
@@ -93,11 +92,11 @@ const Settings = ({
                           />
                           <p className="ml-4">{org.login}</p>
                         </div>
-                        <div
+                        {/* <div
                           onClick={() => onSaveOrganizationSettings(null, org.login)}
                           className="text-white bg-brand-800 py-2 px-2 rounded-md cursor-pointer">
                           <Icon type="Save" size={20} strokeWidth={2} className="text-white" />
-                        </div>
+                        </div> */}
                       </div>
                       <form className="w-full space-y-8" onSubmit={(e) => onSaveOrganizationSettings(e, org.login)}>
                         <div>
@@ -121,7 +120,7 @@ const Settings = ({
                               <Badge dot color="green" size="small">Coming soon</Badge>
                             </div>
                             <span className="block text-gray-400 text-sm mt-1">
-                            Allow private repositories to be publicly visible on repository.surf.
+                              Allow private repositories under {org.login} to be publicly visible on repository.surf.
                             </span>
                           </label>
                           <div className="opacity-50" onClick={() => setToggle(!toggle)}>
