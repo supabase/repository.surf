@@ -8,7 +8,7 @@ import Sidebar from 'components/Sidebar'
 import Header from 'components/Header'
 import Footer from 'components/Footer'
 
-import { login, logout } from 'lib/auth'
+import { login, logout, getUserProfile } from 'lib/auth'
 
 const Layout = ({
   references,
@@ -32,8 +32,10 @@ const Layout = ({
   }, [])
 
   useEffect(() => {
-    const user = supabase.auth.user()
-    if (user) setUserProfile(user.user_metadata)
+    (async function initUserProfile() {
+      const user = supabase.auth.user()
+      if (user) setUserProfile(user.user_metadata)
+    })()
   }, [])
 
   return (
@@ -69,17 +71,17 @@ const Layout = ({
         numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
         login={() => {
-          login(supabase)
+          login()
         }}
         logout={() => {
-          logout(supabase)
+          logout()
           setUserProfile(null)
-          toast.success('Succesfully logged out')
+          toast.success('Successfully logged out')
         }}
       />
 
       {uPlotLoaded && (
-        <main className="h-screen flex-1 overflow-y-auto focus:outline-none flex flex-col bg-gray-700 px-5 py-14 sm:px-10 sm:py-24">
+        <main className="min-h-screen focus:outline-none flex flex-col bg-gray-700 px-5 py-14 sm:px-10 sm:py-24">
           {!loaded
             ? (
               <div className="text-white flex-1 flex flex-col justify-center items-center">

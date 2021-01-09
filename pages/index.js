@@ -15,6 +15,7 @@ export default function Home() {
   const [organization, setOrganization] = useState('')
 
   useEffect(() => {
+    if (router.asPath.includes("access_token")) router.push('/')
     setLoadGraphic(true)
   }, [])
 

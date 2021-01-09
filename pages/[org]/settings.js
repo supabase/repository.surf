@@ -62,35 +62,90 @@ const Settings = ({
     }
   }
 
+  const onSaveOrganizationSettings = (event) => {
+    if (event) {
+      document.activeElement.blur();
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    console.log("Save org settings")
+  }
+
   return (
-    <>
-      <div className="pb-5 sm:px-10 sm:pb-10 flex items-center justify-between">
-        <div>
-          <h1 className="text-white text-2xl">Settings</h1>
-          <p className="mt-2 text-base text-gray-400">Adjust your settings here</p>
+    <div className="px-5 xl:px-0 container mx-auto space-y-24">
+      <div>
+        <div className="pb-5 sm:px-10 sm:pb-10 flex items-center justify-between">
+          <div>
+            <h1 className="text-white text-2xl">User settings</h1>
+            <p className="mt-2 text-base text-gray-400">Settings for your personal preference</p>
+          </div>
+          <div
+            onClick={() => onSaveSettings()}
+            className="text-white bg-brand-800 py-2 px-2 rounded-md cursor-pointer">
+            <SaveIcon />
+          </div>
         </div>
-        <div
-          onClick={() => onSaveSettings()}
-          className="text-white bg-brand-800 py-2 px-2 rounded-md cursor-pointer">
-          <SaveIcon />
+        <div className="flex flex-col items-start sm:px-10 text-white">
+          <form className="w-full" onSubmit={(e) => onSaveSettings(e)}>
+            <label htmlFor="filterList">
+              Filter Repositories
+              <span className="block text-gray-400 text-sm mt-1">Hide certain repositories in the side bar</span>
+            </label>
+            <input
+              type="text"
+              value={filterList}
+              onChange={(e) => setFilterList(e.target.value)}
+              placeholder="Comma separated strings"
+              className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
+            />
+          </form>
         </div>
       </div>
-      <div className="flex-1 flex flex-col items-start sm:px-10 text-white">
-        <form className="w-full" onSubmit={(e) => onSaveSettings(e)}>
-          <label htmlFor="filterList">
-            Filter Repositories
-            <span className="block text-gray-400 text-sm mt-1">Hide certain repositories in the side bar</span>
-          </label>
-          <input
-            type="text"
-            value={filterList}
-            onChange={(e) => setFilterList(e.target.value)}
-            placeholder="Comma separated strings"
-            className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
-          />
-        </form>
+
+      <div>
+        <div className="pb-5 sm:px-10 sm:pb-10 flex items-center justify-between">
+          <div>
+            <h1 className="text-white text-2xl">Organization settings</h1>
+            <p className="mt-2 text-base text-gray-400">Settings for repositories under the organizations you belong to</p>
+          </div>
+          <div
+            onClick={() => onSaveOrganizationSettings()}
+            className="text-white bg-brand-800 py-2 px-2 rounded-md cursor-pointer">
+            <SaveIcon />
+          </div>
+        </div>
+        <div className="flex flex-col items-start sm:px-10 text-white">
+          <form className="w-full space-y-8" onSubmit={(e) => onSaveOrganizationSettings(e)}>
+            <div>
+              <label htmlFor="filterList">
+                Filter Repositories
+                <span className="block text-gray-400 text-sm mt-1">Hide certain repositories in the side bar</span>
+              </label>
+              <input
+                type="text"
+                value={filterList}
+                onChange={(e) => setFilterList(e.target.value)}
+                placeholder="Comma separated strings"
+                className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
+              />
+            </div>
+            <div>
+              <label htmlFor="filterList">
+                Filter Repositories
+                <span className="block text-gray-400 text-sm mt-1">Hide certain repositories in the side bar</span>
+              </label>
+              <input
+                type="text"
+                value={filterList}
+                onChange={(e) => setFilterList(e.target.value)}
+                placeholder="Comma separated strings"
+                className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
+              />
+            </div>
+          </form>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 

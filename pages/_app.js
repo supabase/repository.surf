@@ -22,11 +22,8 @@ function MyApp({ Component, pageProps, router }) {
 
   // Stores all the repositories of the organization
   const [repos, setRepos] = useState([])
-  // Stores all the repositories whose names are not included in filteredRepoNames
-  const [viewableRepos, setViewableRepos] = useState([])
   // Stores all the repositories selected to show cumulative data in the chart
   const [selectedRepos, setSelectedRepos] = useState([])
-  const [filteredRepoNames, setFilteredRepoNames] = useState([])
 
   // An object of star history retrievers.
   // Example: {'supabase/supabase': RepoStarHistoryRetriever1, 'supabase/realtime': RepoStarHistoryRetriever2}
@@ -38,7 +35,9 @@ function MyApp({ Component, pageProps, router }) {
   }
 
   useEffect(() => {
-    if (router.pathname !== '/' && router.query.org) {
+    if (router.pathname === '/settings') {
+      setLoaded(true)
+    } else if (router.pathname !== '/' && router.query.org) {
       (async function retrieveOrganizationProfile() {
         setLoaded(false)
         const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
@@ -51,23 +50,12 @@ function MyApp({ Component, pageProps, router }) {
         setRepos(repos.sort((a, b) => a.stargazers_count > b.stargazers_count ? -1 : 1))
         setLoaded(true)
       })()
-
-      const userPreferences = JSON.parse(localStorage.getItem(`repoSurf_${router.query.org}`))
-      if (userPreferences && userPreferences.repoFilter) {
-        const formattedFilterList = userPreferences.repoFilter?.split(',').map(repo => repo.replace(/^[ ]+/g, "")) || []
-        setFilteredRepoNames(formattedFilterList)      
-      }
     }
   }, [router.query.org])
 
   useEffect(() => {
-    let repositories = repos.slice()
-    filteredRepoNames.forEach(filteredRepo => {
-      repositories = repositories.filter(repo => repo.name !== filteredRepo)
-    })
-    setViewableRepos(repositories)
-    setSelectedRepos(repositories.map(repo => repo.name))
-  }, [repos, filteredRepoNames])
+    setSelectedRepos(repos.map(repo => repo.name))
+  }, [repos])
 
   const toggleRepo = (repoName) => {
     let updatedSelectedRepos = selectedRepos.slice()
@@ -102,7 +90,7 @@ function MyApp({ Component, pageProps, router }) {
       : (
         <Layout
           references={references}
-          repos={viewableRepos}
+          repos={repos}
           supabase={supabase}
           selectedRepos={selectedRepos}
           loaded={loaded}
@@ -118,7 +106,6 @@ function MyApp({ Component, pageProps, router }) {
             supabase={supabase}
             organization={organization}
             repoNames={selectedRepos}
-            onUpdateFilterList={(repos) => setFilteredRepoNames(repos)}
             starRetrievers={starRetrievers}
             setStarRetrievers={setStarRetrievers}
           />
