@@ -42,18 +42,26 @@ const Header = ({
     setLoading(false)
   }
 
-  const userOptions = [
-    {
-      key: 'signIn',
-      label: 'Sign in',
-      action: () => login()
-    },
-    {
-      key: 'signOut',
-      label: 'Sign out',
-      action: () => logout()
-    },
-  ]
+  const userOptions = !userProfile
+    ? [
+        {
+          key: 'signIn',
+          label: 'Sign in',
+          action: () => login()
+        },
+      ]
+    : [
+        {
+          key: 'settings',
+          label: 'Settings',
+          action: () => router.push('/settings')
+        },
+        {
+          key: 'signOut',
+          label: 'Sign out',
+          action: () => logout()
+        },
+      ]
 
   const scrollTo = (key) => {
     if (references[key]) {
@@ -92,12 +100,7 @@ const Header = ({
               {loading && <Icon type="Loader" size={18} strokeWidth={2} className="animate-spin" />}
             </form>
           </div>
-          <div className="flex-1 flex items-center justify-end space-x-4 sm:space-x-8">
-            <Link href={`${organizationSlug}/settings`}>
-              <div className="cursor-pointer">
-                <Icon type="Settings" size={20} strokeWidth={2} className="text-white" />
-              </div>
-            </Link>
+          <div className="flex-1 flex items-center justify-end">
             <div className="cursor-pointer relative" onClick={() => setShowUserDropdown(!showUserDropdown)}>
               {userProfile
                 ? (
@@ -119,37 +122,39 @@ const Header = ({
 
       {/* Organization Context Nav Bar */}
       <div className="px-4 2xl:px-0 bg-gray-700 h-14 flex items-center shadow-md ">
-        <div className="mx-auto container flex items-center justify-between">
-          <div className="flex-1 flex items-center justify-start">
-            <div
-              className="h-8 w-8 rounded-md bg-cover bg-center no-repeat"
-              style={{ backgroundImage: `url(${organizationAvatar})`}}
-            />
-            <a
-              className="hidden sm:flex ml-4 text-white group items-center"
-              href={`https://github.com/${router.query.org}`}
-              target="_blank"
-              style={{ marginTop: '-2px'}}
-            >
-              <span>{organizationName}</span>
-              <div className="ml-4 transition opacity-0 group-hover:opacity-100">
-                <Icon type="ExternalLink" size={16} strokeWidth={2} className="text-gray-400" />
+        {router.pathname !== '/settings' && (
+          <div className="mx-auto container flex items-center justify-between">
+            <div className="flex-1 flex items-center justify-start">
+              <div
+                className="h-8 w-8 rounded-md bg-cover bg-center no-repeat"
+                style={{ backgroundImage: `url(${organizationAvatar})`}}
+              />
+              <a
+                className="hidden sm:flex ml-4 text-white group items-center"
+                href={`https://github.com/${router.query.org}`}
+                target="_blank"
+                style={{ marginTop: '-2px'}}
+              >
+                <span>{organizationName}</span>
+                <div className="ml-4 transition opacity-0 group-hover:opacity-100">
+                  <Icon type="ExternalLink" size={16} strokeWidth={2} className="text-gray-400" />
+                </div>
+              </a>
+            </div>
+            <div className="flex-1 flex items-center justify-center space-x-8 text-white">
+              <p className="cursor-pointer" onClick={() => scrollTo('stars')}>Stars</p>
+              <p className="cursor-pointer" onClick={() => scrollTo('issues')}>Issues</p>
+            </div>
+            <div className="flex-1 flex items-center justify-end">
+              <div className="hidden sm:flex px-2 py-1 text-white rounded-full border items-center justify-center mr-2" style={{ fontSize: '0.65rem' }}>
+                {numberOfSelectedRepos} repo{numberOfSelectedRepos > 1 && 's'} selected
               </div>
-            </a>
-          </div>
-          <div className="flex-1 flex items-center justify-center space-x-8 text-white">
-            <p className="cursor-pointer" onClick={() => scrollTo('stars')}>Stars</p>
-            <p className="cursor-pointer" onClick={() => scrollTo('issues')}>Issues</p>
-          </div>
-          <div className="flex-1 flex items-center justify-end">
-            <div className="hidden sm:flex px-2 py-1 text-white rounded-full border items-center justify-center mr-2" style={{ fontSize: '0.65rem' }}>
-              {numberOfSelectedRepos} repo{numberOfSelectedRepos > 1 && 's'} selected
-            </div>
-            <div className="cursor-pointer" onClick={() => openSidebar()}>
-              <Icon type="Filter" size={20} strokeWidth={2} className="text-white" />
+              <div className="cursor-pointer" onClick={() => openSidebar()}>
+                <Icon type="Filter" size={20} strokeWidth={2} className="text-white" />
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
