@@ -103,7 +103,7 @@ const StarHistory = ({
                 </div>
               )}
             </div>
-            {!loadingStarHistory && lastUpdated && starHistory.length > 0 && (
+            {!loadingStarHistory && lastUpdated !== null && starHistory.length > 0 && (
               <div className="flex items-center">
                 <Icon type="Star" size={20} strokeWidth={2} className="text-white" />
                 <span className="ml-2 text-white">{totalStarCount}</span>
@@ -111,7 +111,7 @@ const StarHistory = ({
             )}
           </div>
           <p className="mt-2 text-base text-gray-400">This is a timeline of how the star count of {repoName} has grown till today.</p>
-          {!loadingStarHistory && !lastUpdated && starHistory.length > 0 && (
+          {!loadingStarHistory && lastUpdated === null && starHistory.length > 0 && (
             <div className="mt-5 flex item-center text-xs text-gray-400">
               <Icon type="Loader" className="animate-spin text-white inline" size={18} strokeWidth={2} />
               <span className="ml-2 transform translate-x-0.5 translate-y-0.5 inline-block">

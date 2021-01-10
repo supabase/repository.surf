@@ -67,7 +67,7 @@ const OrganizationOverview = ({
     setAggregationCount(aggregator.aggregationCount)
     // If aggregationLoadedTime is not null, then that means that
     // the aggregation has finished.
-    if(aggregator.aggregationLoadedTime && starHistory.length > 0){
+    if(aggregator.aggregationLoadedTime !== null && starHistory.length > 0){
       setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
       setAggregationLoading(false)
     }
@@ -77,7 +77,7 @@ const OrganizationOverview = ({
       setAggregatedStarHistory(starHistory)
       setAggregationLoadedTime(aggregationLoadedTime)
       setAggregationCount(aggregationCount)
-      if(aggregator.aggregationLoadedTime){
+      if(aggregationLoadedTime !== null){
         setTotalStarCount(starHistory[starHistory.length - 1].starNumber)
         setAggregationLoading(false)
       }
