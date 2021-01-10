@@ -8,7 +8,7 @@ import Sidebar from 'components/Sidebar'
 import Header from 'components/Header'
 import Footer from 'components/Footer'
 
-import { login, logout, getUserProfile } from 'lib/auth'
+import { login, logout } from 'lib/auth'
 
 const Layout = ({
   references,

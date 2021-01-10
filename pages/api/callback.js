@@ -1,5 +1,4 @@
 import { fetchAndWait, postAndWait } from 'lib/fetchWrapper'
-import { encryptString } from 'lib/helpers'
 import { createClient } from '@supabase/supabase-js'
 const CryptoJS = require('crypto-js')
 
@@ -27,7 +26,6 @@ export default async function callback(req, res) {
       .from('users')
       .update({
         name: githubUserProfile.name,
-        access_token: encryptString(result.access_token),
         access_token: CryptoJS.AES.encrypt(
           result.access_token,
           process.env.REPOSITORY_SURF_ENCRYPTION_KEY
