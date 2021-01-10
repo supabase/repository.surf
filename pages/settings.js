@@ -1,20 +1,20 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { retrieveUserOrganizations } from 'lib/helpers'
-import { login, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
+import { retrieveUserOrganizations } from 'lib/helpers'
+import { postAndWait } from 'lib/fetchWrapper'
+import { login, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
 
 import Modal from 'components/Modal'
 import RetrieveOrganizationModal from 'components/Modals/RetrieveOrganizationModal'
 
-const Settings = ({}) => {
+const Settings = ({ supabase }) => {
 
   const [loaded, setLoaded] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [toggle, setToggle] = useState(false)
   const [userProfile, setUserProfile] = useState(null)
   const [organizations, setOrganizations] = useState([])
-  // TODO: Implement this part
   const [orgSettings, setOrgSettings] = useState({})
 
   useEffect(() => {
@@ -36,19 +36,73 @@ const Settings = ({}) => {
   }, [])
 
   useEffect(() => {
-    if (organizations.length > 0) {
-      // Generate organizationSettings
-    }
+    (async function retrieveOrgSettings() {
+      if (organizations.length > 0) {
+        const organizationSettings = {}
+        for (const org of organizations) {
+          const { data } = await supabase.from('organizations').select('*').eq('id', org.id)
+          if (data.length > 0 && data[0].access_token) {
+            const { decrypted_token } = await postAndWait('/api/decrypt', { token: data[0].access_token })
+            organizationSettings[org.id] = {
+              name: org.login,
+              accessToken: decrypted_token
+            }
+          } else {
+            organizationSettings[org.id] = {
+              name: org.login,
+              accessToken: null
+            }
+          }
+        }
+        setOrgSettings(organizationSettings)
+      }
+    })()
   }, [organizations])
 
-  const onSaveOrganizationSettings = (event, org) => {
-    // At the moment this is only for saving org access token
+  const updateOrgAccessToken = async(orgId, value) => {
+    const updatedOrgSettings = { ...orgSettings }
+    updatedOrgSettings[orgId].accessToken = value
+    setOrgSettings(updatedOrgSettings)
+  }
+
+  const onSaveOrgAccessToken = async(event, org) => {
     if (event) {
       document.activeElement.blur();
       event.preventDefault()
       event.stopPropagation()
     }
-    toast.success(`Successfully saved settings for ${org}`)
+
+    const { encrypted_token } = await postAndWait('/api/encrypt', { string: orgSettings[org.id].accessToken })
+
+    const { data } = await supabase
+      .from('organizations')
+      .select('*')
+      .eq('id', org.id)
+    
+    if (data.length > 0) {
+      const { error } = await supabase
+        .from('organizations')
+        .update({ access_token: encrypted_token })
+        .match({ id: org.id })
+      if (error) {
+        console.error(error)
+        toast.error(error)
+      } else {
+        toast.success(`Successfully updated access token for ${org.login}`)
+      }
+    } else {
+      const { error } = await supabase
+        .from('organizations')
+        .insert([
+          { id: org.id, name: org.login, access_token: encrypted_token }
+        ])
+      if (error) {
+        console.error(error)
+        toast.error(error)
+      } else {
+        toast.success(`Successfully saved access token for ${org.login}`)
+      }
+    }
   }
 
   if (!userProfile) {
@@ -123,7 +177,7 @@ const Settings = ({}) => {
                             <p className="ml-4">{org.login}</p>
                           </div>
                         </div>
-                        <form className="w-full space-y-8" onSubmit={(e) => onSaveOrganizationSettings(e, org.login)}>
+                        <form className="w-full space-y-8" onSubmit={(e) => onSaveOrgAccessToken(e, org)}>
                           <div>
                             <label>
                               Organization access token
@@ -133,8 +187,8 @@ const Settings = ({}) => {
                             </label>
                             <input
                               type="text"
-                              // value={filterList}
-                              // onChange={(e) => setFilterList(e.target.value)}
+                              value={(orgSettings[org.id] ? orgSettings[org.id].accessToken : '') || ''}
+                              onChange={(e) => updateOrgAccessToken(org.id, e.target.value)}
                               className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
                             />
                           </div>
