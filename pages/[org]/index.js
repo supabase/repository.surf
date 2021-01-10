@@ -158,6 +158,7 @@ const OrganizationOverview = ({
         loadingMessage={`Preparing star history... ${aggregationCount} out of ${repoNames.length} repos loaded.`}
         enableSharing={false}
         noStarHistory={repoNames.length > 0 && aggregatedStarHistory.length === 0}
+        noReposSelected={repoNames.length === 0}
       />
       <IssueTracker
         issuesRef={references.issues}
