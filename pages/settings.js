@@ -38,7 +38,6 @@ const Settings = ({}) => {
   useEffect(() => {
     if (organizations.length > 0) {
       // Generate organizationSettings
-      console.log(organizations)
     }
   }, [organizations])
 
