@@ -5,11 +5,14 @@ import { toast, ToastContainer } from 'react-toastify'
 import { Icon } from '@supabase/ui'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
+import { getUser } from 'lib/auth'
 import CountUp from 'components/CountUp'
+import Header from 'components/Header'
 
 export default function Home() {
 
   const router = useRouter()
+  const [userProfile, setUserProfile] = useState(null)
   const [loadGraphic, setLoadGraphic] = useState(false)
   const [loading, setLoading] = useState(false)
   const [organization, setOrganization] = useState('')
@@ -17,6 +20,7 @@ export default function Home() {
   useEffect(() => {
     if (router.asPath.includes("access_token")) router.push('/')
     setLoadGraphic(true)
+    setUserProfile(getUser())
   }, [])
 
   const goToOrganization = async(event) => {
@@ -46,13 +50,21 @@ export default function Home() {
         <title>repository.surf</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Header
+        hideOrgNav
+        userProfile={userProfile}
+        onLogout={() => {
+          setUserProfile(null)
+          toast.success('Successfully logged out')
+        }}
+      />
       <div className="flex lg:flex-row h-screen items-center bg-gray-800 relative overflow-y-hidden">
         <div
           className="absolute -top-16 -left-36 xl:-left-36 w-full sm:w-2/3 transform rotate-6 bg-gray-900 shadow-xl"
           style={{ height: '120vh'}}
         />
         <div className="grid grid-cols-12 gap-x-4 container px-10 sm:px-20 xl:px-28 mx-auto z-10 flex-col-reverse">
-          <div className="row-start-2 lg:row-start-1 col-span-12 lg:col-span-6">
+          <div className="row-start-2 lg:row-start-1 col-span-12 lg:col-span-6 relative">
             <div className="mb-10">
               <div className="flex items-center mb-5">
                 {/* <img className="h-20 xl:h-24 mr-5" src="logo.png" /> */}
@@ -96,6 +108,15 @@ export default function Home() {
                 </a>
               </div>
             </div>
+            {/* {user && (
+              <div className="absolute -bottom-12 text-sm text-gray-400 flex items-center">
+                <div
+                  className="h-5 w-5 rounded-full bg-no-repeat bg-center bg-cover"
+                  style={{ backgroundImage: `url('${user.user_metadata.avatar_url}')`}}
+                />
+                <span className="ml-2">{user.user_metadata.full_name}</span>
+              </div>
+            )} */}
           </div>
 
           {/* Graphic */}

@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { retrieveUserOrganizations } from 'lib/helpers'
 import { login, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
-import { Button, Toggle, Badge } from '@supabase/ui'
+import { Icon, Button, Toggle, Badge } from '@supabase/ui'
 
 import Modal from 'components/Modal'
 import RetrieveOrganizationModal from 'components/Modals/RetrieveOrganizationModal'
 
 const Settings = ({}) => {
 
+  const [loaded, setLoaded] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [toggle, setToggle] = useState(false)
   const [userProfile, setUserProfile] = useState(null)
@@ -30,6 +31,7 @@ const Settings = ({}) => {
         }
         setUserProfile(userProfile)
       }
+      setLoaded(true)
     })()
   }, [])
 
@@ -53,15 +55,24 @@ const Settings = ({}) => {
   if (!userProfile) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center">
-        <p className="text-white">Sign in to have access to your settings</p>
-        <Button
-          className="mt-4"
-          shadow
-          type="primary"
-          onClick={() => login()}
-        >
-          Sign in
-        </Button>
+        {!loaded 
+          ? (
+            <Icon type="Loader" size={24} strokeWidth={2} className="text-white animate-spin" />
+          )
+          : (
+            <>
+            <p className="text-white">Sign in to have access to your settings</p>
+              <Button
+                className="mt-4"
+                shadow
+                type="primary"
+                onClick={() => login()}
+              >
+                Sign in
+              </Button>
+            </>
+          )
+        }
       </div>
     )
   } else {

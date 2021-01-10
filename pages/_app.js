@@ -35,9 +35,7 @@ function MyApp({ Component, pageProps, router }) {
   }
 
   useEffect(() => {
-    if (router.pathname === '/settings') {
-      setLoaded(true)
-    } else if (router.pathname !== '/' && router.query.org) {
+    if (router.pathname !== '/' && router.query.org) {
       (async function retrieveOrganizationProfile() {
         setLoaded(false)
         const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)

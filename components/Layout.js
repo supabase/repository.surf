@@ -8,8 +8,6 @@ import Sidebar from 'components/Sidebar'
 import Header from 'components/Header'
 import Footer from 'components/Footer'
 
-import { login, logout } from 'lib/auth'
-
 const Layout = ({
   references,
   repos,
@@ -32,10 +30,8 @@ const Layout = ({
   }, [])
 
   useEffect(() => {
-    (async function initUserProfile() {
-      const user = supabase.auth.user()
-      if (user) setUserProfile(user.user_metadata)
-    })()
+    const user = supabase.auth.user()
+    if (user) setUserProfile(user.user_metadata)
   }, [])
 
   return (
@@ -70,11 +66,7 @@ const Layout = ({
         organizationName={organization.name}
         numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
-        login={() => {
-          login()
-        }}
-        logout={() => {
-          logout()
+        onLogout={() => {
           setUserProfile(null)
           toast.success('Successfully logged out')
         }}
@@ -82,7 +74,7 @@ const Layout = ({
 
       {uPlotLoaded && (
         <main className="min-h-screen focus:outline-none flex flex-col bg-gray-700 px-5 py-14 sm:px-10 sm:py-24">
-          {!loaded
+          {router.pathname !== '/settings' && !loaded
             ? (
               <div className="text-white flex-1 flex flex-col justify-center items-center">
                 <Icon type="Loader" size={20} strokeWidth={2} className="animate-spin text-white" />
