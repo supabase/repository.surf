@@ -44,12 +44,14 @@ const Settings = ({ supabase }) => {
             const { decrypted_token } = await postAndWait('/api/decrypt', { token: data[0].access_token })
             organizationSettings[org.id] = {
               name: org.login,
-              accessToken: decrypted_token
+              accessToken: decrypted_token,
+              showToken: false,
             }
           } else {
             organizationSettings[org.id] = {
               name: org.login,
-              accessToken: null
+              accessToken: null,
+              showToken: false,
             }
           }
         }
@@ -61,6 +63,12 @@ const Settings = ({ supabase }) => {
   const updateOrgAccessToken = async(orgId, value) => {
     const updatedOrgSettings = { ...orgSettings }
     updatedOrgSettings[orgId].accessToken = value
+    setOrgSettings(updatedOrgSettings)
+  }
+
+  const setOrgAccessTokenVisible = async(orgId) => {
+    const updatedOrgSettings = { ...orgSettings }
+    updatedOrgSettings[orgId].showToken = !updatedOrgSettings[orgId].showToken
     setOrgSettings(updatedOrgSettings)
   }
 
@@ -184,12 +192,25 @@ const Settings = ({ supabase }) => {
                                 Set a Github access token for {org.login} to fetch private repositories
                               </span>
                             </label>
-                            <input
-                              type="text"
-                              value={(orgSettings[org.id] ? orgSettings[org.id].accessToken : '') || ''}
-                              onChange={(e) => updateOrgAccessToken(org.id, e.target.value)}
-                              className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
-                            />
+                            <div className="relative">
+                              <input
+                                type={orgSettings[org.id] && orgSettings[org.id].showToken ? 'text' : 'password' }
+                                value={(orgSettings[org.id] ? orgSettings[org.id].accessToken : '') || ''}
+                                onChange={(e) => updateOrgAccessToken(org.id, e.target.value)}
+                                className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
+                              />
+                              <div
+                                className="absolute top-6 right-4 cursor-pointer transition opacity-50 hover:opacity-100"
+                                onClick={() => setOrgAccessTokenVisible(org.id)}
+                              >
+                                <Icon
+                                  type={orgSettings[org.id] && orgSettings[org.id].showToken ? 'EyeOff' : 'Eye' }
+                                  size={16}
+                                  strokeWidth={2}
+                                  className="text-white" 
+                                />
+                              </div>
+                            </div>
                           </div>
                           <div className="flex items-center justify-between">
                             <label>
