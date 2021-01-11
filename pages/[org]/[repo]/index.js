@@ -16,6 +16,10 @@ import IssueTrackerInfoModal from 'components/Modals/IssueTrackerInfoModal'
 const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
 const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
+/**
+ * This page will be deprecated soon
+ */
+
 const RepositoryStatistics = ({
   githubAccessToken,
   organization,

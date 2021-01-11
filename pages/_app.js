@@ -7,9 +7,9 @@ import { createClient } from '@supabase/supabase-js'
 
 import Layout from 'components/Layout'
 import Meta from 'components/Meta'
-import { fetchAndWait, postAndWait } from 'lib/fetchWrapper'
+import { fetchAndWait } from 'lib/fetchWrapper'
+import { retrieveOrgAccessToken } from 'lib/auth'
 
-const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
 const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabasePublicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
 
@@ -19,10 +19,11 @@ function MyApp({ Component, pageProps, router }) {
 
   const [loaded, setLoaded] = useState(false)
   const [organization, setOrganization] = useState({})
+  const [orgAccessToken, setOrgAccessToken] = useState('')
 
   // Stores all the repositories of the organization
   const [repos, setRepos] = useState([])
-  // Stores all the repositories selected to show cumulative data in the chart
+  // Stores all the repositories selected in the side bar to show cumulative data in the chart
   const [selectedRepos, setSelectedRepos] = useState([])
 
   // An object of star history retrievers.
@@ -37,26 +38,16 @@ function MyApp({ Component, pageProps, router }) {
   useEffect(() => {
     if (router.pathname !== '/' && router.query.org) {
       (async function retrieveOrganizationProfile() {
-        let orgAccessToken = githubAccessToken
         setLoaded(false)
         const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
         setOrganization(org)
 
-        const { data, error } = await supabase
-          .from('organizations')
-          .select('*')
-          .eq('id', org.id)
-
-        if (error) {
-          console.log(error)
-        } else if (data.length > 0) {
-          const res = await postAndWait('/api/decrypt', { token: data[0].access_token })
-          orgAccessToken = res.decrypted_token
-        }
+        const accessToken = await retrieveOrgAccessToken(org.id)
+        setOrgAccessToken(accessToken)
 
         const repos = await fetchAndWait(
           `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
-          { 'Authorization': `token ${orgAccessToken}` }
+          { 'Authorization': `token ${accessToken}` }
         )
         setRepos(repos)
         setLoaded(true)
@@ -113,9 +104,9 @@ function MyApp({ Component, pageProps, router }) {
             {...pageProps}
             loaded={loaded}
             references={references}
-            githubAccessToken={githubAccessToken}
             supabase={supabase}
             organization={organization}
+            orgAccessToken={orgAccessToken}
             repoNames={selectedRepos}
             starRetrievers={starRetrievers}
             setStarRetrievers={setStarRetrievers}
