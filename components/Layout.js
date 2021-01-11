@@ -63,7 +63,7 @@ const Layout = ({
         userProfile={userProfile}
         organizationSlug={organization.login}
         organizationAvatar={organization.avatar_url}
-        organizationName={organization.name}
+        organizationName={organization.name || organization.login}
         numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
         onLogout={() => {

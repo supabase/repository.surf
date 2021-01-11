@@ -34,9 +34,9 @@ const Header = ({
     event.stopPropagation()
 
     setLoading(true)
-    const org = await fetchAndWait(`https://api.github.com/orgs/${organization}`)
-    if (org.name) {
-      router.push(`/${organization.toLowerCase()}`)
+    const org = await fetchAndWait(`https://api.github.com/orgs/${organization.toLowerCase()}`)
+    if (org.login) {
+      router.push(`/${org.login}`)
     } else {
       toast.error(`The organization ${organization} cannot be found`)
     }

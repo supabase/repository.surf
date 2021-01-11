@@ -24,11 +24,14 @@ const Sidebar = ({
     if (userPreferences && userPreferences.sort) {
       const [key, order] = userPreferences.sort.split(' ')
       sortRepositories(key, order)
+    } else {
+      sortRepositories('stargazers_count', 'desc')
     }
   }, [organizationSlug])
 
   useEffect(() => {
     if (repositories.length > 0) sortRepositories(selectedSort.key, selectedSort.order)
+    else setRepoList(repositories)
   }, [repositories])
   
   const sortOptions = [

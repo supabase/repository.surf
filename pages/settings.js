@@ -12,7 +12,6 @@ const Settings = ({ supabase }) => {
 
   const [loaded, setLoaded] = useState(false)
   const [showModal, setShowModal] = useState(false)
-  const [toggle, setToggle] = useState(false)
   const [userProfile, setUserProfile] = useState(null)
   const [organizations, setOrganizations] = useState([])
   const [orgSettings, setOrgSettings] = useState({})
@@ -203,7 +202,7 @@ const Settings = ({ supabase }) => {
                               </span>
                             </label>
                             <div className="opacity-50" onClick={() => {}}>
-                              <Toggle active={toggle} />
+                              <Toggle disabled />
                             </div>
                           </div>
                           <div className="flex items-center justify-between">

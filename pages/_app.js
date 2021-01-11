@@ -7,7 +7,7 @@ import { createClient } from '@supabase/supabase-js'
 
 import Layout from 'components/Layout'
 import Meta from 'components/Meta'
-import { fetchAndWait } from 'lib/fetchWrapper'
+import { fetchAndWait, postAndWait } from 'lib/fetchWrapper'
 
 const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
 const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -37,15 +37,28 @@ function MyApp({ Component, pageProps, router }) {
   useEffect(() => {
     if (router.pathname !== '/' && router.query.org) {
       (async function retrieveOrganizationProfile() {
+        let orgAccessToken = githubAccessToken
         setLoaded(false)
         const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
         setOrganization(org)
 
+        const { data, error } = await supabase
+          .from('organizations')
+          .select('*')
+          .eq('id', org.id)
+
+        if (error) {
+          console.log(error)
+        } else if (data.length > 0) {
+          const res = await postAndWait('/api/decrypt', { token: data[0].access_token })
+          orgAccessToken = res.decrypted_token
+        }
+
         const repos = await fetchAndWait(
           `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
-          { 'Authorization': `token ${githubAccessToken}` }
+          { 'Authorization': `token ${orgAccessToken}` }
         )
-        setRepos(repos.sort((a, b) => a.stargazers_count > b.stargazers_count ? -1 : 1))
+        setRepos(repos)
         setLoaded(true)
       })()
     }
