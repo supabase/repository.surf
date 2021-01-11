@@ -40,18 +40,27 @@ const Settings = ({ supabase }) => {
         const organizationSettings = {}
         for (const org of organizations) {
           const { data } = await supabase.from('organizations').select('*').eq('id', org.id)
-          if (data.length > 0 && data[0].access_token) {
-            const { decrypted_token } = await postAndWait('/api/decrypt', { token: data[0].access_token })
+          if (data.length > 0) {
+            // Load existing configuration for the organization
             organizationSettings[org.id] = {
               name: org.login,
-              accessToken: decrypted_token,
+              accessToken: '',
               showToken: false,
+              showPrivateRepos: data[0].show_private_repos,
+              issueTracking: false,
+            }
+            if (data[0].access_token) {
+              const { decrypted_token } = await postAndWait('/api/decrypt', { token: data[0].access_token })
+              organizationSettings[org.id].accessToken = decrypted_token
             }
           } else {
+            // No existing configuration saved for the organization
             organizationSettings[org.id] = {
               name: org.login,
               accessToken: null,
               showToken: false,
+              showPrivateRepos: false,
+              issueTracking: false,
             }
           }
         }
@@ -60,16 +69,30 @@ const Settings = ({ supabase }) => {
     })()
   }, [organizations])
 
-  const updateOrgAccessToken = async(orgId, value) => {
+  const updateOrgAccessToken = (orgId, value) => {
     const updatedOrgSettings = { ...orgSettings }
     updatedOrgSettings[orgId].accessToken = value
     setOrgSettings(updatedOrgSettings)
   }
 
-  const setOrgAccessTokenVisible = async(orgId) => {
+  const toggleOrgAccessTokenVisible = (orgId) => {
     const updatedOrgSettings = { ...orgSettings }
     updatedOrgSettings[orgId].showToken = !updatedOrgSettings[orgId].showToken
     setOrgSettings(updatedOrgSettings)
+  }
+
+  const toggleOrgPrivateRepoVisibility = async(orgId) => {
+    const { error } = await supabase
+      .from('organizations')
+      .update({ show_private_repos: !orgSettings[orgId].showPrivateRepos })
+      .match({ id: orgId })
+    if (error) {
+      console.error(error)
+    } else {
+      const updatedOrgSettings = { ...orgSettings }
+      updatedOrgSettings[orgId].showPrivateRepos = !updatedOrgSettings[orgId].showPrivateRepos
+      setOrgSettings(updatedOrgSettings)
+    }
   }
 
   const onSaveOrgAccessToken = async(event, org) => {
@@ -184,63 +207,62 @@ const Settings = ({ supabase }) => {
                             <p className="ml-4">{org.login}</p>
                           </div>
                         </div>
-                        <form className="w-full space-y-8" onSubmit={(e) => onSaveOrgAccessToken(e, org)}>
-                          <div>
-                            <label>
-                              Organization access token
-                              <span className="block text-gray-400 text-sm mt-1">
-                                Set a Github access token for {org.login} to fetch private repositories
-                              </span>
-                            </label>
-                            <div className="relative">
-                              <input
-                                type={orgSettings[org.id] && orgSettings[org.id].showToken ? 'text' : 'password' }
-                                value={(orgSettings[org.id] ? orgSettings[org.id].accessToken : '') || ''}
-                                onChange={(e) => updateOrgAccessToken(org.id, e.target.value)}
-                                className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
-                              />
-                              <div
-                                className="absolute top-6 right-4 cursor-pointer transition opacity-50 hover:opacity-100"
-                                onClick={() => setOrgAccessTokenVisible(org.id)}
-                              >
-                                <Icon
-                                  type={orgSettings[org.id] && orgSettings[org.id].showToken ? 'EyeOff' : 'Eye' }
-                                  size={16}
-                                  strokeWidth={2}
-                                  className="text-white" 
+                        {orgSettings[org.id] && (
+                          <form className="w-full space-y-8" onSubmit={(e) => onSaveOrgAccessToken(e, org)}>
+                            <div>
+                              <label>
+                                Organization access token
+                                <span className="block text-gray-400 text-sm mt-1">
+                                  Set a Github access token for {org.login} to fetch private repositories
+                                </span>
+                              </label>
+                              <div className="relative">
+                                <input
+                                  type={orgSettings[org.id].showToken ? 'text' : 'password' }
+                                  value={orgSettings[org.id].accessToken || ''}
+                                  onChange={(e) => updateOrgAccessToken(org.id, e.target.value)}
+                                  className="w-full text-sm bg-gray-700 border border-gray-500 rounded-md mt-3 py-2 px-2 font-light focus:outline-none focus:border-brand-600"
                                 />
+                                <div
+                                  className="absolute top-6 right-4 cursor-pointer transition opacity-50 hover:opacity-100"
+                                  onClick={() => toggleOrgAccessTokenVisible(org.id)}
+                                >
+                                  <Icon
+                                    type={orgSettings[org.id].showToken ? 'EyeOff' : 'Eye' }
+                                    size={16}
+                                    strokeWidth={2}
+                                    className="text-white" 
+                                  />
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <label>
-                              <div className="flex">
-                                <span className="mr-2">Toggle visibility of private repositories</span>
-                                <Badge dot color="green" size="small">Coming soon</Badge>
+                            <div className="flex items-center justify-between">
+                              <label>
+                                <span className="mr-2">Show private repositories</span>
+                                <span className="block text-gray-400 text-sm mt-1">
+                                  Allow private repositories under {org.login} to be publicly visible on repository.surf.
+                                </span>
+                              </label>
+                              <div onClick={() => toggleOrgPrivateRepoVisibility(org.id)}>
+                                <Toggle checked={orgSettings[org.id].showPrivateRepos} />
                               </div>
-                              <span className="block text-gray-400 text-sm mt-1">
-                                Allow private repositories under {org.login} to be publicly visible on repository.surf.
-                              </span>
-                            </label>
-                            <div className="opacity-50" onClick={() => {}}>
-                              <Toggle disabled />
                             </div>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <label>
-                              <div className="flex">
-                                <span className="mr-2">Toggle issue tracking</span>
-                                <Badge dot color="green" size="small">Coming soon</Badge>
+                            <div className="flex items-center justify-between">
+                              <label>
+                                <div className="flex">
+                                  <span className="mr-2">Toggle issue tracking</span>
+                                  <Badge dot color="green" size="small">Coming soon</Badge>
+                                </div>
+                                <span className="block text-gray-400 text-sm mt-1">
+                                  Start tracking the issue counts for repositories under {org.login}
+                                </span>
+                              </label>
+                              <div className="opacity-50">
+                                <Toggle checked={orgSettings[org.id].issueTracking} disabled />
                               </div>
-                              <span className="block text-gray-400 text-sm mt-1">
-                                Start tracking the issue counts for repositories under {org.login}
-                              </span>
-                            </label>
-                            <div className="opacity-50">
-                              <Toggle disabled />
                             </div>
-                          </div>
-                        </form>
+                          </form>
+                        )}
                       </div>
                     ))}
                   </div>
