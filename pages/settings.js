@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
-import { retrieveUserOrganizations } from 'lib/helpers'
 import { postAndWait } from 'lib/fetchWrapper'
+import { retrieveUserOrganizations } from 'lib/helpers'
 import { login, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
+import { saveOrgAccessToken, saveOrgPrivateRepoVisibility } from 'lib/settingsHelpers'
 
 import Modal from 'components/Modal'
 import RetrieveOrganizationModal from 'components/Modals/RetrieveOrganizationModal'
@@ -75,24 +76,10 @@ const Settings = ({ supabase }) => {
     setOrgSettings(updatedOrgSettings)
   }
 
-  const toggleOrgAccessTokenVisible = (orgId) => {
+  const onToggleOrgAccessTokenVisible = (orgId) => {
     const updatedOrgSettings = { ...orgSettings }
     updatedOrgSettings[orgId].showToken = !updatedOrgSettings[orgId].showToken
     setOrgSettings(updatedOrgSettings)
-  }
-
-  const toggleOrgPrivateRepoVisibility = async(orgId) => {
-    const { error } = await supabase
-      .from('organizations')
-      .update({ show_private_repos: !orgSettings[orgId].showPrivateRepos })
-      .match({ id: orgId })
-    if (error) {
-      console.error(error)
-    } else {
-      const updatedOrgSettings = { ...orgSettings }
-      updatedOrgSettings[orgId].showPrivateRepos = !updatedOrgSettings[orgId].showPrivateRepos
-      setOrgSettings(updatedOrgSettings)
-    }
   }
 
   const onSaveOrgAccessToken = async(event, org) => {
@@ -101,37 +88,23 @@ const Settings = ({ supabase }) => {
       event.preventDefault()
       event.stopPropagation()
     }
-
-    const { encrypted_token } = await postAndWait('/api/encrypt', { string: orgSettings[org.id].accessToken })
-
-    const { data } = await supabase
-      .from('organizations')
-      .select('*')
-      .eq('id', org.id)
-    
-    if (data.length > 0) {
-      const { error } = await supabase
-        .from('organizations')
-        .update({ access_token: encrypted_token })
-        .match({ id: org.id })
-      if (error) {
-        console.error(error)
-        toast.error(error)
-      } else {
-        toast.success(`Successfully updated access token for ${org.login}`)
-      }
+    const res = await saveOrgAccessToken(org, orgSettings[org.id].accessToken)
+    if (res.success) {
+      toast.success(res.message)
     } else {
-      const { error } = await supabase
-        .from('organizations')
-        .insert([
-          { id: org.id, name: org.login, access_token: encrypted_token }
-        ])
-      if (error) {
-        console.error(error)
-        toast.error(error)
-      } else {
-        toast.success(`Successfully saved access token for ${org.login}`)
-      }
+      toast.error(res.message)
+    }
+  }
+
+  const onToggleOrgPrivateRepoVisibility = async(org) => {
+    const res = await saveOrgPrivateRepoVisibility(org, !orgSettings[org.id].showPrivateRepos)
+    if (res.success) {
+      const updatedOrgSettings = { ...orgSettings }
+      updatedOrgSettings[org.id].showPrivateRepos = !updatedOrgSettings[org.id].showPrivateRepos
+      setOrgSettings(updatedOrgSettings)
+      toast.success(res.message)
+    } else {
+      toast.error(res.message)
     }
   }
 
@@ -225,7 +198,7 @@ const Settings = ({ supabase }) => {
                                 />
                                 <div
                                   className="absolute top-6 right-4 cursor-pointer transition opacity-50 hover:opacity-100"
-                                  onClick={() => toggleOrgAccessTokenVisible(org.id)}
+                                  onClick={() => onToggleOrgAccessTokenVisible(org.id)}
                                 >
                                   <Icon
                                     type={orgSettings[org.id].showToken ? 'EyeOff' : 'Eye' }
@@ -243,7 +216,7 @@ const Settings = ({ supabase }) => {
                                   Allow private repositories under {org.login} to be publicly visible on repository.surf.
                                 </span>
                               </label>
-                              <div onClick={() => toggleOrgPrivateRepoVisibility(org.id)}>
+                              <div onClick={() => onToggleOrgPrivateRepoVisibility(org)}>
                                 <Toggle checked={orgSettings[org.id].showPrivateRepos} />
                               </div>
                             </div>

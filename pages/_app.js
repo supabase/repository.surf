@@ -3,23 +3,17 @@ import "tailwindcss/tailwind.css";
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useEffect, useState, useRef } from 'react'
-import { createClient } from '@supabase/supabase-js'
 
 import Layout from 'components/Layout'
 import Meta from 'components/Meta'
 import { fetchAndWait } from 'lib/fetchWrapper'
-import { retrieveOrgAccessToken } from 'lib/auth'
-
-const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabasePublicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
+import { supabase, retrieveOrganizationConfig } from 'lib/auth'
 
 function MyApp({ Component, pageProps, router }) {
 
-  const supabase = createClient(supabaseURL, supabasePublicKey)
-
   const [loaded, setLoaded] = useState(false)
   const [organization, setOrganization] = useState({})
-  const [orgAccessToken, setOrgAccessToken] = useState('')
+  const [orgConfig, setOrgConfig] = useState('')
 
   // Stores all the repositories of the organization
   const [repos, setRepos] = useState([])
@@ -42,14 +36,19 @@ function MyApp({ Component, pageProps, router }) {
         const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
         setOrganization(org)
 
-        const accessToken = await retrieveOrgAccessToken(org.id)
-        setOrgAccessToken(accessToken)
+        const orgConfig = await retrieveOrganizationConfig(org.id)
+        setOrgConfig(orgConfig)
 
         const repos = await fetchAndWait(
           `https://api.github.com/orgs/${router.query.org}/repos?per_page=100`,
-          { 'Authorization': `token ${accessToken}` }
+          { 'Authorization': `token ${orgConfig.access_token}` }
         )
-        setRepos(repos)
+
+        if (!orgConfig.show_private_repos) {
+          setRepos(repos.filter(repo => repo.private === false))
+        } else {
+          setRepos(repos)
+        }
         setLoaded(true)
       })()
     }
@@ -97,6 +96,7 @@ function MyApp({ Component, pageProps, router }) {
           selectedRepos={selectedRepos}
           loaded={loaded}
           organization={organization}
+          orgConfig={orgConfig}
           toggleRepo={toggleRepo}
           toggleAllRepos={toggleAllRepos}
         > 
@@ -106,7 +106,7 @@ function MyApp({ Component, pageProps, router }) {
             references={references}
             supabase={supabase}
             organization={organization}
-            orgAccessToken={orgAccessToken}
+            orgConfig={orgConfig}
             repoNames={selectedRepos}
             starRetrievers={starRetrievers}
             setStarRetrievers={setStarRetrievers}

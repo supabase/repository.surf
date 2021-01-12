@@ -1,13 +1,9 @@
 import { fetchAndWait, postAndWait } from 'lib/fetchWrapper'
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from 'lib/auth'
 const CryptoJS = require('crypto-js')
 
 const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET
-
-const supabaseURL = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabasePublicKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLIC_KEY
-const supabase = createClient(supabaseURL, supabasePublicKey)
 
 export default async function callback(req, res) {
   const code = req.query.code

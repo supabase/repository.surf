@@ -22,7 +22,7 @@ const OrganizationOverview = ({
   organization,
   repoNames,
   starRetrievers,
-  orgAccessToken
+  orgConfig
 }) => {
   const [showModal, setShowModal] = useState(false)
   const [allIssueCounts, setAllIssueCounts] = useState([])
@@ -71,7 +71,7 @@ const OrganizationOverview = ({
         starHistoryRetriever = starRetrievers[starHistoryKey]
       } else {
         starHistoryRetriever = new RepoStarHistoryRetriever(supabase,
-            starsTable, orgName, repoName, orgAccessToken)
+            starsTable, orgName, repoName, orgConfig.access_token)
         starRetrievers[starHistoryKey] = starHistoryRetriever
       }
 
@@ -100,7 +100,7 @@ const OrganizationOverview = ({
     }
 
     const aggregator = new StarHistoryAggregator(supabase, starsTable,
-      orgName, orgAccessToken, starRetrievers, repoNames)
+      orgName, orgConfig.access_token, starRetrievers, repoNames)
     const starHistory = aggregator.aggregatedStarHistory
     setAggregatedStarHistory(starHistory)
     setAggregationLoadedTime(aggregator.aggregationLoadedTime)
@@ -127,7 +127,7 @@ const OrganizationOverview = ({
       setAggregationLoading(true)
       setAggregationCount(0)
     }
-  }, [repoNames, orgAccessToken])
+  }, [repoNames, orgConfig])
 
   useEffect(() => {
     if (allIssueCounts.length > 0) {

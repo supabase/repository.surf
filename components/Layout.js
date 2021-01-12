@@ -14,6 +14,7 @@ const Layout = ({
   selectedRepos,
   loaded,
   organization,
+  orgConfig,
   supabase,
   children,
   toggleRepo = () => {},

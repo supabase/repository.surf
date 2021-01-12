@@ -86,14 +86,16 @@ const Sidebar = ({
         <div className="flex items-center justify-between text-white">
           <p>Repositories</p>
           <div className="flex items-center space-x-4">
-            <div className="cursor-pointer relative" onClick={() => setShowSortMenu(!showSortMenu)}>
-              <Icon type="Sliders" size={16} strokeWidth={2} />
-              <Dropdown
-                showDropdown={showSortMenu}
-                options={sortOptions}
-                selectedOptionKey={selectedSort.key}
-              />
-            </div>
+            {repoList.length > 0 && (
+              <div className="cursor-pointer relative" onClick={() => setShowSortMenu(!showSortMenu)}>
+                <Icon type="Sliders" size={16} strokeWidth={2} />
+                <Dropdown
+                  showDropdown={showSortMenu}
+                  options={sortOptions}
+                  selectedOptionKey={selectedSort.key}
+                />
+              </div>
+            )}
             <div className="cursor-pointer" onClick={() => {
               onCloseSidebar()
               setRepoList(repositories)
@@ -103,48 +105,60 @@ const Sidebar = ({
           </div>
         </div>
 
-        <div className="mt-3 mb-6">
-          <Input
-            icon={<Icon type="Search" />}
-            onChange={(text) => onSearchRepository(text)}
-            type="text"
-            placeholder="Search for a repository"
-          />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <Checkbox
-              label="Select all"
-              checked={selectedRepositories.length === repositories.length}
-              onChange={() => onToggleAllRepos()}
-            />
-          </div>
-          <p className="text-sm text-gray-400">
-            {selectedRepositories.length > 0 ? selectedRepositories.length : 'No'} repo{selectedRepositories.length > 1 && 's'} selected
-          </p>
-        </div>
-
-        <div className="border-t border-gray-500 my-4" />
-
-        <div className="space-y-4">
-          {repoList.map((repo, idx) => {
-            return (
-              <div key={`repo_${idx}`} className="flex items-center">
-                <Checkbox
-                  label={repo.name}
-                  checked={selectedRepositories.indexOf(repo.name) >= 0}
-                  onChange={() => onToggleRepo(repo.name)}
+        {repoList.length !== 0
+          ? (
+            <>
+              <div className="mt-3 mb-6">
+                <Input
+                  icon={<Icon type="Search" />}
+                  onChange={(text) => onSearchRepository(text)}
+                  type="text"
+                  placeholder="Search for a repository"
                 />
-                {repo.private && (
-                  <div className="text-gray-400 text-xs border border-gray-400 rounded-full ml-3 px-2">
-                    Private
-                  </div>
-                )}
               </div>
-            )
-          })}
-        </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <Checkbox
+                    label="Select all"
+                    checked={selectedRepositories.length === repositories.length}
+                    onChange={() => onToggleAllRepos()}
+                  />
+                </div>
+                <p className="text-sm text-gray-400">
+                  {selectedRepositories.length > 0 ? selectedRepositories.length : 'No'} repo{selectedRepositories.length > 1 && 's'} selected
+                </p>
+              </div>
+
+              <div className="border-t border-gray-500 my-4" />
+
+              <div className="space-y-4">
+                {repoList.map((repo, idx) => {
+                  return (
+                    <div key={`repo_${idx}`} className="flex items-center">
+                      <Checkbox
+                        label={repo.name}
+                        checked={selectedRepositories.indexOf(repo.name) >= 0}
+                        onChange={() => onToggleRepo(repo.name)}
+                      />
+                      {repo.private && (
+                        <div className="text-gray-400 text-xs border border-gray-400 rounded-full ml-3 px-2">
+                          Private
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )
+          : (
+            <div className="flex items-center justify-center flex-1 text-gray-400 text-sm">
+              This organization has no repositories
+            </div>
+          )
+        }
+
       </div>
     </Transition>
   )
