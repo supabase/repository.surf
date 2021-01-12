@@ -157,7 +157,9 @@ const Settings = ({ supabase }) => {
             <div className="pb-5 sm:px-10 sm:pb-10 flex items-center justify-between">
               <div>
                 <h1 className="text-white text-2xl">Organization settings</h1>
-                <p className="mt-2 text-base text-gray-400">Adjust settings for each organization under your Github account</p>
+                <p className="mt-2 text-base text-gray-400">
+                  Adjust settings for each organization under your Github account
+                </p>
               </div>
               {userProfile.accessToken && (
                 <Button shadow type="primary" onClick={() => setShowModal()}>
@@ -187,6 +189,14 @@ const Settings = ({ supabase }) => {
                                 Organization access token
                                 <span className="block text-gray-400 text-sm mt-1">
                                   Set a Github access token for {org.login} to fetch private repositories
+                                  (Create one {' '}
+                                  <a
+                                    href="https://github.com/settings/tokens/new"
+                                    target="_blank"
+                                    className="text-brand-700 transition-opacity opacity-50 hover:opacity-100"
+                                  >
+                                    here
+                                  </a> - Only the read:org scope is required)
                                 </span>
                               </label>
                               <div className="relative">
