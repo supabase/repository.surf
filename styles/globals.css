@@ -46,3 +46,7 @@ svg.recharts-surface tspan {
 	color: black !important;
 	font-family:  Arial;
 }
+
+.sbui-checkbox__label-container__label__span {
+  font-weight: 400 !important;
+}

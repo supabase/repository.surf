@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Icon, Transition, Input } from '@supabase/ui'
+import { Checkbox, Icon, Transition, Input } from '@supabase/ui'
 
 import Dropdown from 'components/Dropdown'
 import { updateUserPreferences } from 'lib/helpers'
@@ -114,14 +114,11 @@ const Sidebar = ({
 
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <input
-              type="checkbox"
-              className="rounded-sm"
-              name="selectAll"
+            <Checkbox
+              label="Select all"
               checked={selectedRepositories.length === repositories.length}
               onChange={() => onToggleAllRepos()}
             />
-            <label htmlFor="selectAll" className="ml-3 text-white text-sm">Select all</label>
           </div>
           <p className="text-sm text-gray-400">
             {selectedRepositories.length > 0 ? selectedRepositories.length : 'No'} repo{selectedRepositories.length > 1 && 's'} selected
@@ -134,14 +131,16 @@ const Sidebar = ({
           {repoList.map((repo, idx) => {
             return (
               <div key={`repo_${idx}`} className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="rounded-sm"
-                  name={repo.name}
+                <Checkbox
+                  label={repo.name}
                   checked={selectedRepositories.indexOf(repo.name) >= 0}
                   onChange={() => onToggleRepo(repo.name)}
                 />
-                <label htmlFor={repo.name} className="ml-3 text-white text-sm">{repo.name}</label>
+                {repo.private && (
+                  <div className="text-gray-400 text-xs border border-gray-400 rounded-full ml-3 px-2">
+                    Private
+                  </div>
+                )}
               </div>
             )
           })}
