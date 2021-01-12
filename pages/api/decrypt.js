@@ -9,6 +9,7 @@ export default function decrypt(req, res) {
     const decrypted_token = CryptoJS.AES.decrypt(token, process.env.REPOSITORY_SURF_ENCRYPTION_KEY).toString(CryptoJS.enc.Utf8)
     res.send({ decrypted_token })
   } catch(error) {
+    console.log(error)
     res.status(500).json({ error })
   }
 }
