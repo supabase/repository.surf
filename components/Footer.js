@@ -11,7 +11,7 @@ const Footer = ({
           <p className="text-white text-sm font-light">Powered by </p>
           <img className="ml-3 h-5 relative" style={{ top: '1px' }} src="/logo-dark.png" />
         </a>
-        <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-8">
           <a href="https://twitter.com/supabase_io" target="_blank">
             <Icon type="Twitter" size={20} strokeWidth={2} className="text-white" />
           </a>

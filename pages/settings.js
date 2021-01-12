@@ -141,7 +141,7 @@ const Settings = ({ supabase }) => {
         >
           <RetrieveOrganizationModal grantReadOrgPermissions={grantReadOrgPermissions} />
         </Modal>
-        <div className="px-5 xl:px-0 container mx-auto" style={{ minHeight: 'calc(100% - 12rem)' }}>
+        <div className="sm:px-5 xl:px-0 container mx-auto" style={{ minHeight: 'calc(100% - 12rem)' }}>
           <div className="sm:px-10 flex mb-14">
             <div
               className="h-24 w-24 rounded-full bg-no-repeat bg-center bg-cover"
@@ -154,7 +154,7 @@ const Settings = ({ supabase }) => {
           </div>
     
           <div>
-            <div className="pb-5 sm:px-10 sm:pb-10 flex items-center justify-between">
+            <div className="pb-5 sm:px-10 sm:pb-10 flex flex-col sm:flex-row sm:items-center justify-between">
               <div>
                 <h1 className="text-white text-2xl">Organization settings</h1>
                 <p className="mt-2 text-base text-gray-400">
@@ -162,7 +162,7 @@ const Settings = ({ supabase }) => {
                 </p>
               </div>
               {userProfile.accessToken && (
-                <Button shadow type="primary" onClick={() => setShowModal()}>
+                <Button className="mt-3 sm:mt-0" shadow type="primary" onClick={() => setShowModal()}>
                   Retrieve organization
                 </Button>
               )}
@@ -219,18 +219,18 @@ const Settings = ({ supabase }) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                               <label>
                                 <span className="mr-2">Show private repositories</span>
                                 <span className="block text-gray-400 text-sm mt-1">
                                   Allow private repositories under {org.login} to be publicly visible on repository.surf.
                                 </span>
                               </label>
-                              <div onClick={() => onToggleOrgPrivateRepoVisibility(org)}>
+                              <div className="mt-3 sm:mt-0" onClick={() => onToggleOrgPrivateRepoVisibility(org)}>
                                 <Toggle checked={orgSettings[org.id].showPrivateRepos} />
                               </div>
                             </div>
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                               <label>
                                 <div className="flex">
                                   <span className="mr-2">Toggle issue tracking</span>
@@ -240,7 +240,7 @@ const Settings = ({ supabase }) => {
                                   Start tracking the issue counts for repositories under {org.login}
                                 </span>
                               </label>
-                              <div className="opacity-50">
+                              <div className="opacity-50 mt-3 sm:mt-0">
                                 <Toggle checked={orgSettings[org.id].issueTracking} disabled />
                               </div>
                             </div>

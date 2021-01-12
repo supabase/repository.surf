@@ -17,7 +17,7 @@ const Modal = ({
       leaveTo="transform opacity-0"
     >
       <div className="z-10 fixed inset-0 overflow-y-auto">
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div className="flex items-center justify-center min-h-screen px-4 text-center sm:block">
 
           <div
             className="fixed inset-0"
