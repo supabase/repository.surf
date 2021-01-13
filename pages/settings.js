@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
-import { postAndWait } from 'lib/fetchWrapper'
 import { retrieveUserOrganizations } from 'lib/helpers'
 import { login, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
-import { saveOrgAccessToken, saveOrgPrivateRepoVisibility } from 'lib/settingsHelpers'
+import { retrieveOrgSettings, saveOrgAccessToken, saveOrgPrivateRepoVisibility } from 'lib/settingsHelpers'
 
 import Modal from 'components/Modal'
 import RetrieveOrganizationModal from 'components/Modals/RetrieveOrganizationModal'
 
-const Settings = ({ supabase }) => {
+const Settings = () => {
 
   const [loaded, setLoaded] = useState(false)
   const [showModal, setShowModal] = useState(false)
@@ -36,34 +35,11 @@ const Settings = ({ supabase }) => {
   }, [])
 
   useEffect(() => {
-    (async function retrieveOrgSettings() {
+    (async function retrieveOrganizationsSettings() {
       if (organizations.length > 0) {
         const organizationSettings = {}
         for (const org of organizations) {
-          const { data } = await supabase.from('organizations').select('*').eq('id', org.id)
-          if (data.length > 0) {
-            // Load existing configuration for the organization
-            organizationSettings[org.id] = {
-              name: org.login,
-              accessToken: '',
-              showToken: false,
-              showPrivateRepos: data[0].show_private_repos,
-              issueTracking: false,
-            }
-            if (data[0].access_token) {
-              const { decrypted_token } = await postAndWait('/api/decrypt', { token: data[0].access_token })
-              organizationSettings[org.id].accessToken = decrypted_token
-            }
-          } else {
-            // No existing configuration saved for the organization
-            organizationSettings[org.id] = {
-              name: org.login,
-              accessToken: null,
-              showToken: false,
-              showPrivateRepos: false,
-              issueTracking: false,
-            }
-          }
+          organizationSettings[org.id] = await retrieveOrgSettings(org)
         }
         setOrgSettings(organizationSettings)
       }
@@ -171,7 +147,7 @@ const Settings = ({ supabase }) => {
               {userProfile.accessToken
                 ? (
                   <div className="w-full mb-10">
-                    {organizations.map(org => (
+                    {Object.keys(orgSettings).length > 0 && organizations.map(org => (
                       <div key={org.login} className="w-full rounded-md border border-gray-400 p-6 mb-10">
                         <div className="flex items-center justify-between mb-6">
                           <div className="flex items-center">
