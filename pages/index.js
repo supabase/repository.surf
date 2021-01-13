@@ -18,7 +18,10 @@ export default function Home() {
   const [organization, setOrganization] = useState('')
 
   useEffect(() => {
-    if (router.asPath.includes("access_token")) router.push('/')
+    if (router.asPath.includes("access_token")) {
+      router.push('/')
+      setTimeout(() => setUserProfile(getUser()), 100)
+    }
     setLoadGraphic(true)
     setUserProfile(getUser())
   }, [])
@@ -67,7 +70,6 @@ export default function Home() {
           <div className="row-start-2 lg:row-start-1 col-span-12 lg:col-span-6 relative">
             <div className="mb-10">
               <div className="flex items-center mb-5">
-                {/* <img className="h-20 xl:h-24 mr-5" src="logo.png" /> */}
                 <h1 className="text-white text-3xl xl:text-5xl leading-snug">
                   Get <span className="text-brand-700">insights</span> across your organization's repositories
                 </h1>
