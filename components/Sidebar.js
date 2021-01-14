@@ -78,7 +78,7 @@ const Sidebar = ({
     >
       <div
         className={`
-          bg-gray-800 flex flex-col w-80 z-50 fixed top-14 p-4 overflow-y-auto
+          bg-gray-800 flex flex-col w-80 z-20 fixed top-14 p-4 overflow-y-auto
           ${direction === 'right' ? 'right-0' : 'left-0'}
         `}
         style={{ height: 'calc(100vh - 3.5rem)'}}

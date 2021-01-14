@@ -74,7 +74,7 @@ const Header = ({
   }
 
   return (
-    <div className={`${hideOrgNav ? 'absolute w-full' : 'sticky'} top-0 z-30`}>
+    <div className={`${hideOrgNav ? 'absolute w-full' : 'sticky'} top-0 z-10`}>
 
       {/* Repository.surf Context Nav Bar */}
       <div className={`px-4 2xl:px-0 ${hideOrgNav && 'shadow'} bg-gray-900 h-14 flex items-center`}>

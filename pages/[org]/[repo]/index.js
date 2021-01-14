@@ -7,14 +7,12 @@ import {
   retrieveLatestCloseIssueCount,
   deriveOpenIssueCountComparison,
 } from 'lib/helpers'
+import { ISSUES_TABLE, STARS_TABLE } from 'lib/constants'
 import IssueTracker from 'components/IssueTracker'
 import StarHistory from 'components/StarHistory'
 import Modal from 'components/Modal'
 import ChartShareModal from 'components/Modals/ChartShareModal'
 import IssueTrackerInfoModal from 'components/Modals/IssueTrackerInfoModal'
-
-const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
-const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
 /**
  * This page will be deprecated soon
@@ -48,7 +46,7 @@ const RepositoryStatistics = ({
     (async function retrieveRepositoryIssueCounts() {
       setLoadingIssueCounts(true)
       const { data, error } = await supabase
-        .from(issuesTable)
+        .from(ISSUES_TABLE)
         .select('*')
         .eq('organization', orgName)
         .eq('repository', repoName)
@@ -69,7 +67,7 @@ const RepositoryStatistics = ({
     if (starHistoryKey in starRetrievers) {
       starHistoryRetriever = starRetrievers[starHistoryKey]
     } else {
-      starHistoryRetriever = new RepoStarHistoryRetriever(supabase, starsTable, orgName, repoName, githubAccessToken)
+      starHistoryRetriever = new RepoStarHistoryRetriever(supabase, STARS_TABLE, orgName, repoName, githubAccessToken)
       const newRetrievers = Object.assign({}, starRetrievers)
       newRetrievers[starHistoryKey] = starHistoryRetriever
       setStarRetrievers(newRetrievers)

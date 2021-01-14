@@ -1,11 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { getRepositoryStarHistory } from 'lib/helpers'
-import IssueTracker from 'components/IssueTracker'
-import StarHistory from 'components/StarHistory'
-
-const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
-const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
+import { ISSUES_TABLE, STARS_TABLE } from 'lib/constants'
+import IssueTracker from '~/components/IssueTracker'
+import StarHistory from '~/components/StarHistory'
 
 const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }) => {
 
@@ -20,7 +18,7 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
     if (chartType === 'issues') {
       (async function retrieveRepositoryIssueCounts() {
         const { data, error } = await supabase
-          .from(issuesTable)
+          .from(ISSUES_TABLE)
           .select('*')
           .eq('organization', organization)
           .eq('repository', repoName)
@@ -32,7 +30,7 @@ const EmbedRepositoryStatistics = ({ githubAccessToken, supabase, organization }
       })()
     } else if (chartType === 'stars') {
       (async function retrieveRepositoryStarHistory() {
-        const { starHistory } = await getRepositoryStarHistory(supabase, starsTable, organization, repoName, githubAccessToken)
+        const { starHistory } = await getRepositoryStarHistory(supabase, STARS_TABLE, organization, repoName, githubAccessToken)
         setChartData(starHistory)
       })()
     }

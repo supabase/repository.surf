@@ -1,8 +1,8 @@
 import { fetchAndWait, postAndWait } from 'lib/fetchWrapper'
+import { USERS_TABLE } from 'lib/constants'
 import { supabase } from 'lib/auth'
 const CryptoJS = require('crypto-js')
 
-const usersTable = process.env.NEXT_PUBLIC_SUPABASE_USERS_TABLE
 const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET
 
@@ -20,7 +20,7 @@ export default async function callback(req, res) {
     )
   
     const { error } = await supabase
-      .from(usersTable)
+      .from(USERS_TABLE)
       .update({
         name: githubUserProfile.name,
         access_token: CryptoJS.AES.encrypt(
