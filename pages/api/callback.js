@@ -35,9 +35,9 @@ export default async function callback(req, res) {
     if (error) console.error(error)
   }
 
-  if (environment === 'local') {
-    res.redirect('http://localhost:3000/settings')
-  } else if (environment === 'production') {
+  if (environment === 'production') {
     res.redirect('https://repository.surf/settings')
+  } else {
+    res.redirect('http://localhost:3000/settings')
   }
 }
