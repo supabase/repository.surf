@@ -11,10 +11,10 @@ const Dropdown = ({ showDropdown, options = [], selectedOptionKey = '' }) => (
     leaveTo="transform opacity-0 scale-95"
   >
     <div>
-      <div className="cursor-default fixed top-0 right-0 h-screen w-screen z-10" />
+      <div className="cursor-default fixed top-0 right-0 h-screen w-screen z-30" />
       <div className={`
         origin-top-right absolute -right-9 mt-2 w-56 rounded-md shadow-lg bg-gray-700
-        ring-1 ring-black ring-opacity-5 z-20 overflow-y-hidden
+        ring-1 ring-black ring-opacity-5 z-30 overflow-y-hidden
       `}>
         <div className="py-1 space-y-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
           {options.map((option, idx) => (

@@ -1,19 +1,17 @@
 import { useState, useEffect } from 'react'
-import { formatOrganizationIssueCount } from 'lib/helpers'
 import StarHistoryAggregator from 'lib/StarHistoryAggregator'
 import RepoStarHistoryRetriever from 'lib/RepoStarHistoryRetriever'
 import {
+  formatOrganizationIssueCount,
   retrieveLatestOpenIssueCount,
   retrieveLatestCloseIssueCount,
   deriveOpenIssueCountComparison,
 } from 'lib/helpers'
+import { ISSUES_TABLE, STARS_TABLE } from 'lib/constants'
 import StarHistory from 'components/StarHistory'
 import IssueTracker from 'components/IssueTracker'
 import Modal from 'components/Modal'
 import IssueTrackerInfoModal from 'components/Modals/IssueTrackerInfoModal'
-
-const issuesTable = process.env.NEXT_PUBLIC_SUPABASE_ISSUES_TABLE
-const starsTable = process.env.NEXT_PUBLIC_SUPABASE_STARS_TABLE
 
 const OrganizationOverview = ({
   references,
@@ -22,7 +20,7 @@ const OrganizationOverview = ({
   organization,
   repoNames,
   starRetrievers,
-  githubAccessToken
+  orgConfig
 }) => {
   const [showModal, setShowModal] = useState(false)
   const [allIssueCounts, setAllIssueCounts] = useState([])
@@ -40,7 +38,7 @@ const OrganizationOverview = ({
     (async function retrieveOrganizationStats() {
       setLoadingIssueCounts(true)
       const { data, error } = await supabase
-        .from(issuesTable)
+        .from(ISSUES_TABLE)
         .select('*')
         .eq('organization', orgName)
       if (error) {
@@ -71,7 +69,7 @@ const OrganizationOverview = ({
         starHistoryRetriever = starRetrievers[starHistoryKey]
       } else {
         starHistoryRetriever = new RepoStarHistoryRetriever(supabase,
-            starsTable, orgName, repoName, githubAccessToken)
+            STARS_TABLE, orgName, repoName, orgConfig.access_token)
         starRetrievers[starHistoryKey] = starHistoryRetriever
       }
 
@@ -99,8 +97,8 @@ const OrganizationOverview = ({
       }
     }
 
-    const aggregator = new StarHistoryAggregator(supabase, starsTable,
-      orgName, githubAccessToken, starRetrievers, repoNames)
+    const aggregator = new StarHistoryAggregator(supabase, STARS_TABLE,
+      orgName, orgConfig.access_token, starRetrievers, repoNames)
     const starHistory = aggregator.aggregatedStarHistory
     setAggregatedStarHistory(starHistory)
     setAggregationLoadedTime(aggregator.aggregationLoadedTime)
@@ -127,7 +125,7 @@ const OrganizationOverview = ({
       setAggregationLoading(true)
       setAggregationCount(0)
     }
-  }, [repoNames])
+  }, [repoNames, orgConfig])
 
   useEffect(() => {
     if (allIssueCounts.length > 0) {

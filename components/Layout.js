@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import { Icon } from '@supabase/ui'
 
 import Sidebar from 'components/Sidebar'
@@ -14,17 +14,24 @@ const Layout = ({
   selectedRepos,
   loaded,
   organization,
+  supabase,
   children,
   toggleRepo = () => {},
   toggleAllRepos = () => {},
 }) => {
 
   const router = useRouter()
+  const [userProfile, setUserProfile] = useState(null)
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     if (uPlot) setUPlotLoaded(true)
+  }, [])
+
+  useEffect(() => {
+    const user = supabase.auth.user()
+    if (user) setUserProfile(user.user_metadata)
   }, [])
 
   return (
@@ -53,16 +60,21 @@ const Layout = ({
 
       <Header
         references={references}
+        userProfile={userProfile}
         organizationSlug={organization.login}
         organizationAvatar={organization.avatar_url}
-        organizationName={organization.name}
+        organizationName={organization.name || organization.login}
         numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
+        onLogout={() => {
+          setUserProfile(null)
+          toast.success('Successfully logged out')
+        }}
       />
 
       {uPlotLoaded && (
-        <main className="h-screen flex-1 overflow-y-auto focus:outline-none flex flex-col bg-gray-700 px-5 py-14 sm:px-10 sm:py-24">
-          {!loaded
+        <main className="min-h-screen focus:outline-none flex flex-col bg-gray-700 px-5 py-14 sm:px-10 sm:py-24">
+          {router.pathname !== '/settings' && !loaded
             ? (
               <div className="text-white flex-1 flex flex-col justify-center items-center">
                 <Icon type="Loader" size={20} strokeWidth={2} className="animate-spin text-white" />
