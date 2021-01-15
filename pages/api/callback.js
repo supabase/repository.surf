@@ -23,11 +23,13 @@ export default async function callback(req, res) {
     const { error } = await supabase
       .from(USERS_TABLE)
       .update({
-        name: githubUserProfile.name,
         access_token: CryptoJS.AES.encrypt(
           result.access_token,
           process.env.REPOSITORY_SURF_ENCRYPTION_KEY
         ).toString()
+      })
+      .match({
+        email: githubUserProfile.email
       })
     
     if (error) console.error(error)
