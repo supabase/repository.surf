@@ -3,6 +3,7 @@ import { USERS_TABLE } from 'lib/constants'
 import { supabase } from 'lib/auth'
 const CryptoJS = require('crypto-js')
 
+const environment = process.env.NEXT_PUBLIC_ENVIRONMENT
 const githubClientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID
 const githubClientSecret = process.env.GITHUB_CLIENT_SECRET
 
@@ -32,5 +33,9 @@ export default async function callback(req, res) {
     if (error) console.error(error)
   }
 
-  res.redirect('http://localhost:3000/settings')
+  if (environment === 'local') {
+    res.redirect('http://localhost:3000/settings')
+  } else if (environment === 'production') {
+    res.redirect('https://repository.surf/settings')
+  }
 }

@@ -147,6 +147,16 @@ const Settings = () => {
               {userProfile.accessToken
                 ? (
                   <div className="w-full mb-10">
+                    {organizations.length === 0 && (
+                      <>
+                        <p className="text-gray-400">
+                          There are no organizations under your Github user (that you've given read access to)
+                        </p>
+                        <p className="text-gray-400 mt-4">
+                          Not what you expected? Try retrieving your organizations again via the button to the right
+                        </p>
+                      </>
+                    )}
                     {Object.keys(orgSettings).length > 0 && organizations.map(org => (
                       <div key={org.login} className="w-full rounded-md border border-gray-400 p-6 mb-10">
                         <div className="flex items-center justify-between mb-6">
@@ -230,7 +240,7 @@ const Settings = () => {
                   <>
                     <div className="mb-10 space-y-5">
                       <p className="text-sm">
-                        You will need to grant read access for each organization that you want to adjust settings for to repository.surf via the button below.
+                        You will need to <span className="text-brand-700">grant read access for each organization that you want</span> to adjust settings for to repository.surf via the button below.
                       </p>
                       <p className="text-sm">
                         The settings available for each organization include the following:
