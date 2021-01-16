@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
 import { retrieveUserOrganizations } from 'lib/helpers'
-import { login, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
+import { login, logout, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
 import { retrieveOrgSettings, saveOrgAccessToken, saveOrgPrivateRepoVisibility } from 'lib/settingsHelpers'
 
 import Modal from 'components/Modal'
 import RetrieveOrganizationModal from 'components/Modals/RetrieveOrganizationModal'
+import Router from 'next/dist/next-server/lib/router/router'
 
-const Settings = () => {
+const Settings = ({ onLogout }) => {
 
+  const router = useRouter()
   const [loaded, setLoaded] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [userProfile, setUserProfile] = useState(null)
@@ -123,9 +126,18 @@ const Settings = () => {
               className="h-24 w-24 rounded-full bg-no-repeat bg-center bg-cover"
               style={{ backgroundImage: `url('${userProfile.avatarUrl}')`}}
             />
-            <div className="flex flex-col justify-center ml-10 text-white">
+            <div className="flex-1 flex flex-col justify-center ml-10 text-white">
               <p className="text-2xl">{userProfile.name}</p>
               <p className="font-light text-gray-400">{userProfile.email}</p>
+              <button
+                onClick={async() => {
+                  await logout()
+                  window.location.href = '/'
+                }}
+                className="text-xs border rounded-full px-3 py-1 w-28 mt-2 transition opacity-50 hover:opacity-100 focus:outline-none"
+              >
+                Logout
+              </button>
             </div>
           </div>
     

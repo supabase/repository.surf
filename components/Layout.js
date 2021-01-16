@@ -66,10 +66,10 @@ const Layout = ({
         organizationName={organization.name || organization.login}
         numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
-        onLogout={() => {
-          setUserProfile(null)
-          toast.success('Successfully logged out')
-        }}
+        // onLogout={() => {
+        //   setUserProfile(null)
+        //   toast.success('Successfully logged out')
+        // }}
       />
 
       {uPlotLoaded && (

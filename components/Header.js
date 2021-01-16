@@ -5,8 +5,7 @@ import { toast } from 'react-toastify'
 import Link from 'next/link'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
-import { login, logout } from 'lib/auth'
-import Dropdown from 'components/Dropdown'
+import { login } from 'lib/auth'
 
 const Header = ({
   hideOrgNav = false,
@@ -17,13 +16,11 @@ const Header = ({
   organizationName,
   numberOfSelectedRepos = 0,
   openSidebar = () => {},
-  onLogout = () => {},
 }) => {
 
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [organization, setOrganization] = useState('')
-  const [showUserDropdown, setShowUserDropdown] = useState(false)
 
   useEffect(() => {
     if (organizationSlug) setOrganization(organizationSlug.toLowerCase())
@@ -42,30 +39,6 @@ const Header = ({
     }
     setLoading(false)
   }
-
-  const userOptions = !userProfile
-    ? [
-        {
-          key: 'signIn',
-          label: 'Sign in',
-          action: () => login()
-        },
-      ]
-    : [
-        {
-          key: 'settings',
-          label: 'Settings',
-          action: () => router.push('/settings')
-        },
-        {
-          key: 'signOut',
-          label: 'Sign out',
-          action: () => {
-            logout()
-            onLogout()
-          }
-        },
-      ]
 
   const scrollTo = (key) => {
     if (references[key]) {
@@ -107,20 +80,27 @@ const Header = ({
             </div>
           )}
           <div className="flex-1 flex items-center justify-end">
-            <div className="cursor-pointer relative" onClick={() => setShowUserDropdown(!showUserDropdown)}>
+            <div className="cursor-pointer relative">
               {userProfile
                 ? (
                   <div
+                    onClick={() => router.push('/settings')}
                     style={{ backgroundImage: `url('${userProfile.avatar_url}')` }}
                     className="h-8 w-8 bg-no-repeat bg-center bg-cover rounded-full" 
                   />
                 )
-                : (<Icon type="User" size={20} strokeWidth={2} className="text-white" />)
+                : (
+                  <button
+                    onClick={() => login()}
+                    className={`
+                      text-xs text-white border transition opacity-50 hover:opacity-100 px-3 py-1
+                      rounded-full focus:outline-none
+                    `}
+                  >
+                    Sign in with Github
+                  </button>
+                )
               }
-              <Dropdown
-                showDropdown={showUserDropdown}
-                options={userOptions}
-              />
             </div>
           </div>
         </div>

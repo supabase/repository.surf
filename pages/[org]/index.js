@@ -146,30 +146,32 @@ const OrganizationOverview = ({
       >
         <IssueTrackerInfoModal orgName={organization.name} />
       </Modal>
-      <StarHistory
-        starHistoryRef={references.stars}
-        repoName={`the selected ${repoNames.length} repositories (up to 100)`}
-        lastUpdated={aggregationLoadedTime}
-        starHistory={aggregatedStarHistory}
-        totalStarCount={totalStarCount}
-        loadingStarHistory={aggregationLoading}
-        loadingMessage={`Preparing star history... ${aggregationCount} out of ${repoNames.length} repos loaded.`}
-        enableSharing={false}
-        noStarHistory={repoNames.length > 0 && aggregatedStarHistory.length === 0}
-        noReposSelected={repoNames.length === 0}
-      />
-      <IssueTracker
-        issuesRef={references.issues}
-        repoName={`the selected ${repoNames.length} repositories (up to 100)`}
-        issueCounts={selectedIssueCounts}
-        loadingIssueCounts={loadingIssueCounts}
-        latestOpenIssueCount={retrieveLatestOpenIssueCount(selectedIssueCounts)}
-        openIssueCountComparison={deriveOpenIssueCountComparison(selectedIssueCounts)}
-        latestClosedIssueCount={retrieveLatestCloseIssueCount(selectedIssueCounts)}
-        enableSharing={false}
-        onOpenInfo={() => setShowModal(true)}
-        noIssueCounts={repoNames.length > 0 && selectedIssueCounts.length === 0}
-      />
+      <div className="container mx-auto">
+        <StarHistory
+          starHistoryRef={references.stars}
+          repoName={`the selected ${repoNames.length} repositories (up to 100)`}
+          lastUpdated={aggregationLoadedTime}
+          starHistory={aggregatedStarHistory}
+          totalStarCount={totalStarCount}
+          loadingStarHistory={aggregationLoading}
+          loadingMessage={`Preparing star history... ${aggregationCount} out of ${repoNames.length} repos loaded.`}
+          enableSharing={false}
+          noStarHistory={repoNames.length > 0 && aggregatedStarHistory.length === 0}
+          noReposSelected={repoNames.length === 0}
+        />
+        <IssueTracker
+          issuesRef={references.issues}
+          repoName={`the selected ${repoNames.length} repositories (up to 100)`}
+          issueCounts={selectedIssueCounts}
+          loadingIssueCounts={loadingIssueCounts}
+          latestOpenIssueCount={retrieveLatestOpenIssueCount(selectedIssueCounts)}
+          openIssueCountComparison={deriveOpenIssueCountComparison(selectedIssueCounts)}
+          latestClosedIssueCount={retrieveLatestCloseIssueCount(selectedIssueCounts)}
+          enableSharing={false}
+          onOpenInfo={() => setShowModal(true)}
+          noIssueCounts={repoNames.length > 0 && selectedIssueCounts.length === 0}
+        />
+      </div>
     </>
   )
 }
