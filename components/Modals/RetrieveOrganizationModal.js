@@ -1,3 +1,5 @@
+const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID
+
 const RetrieveOrganizationModal = ({
   grantReadOrgPermissions = () => {}
 }) => {
@@ -8,7 +10,7 @@ const RetrieveOrganizationModal = ({
       </p>
       <p className="leading-relaxed text-sm mt-3">
         To do this, you will first need to revoke your current authorization via {' '}
-        <a href="https://github.com/settings/connections/applications/8b38cc996af0a52a6548" target="_blank" className="text-brand-700">
+        <a href={`https://github.com/settings/connections/applications/${clientId}`} target="_blank" className="text-brand-700">
           here
         </a> and selecting the "Revoke access" button.
       </p>
