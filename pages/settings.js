@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/router'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
 import { retrieveUserOrganizations } from 'lib/helpers'
 import { login, logout, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
@@ -8,11 +7,9 @@ import { retrieveOrgSettings, saveOrgAccessToken, saveOrgPrivateRepoVisibility }
 
 import Modal from 'components/Modal'
 import RetrieveOrganizationModal from 'components/Modals/RetrieveOrganizationModal'
-import Router from 'next/dist/next-server/lib/router/router'
 
-const Settings = ({ onLogout }) => {
+const Settings = () => {
 
-  const router = useRouter()
   const [loaded, setLoaded] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [userProfile, setUserProfile] = useState(null)
@@ -151,7 +148,7 @@ const Settings = ({ onLogout }) => {
               </div>
               {userProfile.accessToken && (
                 <Button className="mt-3 sm:mt-0" shadow type="primary" onClick={() => setShowModal()}>
-                  Retrieve organization
+                  Unable to find your organization?
                 </Button>
               )}
             </div>
@@ -161,11 +158,12 @@ const Settings = ({ onLogout }) => {
                   <div className="w-full mb-10">
                     {organizations.length === 0 && (
                       <>
-                        <p className="text-gray-400">
+                        <p className="text-gray-100">
                           There are no organizations under your Github user (that you've given read access to)
                         </p>
-                        <p className="text-gray-400 mt-4">
-                          Not what you expected? Try retrieving your organizations again via the button to the right
+                        <p className="text-gray-100 mt-4">
+                          <span className="text-brand-700">Not what you expected?</span>{' '}
+                          Try retrieving your organizations again via the button to the right
                         </p>
                       </>
                     )}
