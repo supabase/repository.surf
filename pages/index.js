@@ -20,7 +20,9 @@ export default function Home() {
   useEffect(() => {
     if (router.asPath.includes("access_token")) {
       router.push('/')
-      setTimeout(() => setUserProfile(getUser()), 100)
+      setTimeout(() => {
+        setUserProfile(getUser())
+      }, 200)
       toast.success('Successfully logged in')
     }
     setLoadGraphic(true)
