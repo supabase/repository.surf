@@ -5,14 +5,11 @@ import { toast, ToastContainer } from 'react-toastify'
 import { Icon } from '@supabase/ui'
 
 import { fetchAndWait } from 'lib/fetchWrapper'
-import { getUser } from 'lib/auth'
 import CountUp from 'components/CountUp'
 import Header from 'components/Header'
 
-export default function Home() {
-
+export default function Home({ userProfile }) {
   const router = useRouter()
-  const [userProfile, setUserProfile] = useState(null)
   const [loadGraphic, setLoadGraphic] = useState(false)
   const [loading, setLoading] = useState(false)
   const [organization, setOrganization] = useState('')
@@ -20,15 +17,9 @@ export default function Home() {
   useEffect(() => {
     if (router.asPath.includes("access_token")) {
       router.push('/')
-      setTimeout(() => {
-        const user = getUser()
-        console.log(user)
-        setUserProfile(user)
-      }, 500)
       toast.success('Successfully logged in')
     }
     setLoadGraphic(true)
-    setUserProfile(getUser())
   }, [])
 
   const goToOrganization = async(event) => {
@@ -61,10 +52,6 @@ export default function Home() {
       <Header
         hideOrgNav
         userProfile={userProfile}
-        onLogout={() => {
-          setUserProfile(null)
-          toast.success('Successfully logged out')
-        }}
       />
       <div className="flex lg:flex-row h-screen items-center bg-gray-800 relative overflow-y-hidden">
         <div

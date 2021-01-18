@@ -14,24 +14,18 @@ const Layout = ({
   selectedRepos,
   loaded,
   organization,
-  supabase,
+  userProfile,
   children,
   toggleRepo = () => {},
   toggleAllRepos = () => {},
 }) => {
 
   const router = useRouter()
-  const [userProfile, setUserProfile] = useState(null)
   const [uPlotLoaded, setUPlotLoaded] = useState(false)
   const [showSidebar, setShowSidebar] = useState(false)
 
   useEffect(() => {
     if (uPlot) setUPlotLoaded(true)
-  }, [])
-
-  useEffect(() => {
-    const user = supabase.auth.user()
-    if (user) setUserProfile(user.user_metadata)
   }, [])
 
   return (
@@ -66,10 +60,6 @@ const Layout = ({
         organizationName={organization.name || organization.login}
         numberOfSelectedRepos={selectedRepos.length}
         openSidebar={() => setShowSidebar(true)}
-        // onLogout={() => {
-        //   setUserProfile(null)
-        //   toast.success('Successfully logged out')
-        // }}
       />
 
       {uPlotLoaded && (

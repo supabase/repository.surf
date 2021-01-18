@@ -12,12 +12,12 @@ import { supabase, retrieveOrganizationConfig } from 'lib/auth'
 function MyApp({ Component, pageProps, router }) {
 
   const [loaded, setLoaded] = useState(false)
+  const [userProfile, setUserProfile] = useState(null)
+
   const [organization, setOrganization] = useState({})
   const [orgConfig, setOrgConfig] = useState('')
 
-  // Stores all the repositories of the organization
   const [repos, setRepos] = useState([])
-  // Stores all the repositories selected in the side bar to show cumulative data in the chart
   const [selectedRepos, setSelectedRepos] = useState([])
 
   // An object of star history retrievers.
@@ -28,6 +28,30 @@ function MyApp({ Component, pageProps, router }) {
     stars: useRef(null),
     issues: useRef(null),
   }
+
+  supabase.auth.onAuthStateChange(async(event, session) => {
+    if (event === 'SIGNED_IN') {
+      setUserProfile(session.user.user_metadata)
+      const { data: user, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', session.user.id)
+  
+      if (error) {
+        console.error(error)
+      } else if (user.length === 0) {
+        await supabase
+          .from('users')
+          .insert([
+            {
+              id: session.user.id,
+              name: session.user.user_metadata.full_name,
+              email: session.user.email
+            }
+          ])
+      }
+    }
+  })
 
   useEffect(() => {
     if (router.pathname !== '/' && router.query.org) {
@@ -58,6 +82,11 @@ function MyApp({ Component, pageProps, router }) {
     setSelectedRepos(repos.map(repo => repo.name))
   }, [repos])
 
+  useEffect(() => {
+    const user = supabase.auth.user()
+    if (user) setUserProfile(user.user_metadata)
+  })
+
   const toggleRepo = (repoName) => {
     let updatedSelectedRepos = selectedRepos.slice()
     if (selectedRepos.indexOf(repoName) !== -1) {
@@ -83,6 +112,7 @@ function MyApp({ Component, pageProps, router }) {
           <Meta />
           <Component
             {...pageProps}
+            userProfile={userProfile}
             supabase={supabase} 
             organization={router.query.org}
           />
@@ -92,17 +122,18 @@ function MyApp({ Component, pageProps, router }) {
         <Layout
           references={references}
           repos={repos}
-          supabase={supabase}
           selectedRepos={selectedRepos}
           loaded={loaded}
           organization={organization}
           orgConfig={orgConfig}
+          userProfile={userProfile}
           toggleRepo={toggleRepo}
           toggleAllRepos={toggleAllRepos}
         > 
           <Component
             {...pageProps}
             loaded={loaded}
+            userProfile={userProfile}
             references={references}
             supabase={supabase}
             organization={organization}
