@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
@@ -17,34 +18,38 @@ const Settings = () => {
   const [orgSettings, setOrgSettings] = useState({})
 
   useEffect(() => {
-    (async function initUserProfile() {
+    let isCancelled = false;
+
+    const initUserProfile = async() => {
       const userProfile = await getUserProfile()
-      if (userProfile) {
-        if (userProfile.accessToken) {
-          const { data: organizations, error } = await retrieveUserOrganizations(userProfile.accessToken)
-          if (error) {
-            userProfile.accessToken = null
-          } else {
+      if (userProfile && userProfile.accessToken) {
+        const { data: organizations, error } = await retrieveUserOrganizations(userProfile.accessToken)
+        if (error) {
+          console.error(error)
+          userProfile.accessToken = null
+        } else if (organizations.length > 0) {
+          const organizationSettings = {}
+          for (const org of organizations) {
+            organizationSettings[org.id] = await retrieveOrgSettings(org)
+          }
+          if (!isCancelled) {
             setOrganizations(organizations)
+            setOrgSettings(organizationSettings)
           }
         }
+      }
+      if (!isCancelled) {
         setUserProfile(userProfile)
+        setLoaded(true)
       }
-      setLoaded(true)
-    })()
-  }, [])
+    }
+    
+    initUserProfile()
 
-  useEffect(() => {
-    (async function retrieveOrganizationsSettings() {
-      if (organizations.length > 0) {
-        const organizationSettings = {}
-        for (const org of organizations) {
-          organizationSettings[org.id] = await retrieveOrgSettings(org)
-        }
-        setOrgSettings(organizationSettings)
-      }
-    })()
-  }, [organizations])
+    return () => {
+      isCancelled = true
+    }
+  }, [])
 
   const updateOrgAccessToken = (orgId, value) => {
     const updatedOrgSettings = { ...orgSettings }
@@ -170,13 +175,15 @@ const Settings = () => {
                     {Object.keys(orgSettings).length > 0 && organizations.map(org => (
                       <div key={org.login} className="w-full rounded-md border border-gray-400 p-6 mb-10">
                         <div className="flex items-center justify-between mb-6">
-                          <div className="flex items-center">
-                            <div
-                              className="h-10 w-10 rounded-full bg-no-repeat bg-center bg-cover"
-                              style={{ backgroundImage: `url('${org.avatar_url}')`}}
-                            />
-                            <p className="ml-4">{org.login}</p>
-                          </div>
+                          <Link href={`/${org.login}`}>
+                            <div className="flex items-center cursor-pointer">
+                              <div
+                                className="h-10 w-10 rounded-full bg-no-repeat bg-center bg-cover"
+                                style={{ backgroundImage: `url('${org.avatar_url}')`}}
+                              />
+                              <p className="ml-4">{org.login}</p>
+                            </div>
+                          </Link>
                         </div>
                         {orgSettings[org.id] && (
                           <form className="w-full space-y-8" onSubmit={(e) => onSaveOrgAccessToken(e, org)}>

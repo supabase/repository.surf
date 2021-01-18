@@ -21,8 +21,10 @@ export default function Home() {
     if (router.asPath.includes("access_token")) {
       router.push('/')
       setTimeout(() => {
-        setUserProfile(getUser())
-      }, 200)
+        const user = getUser()
+        console.log(user)
+        setUserProfile(user)
+      }, 500)
       toast.success('Successfully logged in')
     }
     setLoadGraphic(true)
