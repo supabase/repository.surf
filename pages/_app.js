@@ -8,6 +8,7 @@ import Layout from 'components/Layout'
 import Meta from 'components/Meta'
 import { fetchAndWait } from 'lib/fetchWrapper'
 import { supabase, retrieveOrganizationConfig } from 'lib/auth'
+import { USERS_TABLE } from 'lib/constants'
 
 function MyApp({ Component, pageProps, router }) {
 
@@ -33,7 +34,7 @@ function MyApp({ Component, pageProps, router }) {
     if (event === 'SIGNED_IN') {
       setUserProfile(session.user.user_metadata)
       const { data: user, error } = await supabase
-        .from('users')
+        .from(USERS_TABLE)
         .select('*')
         .eq('id', session.user.id)
   
@@ -41,7 +42,7 @@ function MyApp({ Component, pageProps, router }) {
         console.error(error)
       } else if (user.length === 0) {
         await supabase
-          .from('users')
+          .from(USERS_TABLE)
           .insert([
             {
               id: session.user.id,
