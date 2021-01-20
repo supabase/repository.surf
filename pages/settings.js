@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import { Icon, Button, Toggle, Badge } from '@supabase/ui'
 import { retrieveUserOrganizations } from 'lib/helpers'
 import { login, logout, getUserProfile, grantReadOrgPermissions } from 'lib/auth'
-import { retrieveOrgSettings, saveOrgAccessToken, saveOrgPrivateRepoVisibility } from 'lib/settingsHelpers'
+import { retrieveOrgSettings, saveOrgAccessToken, saveOrgPrivateRepoVisibility, saveOrgIssueTracking } from 'lib/settingsHelpers'
 
 import Modal from 'components/Modal'
 import RetrieveOrganizationModal from 'components/Modals/RetrieveOrganizationModal'
@@ -86,6 +86,20 @@ const Settings = () => {
       toast.success(res.message)
     } else {
       toast.error(res.message)
+    }
+  }
+
+  const onToggleOrgIssueTracking = async(org) => {
+    if (orgSettings[org.id].accessToken) {
+      const res = await saveOrgIssueTracking(org, !orgSettings[org.id].trackIssues)
+      if (res.success) {
+        const updatedOrgSettings = { ...orgSettings }
+        updatedOrgSettings[org.id].trackIssues = !updatedOrgSettings[org.id].trackIssues
+        setOrgSettings(updatedOrgSettings)
+        toast.success(res.message)
+      } else {
+        toast.error(res.message)
+      }
     }
   }
 
@@ -237,14 +251,17 @@ const Settings = () => {
                               <label>
                                 <div className="flex">
                                   <span className="mr-2">Toggle issue tracking</span>
-                                  <Badge dot color="green" size="small">Coming soon</Badge>
+                                  {/* <Badge dot color="green" size="small">Coming soon</Badge> */}
                                 </div>
                                 <span className="block text-gray-400 text-sm mt-1">
-                                  Start tracking the issue counts for repositories under {org.login}
+                                  Start tracking the issue counts for repositories under {org.login} (You will need to provide an access token first)
                                 </span>
                               </label>
-                              <div className="opacity-50 mt-3 sm:mt-0">
-                                <Toggle checked={orgSettings[org.id].issueTracking} disabled />
+                              <div
+                                className={`mt-3 sm:mt-0 ${!orgSettings[org.id].accessToken && 'opacity-50'}`}
+                                onClick={() => onToggleOrgIssueTracking(org)}
+                              >
+                                <Toggle checked={orgSettings[org.id].trackIssues} disabled={!orgSettings[org.id].accessToken} />
                               </div>
                             </div>
                           </form>
