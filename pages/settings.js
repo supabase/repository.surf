@@ -96,7 +96,7 @@ const Settings = () => {
         const updatedOrgSettings = { ...orgSettings }
         updatedOrgSettings[org.id].trackIssues = !updatedOrgSettings[org.id].trackIssues
         setOrgSettings(updatedOrgSettings)
-        toast.success(res.message)
+        toast.success(`${res.message}. ${updatedOrgSettings[org.id].trackIssues ? 'We track issue counts by the hour so sit tight!' : ''}`)
       } else {
         toast.error(res.message)
       }
@@ -218,6 +218,7 @@ const Settings = () => {
                               </label>
                               <div className="relative">
                                 <input
+                                  placeholder="Hit enter after placing your token to save"
                                   type={orgSettings[org.id].showToken ? 'text' : 'password' }
                                   value={orgSettings[org.id].accessToken || ''}
                                   onChange={(e) => updateOrgAccessToken(org.id, e.target.value)}

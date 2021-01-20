@@ -14,8 +14,10 @@ const IssueTrackerInfoModal = ({ orgName }) => {
         <span className="text-brand-700"><Link href={"/supabase"}>here</Link></span>.
       </p>
       <p className="leading-relaxed mt-3 text-sm">
-        If you'd like us to start tracking your issues, let us know right {' '}
-        <a target="_blank" href="https://github.com/supabase/repository.surf/discussions" className="text-brand-700">here</a>
+        If you'd like us to start tracking your issues, head over to your settings <span className="text-brand-700"><Link href='/settings'>here</Link></span>.
+      </p>
+      <p className="leading-relaxed text-sm mt-3">
+        But if you've already turned on issue tracking for your organization - hang tight for the next hour!
       </p>
     </div>
   )

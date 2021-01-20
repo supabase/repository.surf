@@ -96,7 +96,8 @@ const IssueTracker = ({
                 <div className="cursor-pointer transition opacity-25 hover:opacity-75" onClick={() => onOpenInfo()}>
                   <Icon type="Info" size={24} strokeWidth={2} className="text-white" />
                 </div>
-                <span className="mt-5">Issues are not being tracked at the moment.</span>
+                <span className="mt-5 block">Issues are not being tracked at the moment.</span>
+                <span className="mt-2 block">Click on the icon above for more information.</span>
               </>
             )
             : (
