@@ -7,7 +7,7 @@ import { useEffect, useState, useRef } from 'react'
 import Layout from 'components/Layout'
 import Meta from 'components/Meta'
 import { fetchAndWait } from 'lib/fetchWrapper'
-import { supabase, retrieveOrganizationConfig } from 'lib/auth'
+import { supabase } from 'lib/auth'
 import { USERS_TABLE } from 'lib/constants'
 
 function MyApp({ Component, pageProps, router }) {
@@ -61,7 +61,7 @@ function MyApp({ Component, pageProps, router }) {
         const org = await fetchAndWait(`https://api.github.com/orgs/${router.query.org}`)
         setOrganization(org)
 
-        const orgConfig = await retrieveOrganizationConfig(org.id)
+        const orgConfig = await fetchAndWait(`/api/organizations?id=${org.id}`)
         setOrgConfig(orgConfig)
 
         const repos = await fetchAndWait(
