@@ -7,8 +7,31 @@ import { Icon } from '@supabase/ui'
 import { fetchAndWait } from 'lib/fetchWrapper'
 import CountUp from 'components/CountUp'
 import Header from 'components/Header'
+import OrgFeatureCard from 'components/OrgFeatureCard'
 
-export default function Home({ userProfile }) {
+const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
+const featuredOrgNames = ['supabase', 'postgrest', 'superfly', 'questdb', 'vercel', 'lottiefiles']
+
+export async function getStaticProps() {
+  const featuredOrganizations = await Promise.all(
+    featuredOrgNames.map(org => fetch(
+      `https://api.github.com/orgs/${org}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `bearer ${githubAccessToken}` 
+        }
+      }
+    ).then(res => res.json()))
+  )
+  return {
+    props: { featuredOrganizations }
+  }
+}
+
+export default function Home({ userProfile, featuredOrganizations }) {
   const router = useRouter()
   const [loadGraphic, setLoadGraphic] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -53,12 +76,12 @@ export default function Home({ userProfile }) {
         hideOrgNav
         userProfile={userProfile}
       />
-      <div className="flex lg:flex-row h-screen items-center bg-gray-800 relative overflow-y-hidden">
+      <div className="flex flex-col min-h-screen items-center bg-gray-800 relative overflow-y-hidden">
         <div
-          className="absolute -top-16 -left-36 xl:-left-36 w-full sm:w-2/3 transform rotate-6 bg-gray-900 shadow-xl"
-          style={{ height: '120vh'}}
+          className="absolute top-8 sm:-top-16 -left-40 sm:-left-36 xl:-left-36 w-full sm:w-2/3 transform rotate-6 bg-gray-900 shadow-xl"
+          style={{ height: '150vh'}}
         />
-        <div className="grid grid-cols-12 gap-x-4 container px-10 sm:px-20 xl:px-28 mx-auto z-10 flex-col-reverse">
+        <div className="min-h-screen items-center py-40 sm:py-0 grid grid-cols-12 gap-x-4 container px-10 sm:px-20 xl:px-28 mx-auto z-10 flex-col-reverse">
           <div className="row-start-2 lg:row-start-1 col-span-12 lg:col-span-6 relative">
             <div className="mb-10">
               <div className="flex items-center mb-5">
@@ -102,15 +125,6 @@ export default function Home({ userProfile }) {
                 </a>
               </div>
             </div>
-            {/* {user && (
-              <div className="absolute -bottom-12 text-sm text-gray-400 flex items-center">
-                <div
-                  className="h-5 w-5 rounded-full bg-no-repeat bg-center bg-cover"
-                  style={{ backgroundImage: `url('${user.user_metadata.avatar_url}')`}}
-                />
-                <span className="ml-2">{user.user_metadata.full_name}</span>
-              </div>
-            )} */}
           </div>
 
           {/* Graphic */}
@@ -155,6 +169,16 @@ export default function Home({ userProfile }) {
                 <span className="text-xs ml-2 relative" style={{ top: '1px' }}>Issues</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Featured Organizations */}
+        <div className="w-full z-10 px-10 sm:px-20 xl:px-28 container mx-auto -mt-32">
+          <p className="text-white">Explore organizations</p>
+          <div className="mt-8 mb-24 grid grid-cols-12 gap-x-8 gap-y-8">
+            {featuredOrganizations.map(org => (
+              <OrgFeatureCard key={org.id} org={org} />
+            ))}
           </div>
         </div>
       </div>

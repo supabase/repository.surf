@@ -1,10 +1,8 @@
 import { Icon } from '@supabase/ui'
 
-const Footer = ({
-
-}) => {
+const Footer = ({ color = 'bg-gray-900' }) => {
   return (
-    <div className="bg-gray-900 h-24 flex items-center px-4 2xl:px-0">
+    <div className={`${color} h-24 flex items-center px-4 2xl:px-0`}>
       <div className="container mx-auto flex items-center justify-between">
         {/* <img className="h-5" src="/logo-word.png" /> */}
         <a href="https://supabase.io" target="_blank" className="flex items-center">
