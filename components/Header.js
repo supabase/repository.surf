@@ -97,7 +97,7 @@ const Header = ({
                       rounded-full focus:outline-none
                     `}
                   >
-                    Sign in with Github
+                    Sign in<span className="hidden sm:inline"> with Github</span>
                   </button>
                 )
               }

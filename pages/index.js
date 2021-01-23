@@ -10,7 +10,7 @@ import Header from 'components/Header'
 import OrgFeatureCard from 'components/OrgFeatureCard'
 
 const githubAccessToken = process.env.NEXT_PUBLIC_GITHUB_ACCESS_TOKEN
-const featuredOrgNames = ['supabase', 'postgrest', 'superfly', 'questdb', 'vercel', 'lottiefiles']
+const featuredOrgNames = ['supabase', 'postgrest', 'superfly', 'questdb', 'vercel', 'posthog']
 
 export async function getStaticProps() {
   const featuredOrganizations = await Promise.all(
@@ -81,7 +81,7 @@ export default function Home({ userProfile, featuredOrganizations }) {
           className="absolute top-8 sm:-top-16 -left-40 sm:-left-36 xl:-left-36 w-full sm:w-2/3 transform rotate-6 bg-gray-900 shadow-xl"
           style={{ height: '150vh'}}
         />
-        <div className="min-h-screen items-center py-40 sm:py-0 grid grid-cols-12 gap-x-4 container px-10 sm:px-20 xl:px-28 mx-auto z-10 flex-col-reverse">
+        <div className="min-h-screen sm:min-h-full lg:min-h-screen items-center py-40 sm:py-0 grid grid-cols-12 gap-x-4 container px-10 sm:px-20 xl:px-28 mx-auto z-10 flex-col-reverse sm:my-56 lg:my-0">
           <div className="row-start-2 lg:row-start-1 col-span-12 lg:col-span-6 relative">
             <div className="mb-10">
               <div className="flex items-center mb-5">
@@ -131,11 +131,11 @@ export default function Home({ userProfile, featuredOrganizations }) {
           <div 
             className={`
               col-span-12 lg:col-start-9 lg:col-span-5 flex items-center justify-center
-              transform skew-y-12 w-4/5 h-40 mx-auto lg:w-full lg:h-56 mb-20 lg:mb-0
+              transform skew-y-12 w-4/5 h-40 mx-auto sm:w-3/5 lg:w-full lg:h-56 mb-20 sm:mb-40 lg:mb-0
             `}
           >
             <div className="relative h-full w-full border-b border-gray-400">
-              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-8 lg:px-5 z-20">
+              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-2 sm:px-5 z-20">
                 <div className={`w-5 transition-all duration-300 bg-brand-800 ${loadGraphic ? 'h-3/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-75 duration-300 bg-brand-800 ${loadGraphic ? 'h-2/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-100 duration-300 bg-brand-700 ${loadGraphic ? 'h-1/5' : 'h-0'}`} />
@@ -144,7 +144,7 @@ export default function Home({ userProfile, featuredOrganizations }) {
                 <div className={`w-5 transition-all delay-300 duration-300 bg-brand-600 ${loadGraphic ? 'h-2/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-300 duration-300 bg-brand-600 ${loadGraphic ? 'h-1/5' : 'h-0'}`} />
               </div>
-              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-8 lg:px-5 z-10 left-1 -top-1">
+              <div className="w-full h-full absolute bottom-0 flex items-end justify-between px-2 sm:px-5 z-10 left-1 -top-1">
                 <div className={`w-5 transition-all duration-300 bg-brand-900 ${loadGraphic ? 'h-3/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-75 duration-300 bg-brand-900 ${loadGraphic ? 'h-2/5' : 'h-0'}`} />
                 <div className={`w-5 transition-all delay-100 duration-300 bg-brand-900 ${loadGraphic ? 'h-1/5' : 'h-0'}`} />
@@ -173,9 +173,9 @@ export default function Home({ userProfile, featuredOrganizations }) {
         </div>
 
         {/* Featured Organizations */}
-        <div className="w-full z-10 px-10 sm:px-20 xl:px-28 container mx-auto -mt-32">
+        <div className="w-full z-10 px-10 sm:px-20 xl:px-28 container mx-auto -mt-24 sm:-mt-32">
           <p className="text-white">Explore organizations</p>
-          <div className="mt-8 mb-24 grid grid-cols-12 gap-x-8 gap-y-8">
+          <div className="mt-8 mb-24 grid grid-cols-12 gap-x-0 sm:gap-x-4 lg:gap-x-8 gap-y-8">
             {featuredOrganizations.map(org => (
               <OrgFeatureCard key={org.id} org={org} />
             ))}
