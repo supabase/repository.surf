@@ -32,7 +32,7 @@ const TimelineChart = ({
   dateKey,
   valueKey,
   selectedTimeFilter,
-  chartType,
+  chartType = null,
   xLabel = "",
   showOnlyDate = false,
   showBaselineToggle = false,
@@ -51,7 +51,7 @@ const TimelineChart = ({
     return options.filter((option) => {
       if (option.key === "allTime") return option;
       else {
-        const cutoffDate = new Date(currentTime - option.duration);
+        const cutoffDate = new Date(currentTime - option?.duration ?? 0);
         const filteredData = formattedData.filter((row) => {
           if (row[dateKey] >= cutoffDate.toISOString()) return row;
         });
