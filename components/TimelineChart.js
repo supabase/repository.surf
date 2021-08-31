@@ -31,7 +31,7 @@ const TimelineChart = ({
   data,
   dateKey,
   valueKey,
-  selectedTimeFilter,
+  selectedTimeFilter = "allTime",
   chartType = null,
   xLabel = "",
   showOnlyDate = false,
