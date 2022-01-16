@@ -112,12 +112,12 @@ export default function Home({ userProfile, featuredOrganizations }) {
               </form>
             </div>
             <div className="flex items-center justify-between">
-              <a href="https://supabase.io" target="_blank" className="text-white text-gray-200 flex items-center opacity-75 hover:opacity-100 transition cursor-pointer">
+              <a href="https://supabase.com" target="_blank" className="text-white text-gray-200 flex items-center opacity-75 hover:opacity-100 transition cursor-pointer">
                 <span>Powered by</span>
                 <img src='logo-dark.png' className="ml-2 h-5 relative" style={{ top: '2px'}}/>
               </a>
               <div className="flex items-center space-x-6">
-                <a href="https://twitter.com/supabase_io" target="_blank">
+                <a href="https://twitter.com/supabase" target="_blank">
                   <Icon type="Twitter" size={20} strokeWidth={2} className="text-white" />
                 </a>
                 <a href="https://github.com/supabase/repository.surf" target="_blank">
